@@ -109,6 +109,21 @@ Bootstrap LookML views for all 8 gold_marts tables.
 
 ---
 
+## Validation (Optional)
+
+If `lkml` is available and approved in your environment, run a syntax check before writing the handoff:
+
+```bash
+pip install lkml
+lkml views/*.view.lkml
+lkml models/gold_marts.model.lkml
+```
+
+Clean exit = valid LookML syntax. If `lkml` is not available or not on your approved tool list,
+skip it — note this in the handoff under Blockers. The real validation gate is the Looker IDE
+when a connection is available. See [`demo/tools/lkml-validator.md`](./tools/lkml-validator.md)
+for the tool evaluation brief.
+
 ## Rules
 
 - Use only columns from `demo/schema/gold_marts.md` — no invented fields

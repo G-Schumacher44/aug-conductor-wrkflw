@@ -82,7 +82,20 @@ Create `models/gold_marts.model.lkml`:
 
 Commit: `feat(model): add initial model and explores`
 
-### Step 5 — Write Handoff
+### Step 5 — Validate (Optional)
+
+If `lkml` is available and approved in your environment, run a syntax check:
+
+```bash
+pip install lkml
+lkml views/*.view.lkml
+lkml models/gold_marts.model.lkml
+```
+
+A clean exit means valid LookML syntax. If `lkml` is not available or not approved,
+skip this step — note it in the handoff and record Looker IDE as the pending validation gate.
+
+### Step 6 — Write Handoff
 
 Write a `conductor/handoff-log.md` entry recording:
 - Tables discovered and views generated
