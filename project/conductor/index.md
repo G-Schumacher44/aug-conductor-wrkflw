@@ -2,7 +2,7 @@
 
 ## Active Slice
 
-Active slice: conductor/slice-04-promotions-view.md
+Active slice: conductor/slice-05-maintenance.md
 
 ## Queue
 
@@ -11,7 +11,8 @@ Active slice: conductor/slice-04-promotions-view.md
 | STABLE | conductor/slice-01-lookml-bootstrap.md |
 | STABLE | conductor/slice-02-view-enrichment.md |
 | STABLE | conductor/slice-03-model-layer.md |
-| ACTIVE | conductor/slice-04-promotions-view.md |
+| STABLE | conductor/slice-04-promotions-view.md |
+| ACTIVE | conductor/slice-05-maintenance.md |
 
 ## Master Plan
 [LookML Gold Marts Master Plan](./master-plan-lookml-gold-marts.md)

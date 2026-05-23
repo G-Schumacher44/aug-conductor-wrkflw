@@ -1,7 +1,7 @@
 # Slice 04: Promotions View
 
 Date: 2026-05-23
-Status: queued
+Status: stable
 Type: workflow-slice
 
 ## Objective
@@ -35,12 +35,12 @@ Schema reference: `../demo/schema/gold_marts.md` — find the `fct_promotions` s
 
 ## Acceptance Criteria
 
-- [ ] views/fct_promotions.view.lkml created
-- [ ] All columns from schema represented as dimensions
-- [ ] Exactly one measure: count
-- [ ] No non-baseline measures (no sum, average, max, min)
-- [ ] models/gold_marts.model.lkml has 9 explores
-- [ ] scripts/validate.py exits 0
-- [ ] Slice marked stable, conductor/index.md updated
-- [ ] Handoff written with Exact Next Steps for enrichment
-- [ ] No hardcoded credentials
+- [x] views/fct_promotions.view.lkml created
+- [x] All columns from schema represented as dimensions
+- [x] Exactly one measure: count
+- [x] No non-baseline measures (no sum, average, max, min)
+- [x] models/gold_marts.model.lkml has 9 explores
+- [x] scripts/validate.py exits 0
+- [x] Slice marked stable, conductor/index.md updated
+- [x] Handoff written with Exact Next Steps for enrichment
+- [x] No hardcoded credentials

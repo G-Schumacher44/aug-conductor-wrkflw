@@ -44,7 +44,7 @@ Add new tables as they are provisioned in gold_marts.
 - [x] All 8 views pass simulated CI (scripts/validate.py)
 - [x] models/gold_marts.model.lkml has 8 labeled explores
 - [x] All Phase 1 slice acceptance criteria marked stable
-- [ ] fct_promotions view added (slice 04)
+- [x] fct_promotions view added (slice 04)
 - [ ] Handoff log records final state with no open blockers
 
 ## Slice Index
@@ -54,4 +54,4 @@ Add new tables as they are provisioned in gold_marts.
 | slice-01 | stable | Baseline views (8 tables) |
 | slice-02 | stable | View enrichment |
 | slice-03 | stable | Model layer polish |
-| slice-04 | queued | fct_promotions view |
+| slice-04 | stable | fct_promotions view |
