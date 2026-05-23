@@ -90,7 +90,7 @@ Note the result in the handoff Validation field. Skip if tooling is not approved
 Run from the **repo root** (not from project/):
 
 ```bash
-python scripts/validate.py
+python3 scripts/validate.py
 ```
 
 Fix any failures before proceeding. All checks must pass.
