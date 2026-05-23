@@ -36,7 +36,7 @@ The self-scheduling mechanism. Every session:
 
 1. Agent reads the active slice spec
 2. Agent executes bounded work
-3. Agent writes handoff — the **Next Slice Proposal** field is the recommendation for the next slice
+3. Agent writes handoff — the **Exact Next Steps** field is the recommendation for the next slice
 4. Operator reviews, approves or redirects, promotes to `conductor/slice-N+1-*.md`
 5. Next session begins at step 1
 
@@ -62,7 +62,7 @@ When creating or updating a slice:
 
 When closing a slice:
 
-1. update `handoff-log.md` with objective, current state, files changed, and **Next Slice Proposal**
+1. update `handoff-log.md` with objective, current state, files changed, and **Exact Next Steps**
 2. move older handoff entries to `handoff-archive.md` so `handoff-log.md` stays current-state only
 3. move the slice to `archive/` after the stable checkpoint is cut
 

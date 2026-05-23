@@ -49,9 +49,15 @@ Every session must end with a `conductor/handoff-log.md` entry. The entry must i
 - **Objective** — what this session set out to do
 - **Current State** — what was actually completed
 - **Files Changed** — list of files written or modified
-- **Validation** — what was verified (build output, test results, manual check)
-- **Next Slice Proposal** — what the next agent should do, in order (this is the scheduling mechanism)
+- **Validation** — what was verified (`scripts/validate.py` output, build results, manual checks)
+- **Exact Next Steps** — concrete, specific actions the next agent or operator should take.
+  Not vague proposals. Specific enough that an operator can promote directly to a slice spec.
+  If a master plan exists, ground these steps in it.
 - **Blockers** — anything unresolved that the operator needs to decide
+
+At the end of each slice, also:
+- Mark the current slice `status: stable` in its slice doc
+- Advance `conductor/index.md` active pointer to the next queued slice (if one exists)
 
 Format: newest entry at the top. Keep `handoff-log.md` current-state only — move older entries to `conductor/handoff-archive.md`.
 

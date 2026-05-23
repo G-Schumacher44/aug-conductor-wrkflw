@@ -62,7 +62,7 @@ Read the slice spec, do the work, write the handoff.
 ## The Conductor Loop
 
 - Read active slice spec → execute bounded work → write handoff
-- The handoff's **Next Slice Proposal** field is your recommendation for the next unit of work
+- The handoff's **Exact Next Steps** field is your recommendation for the next unit of work
 - Operator reviews, approves or redirects, starts next session
 
 ## Required Reading Order
@@ -88,7 +88,7 @@ Every session ends with a `conductor/handoff-log.md` entry containing:
 - **Current State** — what was actually completed
 - **Files Changed** — list of written or modified files
 - **Validation** — what was verified
-- **Next Slice Proposal** — what the next agent should do (the scheduling mechanism)
+- **Exact Next Steps** — what the next agent should do (the scheduling mechanism)
 - **Blockers** — unresolved items for operator
 
 Newest entry at top. Move older entries to `conductor/handoff-archive.md`.
@@ -204,7 +204,7 @@ write a model file with explores, and record a handoff.
 - [ ] models/gold_marts.model.lkml with 8 explores
 - [ ] CI stub present at .github/workflows/lookml-ci.yml
 - [ ] scripts/validate.py exits 0 (run from repo root before writing handoff)
-- [ ] Handoff written with Next Slice Proposal and validator output in Validation field
+- [ ] Handoff written with Exact Next Steps and validator output in Validation field
 - [ ] No hardcoded credentials
 ```
 
@@ -360,7 +360,7 @@ Bootstrap LookML views for all 8 gold_marts tables.
 - scripts/validate.py: <X passed | 0 warnings | 0 failed>
 - lkml: <exit 0 for all 8 views and model | "not run — not approved">
 
-### Next Slice Proposal
+### Exact Next Steps
 1. Add typed measures (sum, average) for numeric fields in each view
 2. Add dimension_group for DATE columns
 3. Add value formats, labels, and group_label for field organization
@@ -390,10 +390,10 @@ Commit: `docs(handoff): record slice 01 completion`
 When you finish and write the handoff, you have completed one turn of the Conductor Loop:
 
 ```
-intent defined → slice executed → handoff written → Next Slice Proposal → operator approves → repeat
+intent defined → slice executed → handoff written → Exact Next Steps → operator approves → repeat
 ```
 
-The "Next Slice Proposal" in your handoff is the scheduling mechanism. You are proposing
+The "Exact Next Steps" in your handoff is the scheduling mechanism. You are proposing
 what comes next. The operator reviews it and decides whether to run it.
 
 See [`demo/LOOP.md`](./demo/LOOP.md) for the full explanation.
