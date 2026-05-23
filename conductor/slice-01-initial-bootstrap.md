@@ -68,8 +68,7 @@ Only generate views for what is explicitly listed in the schema reference.
 For each table discovered:
 - Create `views/<table_name>.view.lkml`
 - Map every column to a LookML dimension using the type mapping in `AGENTS.md`
-- Add a `count` measure
-- Add `sum` and `average` measures for columns that represent money, quantity, or duration
+- Add a `count` measure — this is the only measure for slice 01
 - Set `sql_table_name: \`<project>.<dataset>.<table>\``
 
 Commit each view file as you go: `feat(views): add <table_name> view`
@@ -95,7 +94,7 @@ Write a `conductor/handoff-log.md` entry recording:
 
 - [ ] One `.view.lkml` file exists for every table in `gold_marts`
 - [ ] `models/gold_marts.model.lkml` exists with at least one explore
-- [ ] Every view has a `count` measure
+- [ ] Every view has a `count` measure and no other measures
 - [ ] Handoff log entry written with Next Slice Proposal
 - [ ] No placeholder values in generated LookML (except connection name)
 - [ ] No hardcoded credentials
