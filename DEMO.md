@@ -202,7 +202,9 @@ write a model file with explores, and record a handoff.
 - [ ] Every view has exactly one measure: count
 - [ ] No non-baseline measures (no sum, average, max, min)
 - [ ] models/gold_marts.model.lkml with 8 explores
-- [ ] Handoff written with Next Slice Proposal
+- [ ] CI stub present at .github/workflows/lookml-ci.yml
+- [ ] scripts/validate.js exits 0 (run from repo root before writing handoff)
+- [ ] Handoff written with Next Slice Proposal and validator output in Validation field
 - [ ] No hardcoded credentials
 ```
 
@@ -308,7 +310,7 @@ explore: fct_daily_dashboard {}
 
 Commit: `feat(model): add gold_marts model with 8 explores`
 
-### 5 — Validate (Optional)
+### 5 — Validate LookML syntax (Optional)
 
 If `lkml` is available and approved in your environment:
 
@@ -321,7 +323,19 @@ lkml project/models/gold_marts.model.lkml
 Clean exit = valid LookML syntax. If not available, skip and note it in the handoff.
 See [`demo/tools/lkml-validator.md`](./demo/tools/lkml-validator.md) for the evaluation brief.
 
-### 6 — Write the handoff
+### 6 — Run the spine validator
+
+```bash
+node scripts/validate.js
+```
+
+This is a **required gate** before writing the handoff. The script checks the Conductor
+spine, reads the active slice's acceptance criteria checkboxes, and reports pass/warn/fail.
+Fix any failures before proceeding. No npm install required — pure Node stdlib.
+
+All checks must pass before moving to Step 7.
+
+### 7 — Write the handoff
 
 Write an entry at the top of `project/conductor/handoff-log.md`:
 
@@ -343,9 +357,8 @@ Bootstrap LookML views for all 8 gold_marts tables.
 - project/models/gold_marts.model.lkml
 
 ### Validation
-- <confirm each view has correct column count from schema>
-- <confirm model includes all 8 explores>
-- <lkml result or "not run — not approved">
+- scripts/validate.js: <X passed | 0 warnings | 0 failed>
+- lkml: <exit 0 for all 8 views and model | "not run — not approved">
 
 ### Next Slice Proposal
 1. Add typed measures (sum, average) for numeric fields in each view
@@ -358,15 +371,6 @@ Bootstrap LookML views for all 8 gold_marts tables.
 ```
 
 Commit: `docs(handoff): record slice 01 completion`
-
-### 7 — Run the validation script (Optional)
-
-```bash
-node scripts/validate.js
-```
-
-This script checks your output against the slice acceptance criteria and reports
-pass / warn / fail per check. No npm install required — pure Node stdlib.
 
 ---
 
