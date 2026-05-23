@@ -36,6 +36,16 @@ file stub with explores. Record a handoff when done.
 
 ## Execution Steps
 
+### Step 0 — Create Your Branch
+
+Before writing any files:
+
+```bash
+git checkout -b feat/slice-01-lookml-bootstrap
+```
+
+All commits for this slice go on this branch. Do not commit to `demo-run` or `main` directly.
+
 ### Step 1 — Validate Intent
 
 Read `intent.md`. Confirm:
