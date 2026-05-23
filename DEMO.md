@@ -36,12 +36,15 @@ project/
   AGENTS.md
   intent.md
   conductor/
-    index.md
+    index.md                          ← queue: slices 01-03
+    master-plan-lookml-gold-marts.md  ← full project scope
     tracks.md
     handoff-log.md
-    slice-01-lookml-bootstrap.md
-  views/                         ← agent writes LookML views here
-  models/                        ← agent writes model here
+    slice-01-lookml-bootstrap.md      ← ACTIVE
+    slice-02-view-enrichment.md       ← QUEUED
+    slice-03-model-layer.md           ← QUEUED
+  views/                              ← agent writes LookML views here
+  models/                             ← agent writes model here
   .github/
     workflows/
       lookml-ci.yml
@@ -139,8 +142,79 @@ No joins, no PDTs, no derived tables, no value formats — baseline only.
 ```markdown
 # Conductor Index
 
-Active slice: conductor/slice-01-lookml-bootstrap.md
-Status: in-progress
+## Active Slice
+conductor/slice-01-lookml-bootstrap.md
+
+## Queue
+
+| Status | Slice |
+|---|---|
+| ACTIVE | conductor/slice-01-lookml-bootstrap.md |
+| QUEUED | conductor/slice-02-view-enrichment.md |
+| QUEUED | conductor/slice-03-model-layer.md |
+
+## Master Plan
+[LookML Gold Marts Master Plan](./master-plan-lookml-gold-marts.md)
+
+## Agent — end-of-slice responsibilities
+1. Mark completed slice `status: stable` in its slice doc
+2. Update queue table (ACTIVE → STABLE, next QUEUED → ACTIVE)
+3. Commit slice doc + index.md + handoff-log.md together
+```
+
+---
+
+#### `project/conductor/master-plan-lookml-gold-marts.md`
+
+```markdown
+# Master Plan: LookML Gold Marts — Data Model Bootstrap
+
+Date: <today>
+Status: active
+Type: workflow-master-plan
+
+## Objective
+
+Build a production-ready LookML data model on top of 8 pre-aggregated BigQuery
+fact tables for gcs-automation-project.gold_marts.
+
+Done = all 8 tables have enriched views with typed measures, a clean model with
+labeled explores, and the project validates in the Looker IDE when a connection
+is provisioned.
+
+## Phases
+
+### Phase 1: Foundation (Slices 01-03)
+
+Establish baseline views, enrich with business measures and formats, wire the
+model layer.
+
+- Slice 01: Baseline views — one dimension per column, count measure only
+- Slice 02: View enrichment — typed measures, value formats, dimension_group for dates
+- Slice 03: Model layer — explore labels, field grouping, joins where grain is confirmed
+
+## Architecture Decisions
+
+- No live BQ or Looker access — `../demo/schema/gold_marts.md` is the authoritative schema
+- Connection name stays placeholder until operator provisions a real Looker connection
+- No PDTs or derived tables in Phase 1
+- All 8 tables are independently aggregated — no joins until operator confirms shared grain
+
+## Acceptance Criteria
+
+- [ ] All 8 views structurally valid (simulated CI via scripts/validate.py)
+- [ ] All 8 views pass lkml syntax check (when tooling approved)
+- [ ] models/gold_marts.model.lkml has 8 labeled explores
+- [ ] All slice acceptance criteria marked stable
+- [ ] Handoff log records final state with no open blockers
+
+## Slice Index
+
+| Slice | Status | Description |
+|---|---|---|
+| slice-01 | active | Baseline views |
+| slice-02 | queued | View enrichment |
+| slice-03 | queued | Model layer |
 ```
 
 ---
@@ -206,6 +280,96 @@ write a model file with explores, and record a handoff.
 - [ ] scripts/validate.py exits 0 (run from repo root before writing handoff)
 - [ ] Handoff written with Exact Next Steps and validator output in Validation field
 - [ ] No hardcoded credentials
+```
+
+---
+
+#### `project/conductor/slice-02-view-enrichment.md`
+
+```markdown
+# Slice 02: View Enrichment
+
+Date: <today>
+Status: queued
+Type: workflow-slice
+
+## Objective
+
+Enrich all 8 baseline views with typed measures, value formats, and
+dimension_group definitions for date fields. No structural changes to existing
+dimensions — additive only.
+
+## Required Reads
+
+1. `intent.md`
+2. `conductor/master-plan-lookml-gold-marts.md` — architecture decisions
+3. `conductor/handoff-log.md` — state from slice 01
+4. `../demo/schema/gold_marts.md` — column types
+
+## Steps
+
+1. For each view, add typed measures for numeric facts:
+   - Revenue, cost, margin fields → `type: sum`
+   - Rate, percentage fields → `type: average`
+   - ID fields → `type: count_distinct`
+2. Add `value_format_name` to financial measures (decimal_2 or usd)
+3. Replace DATE dimensions with `dimension_group` + `timeframes: [date, week, month, quarter, year]`
+4. Run `scripts/validate.py` from repo root — fix any failures
+5. Write handoff with Exact Next Steps
+
+## Acceptance Criteria
+
+- [ ] Every numeric fact field has a typed measure (sum or average)
+- [ ] All financial measures have value_format_name applied
+- [ ] All DATE columns converted to dimension_group
+- [ ] No dimensions removed or renamed from slice 01
+- [ ] scripts/validate.py exits 0
+- [ ] Slice marked stable, conductor/index.md queue advanced to slice-03
+- [ ] Handoff written with Exact Next Steps
+```
+
+---
+
+#### `project/conductor/slice-03-model-layer.md`
+
+```markdown
+# Slice 03: Model Layer
+
+Date: <today>
+Status: queued
+Type: workflow-slice
+
+## Objective
+
+Polish the model file — add explore labels, field group_label organization,
+and descriptions. No joins until operator confirms shared grain between tables.
+
+## Required Reads
+
+1. `intent.md`
+2. `conductor/master-plan-lookml-gold-marts.md` — architecture decisions
+3. `conductor/handoff-log.md` — state from slice 02
+4. `models/gold_marts.model.lkml`
+
+## Steps
+
+1. Add `label:` and `description:` to each explore block
+2. Add `group_label:` to dimensions and measures within each view for field picker organization
+3. Add `hidden: yes` to primary key dimensions (ID fields)
+4. Review join opportunities — document any confirmed shared grains in handoff,
+   but do not add joins without operator approval
+5. Run `scripts/validate.py` from repo root — fix any failures
+6. Write handoff with Exact Next Steps
+
+## Acceptance Criteria
+
+- [ ] Every explore has a label and description
+- [ ] Key dimensions have group_label applied
+- [ ] PK dimensions are hidden
+- [ ] No joins added without operator confirmation in handoff
+- [ ] scripts/validate.py exits 0
+- [ ] Slice marked stable, conductor/index.md queue shows all slices STABLE
+- [ ] Handoff written — records full project state, notes any open blockers for operator
 ```
 
 ---
