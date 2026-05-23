@@ -133,7 +133,7 @@ Write a `project/conductor/handoff-log.md` entry recording:
 - Any schema gaps (tables with no useful columns, ambiguous types)
 - Connection name placeholder (operator must fill in)
 - **Validation** — include `scripts/validate.py` output (pass count)
-- **Next Slice Proposal** — what the next agent should do, in order
+- **Exact Next Steps** — what the next agent should do, in order
 
 ## Acceptance Criteria
 
@@ -141,7 +141,7 @@ Write a `project/conductor/handoff-log.md` entry recording:
 - [ ] One `.view.lkml` file exists for every table in `gold_marts` (8 total)
 - [ ] `project/models/gold_marts.model.lkml` exists with 8 explores
 - [ ] Every view has exactly one measure: `count` — no other measures
-- [ ] Handoff log entry written to `project/conductor/handoff-log.md` with Next Slice Proposal
+- [ ] Handoff log entry written to `project/conductor/handoff-log.md` with Exact Next Steps
 - [ ] No placeholder values in generated LookML (except connection name)
 - [ ] No hardcoded credentials
 - [ ] CI stub present at `project/.github/workflows/lookml-ci.yml`
