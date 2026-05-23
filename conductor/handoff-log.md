@@ -61,4 +61,5 @@ Bootstrap LookML views for all 8 `gold_marts` tables and add a model stub with e
 
 ### Blockers
 - Looker connection name is a placeholder. Operator must set the real connection before deploying to Looker.
+- Optional `lkml` parser validation was skipped because the tool was not available locally and was not approved for installation in this session. Looker IDE validation remains the pending validation gate once a connection is available.
 - No joins should be added until the operator confirms shared grains or bridge logic; the current schema states all 8 tables are independently aggregated.
