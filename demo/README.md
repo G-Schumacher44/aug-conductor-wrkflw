@@ -31,7 +31,7 @@ The agent opened the repo and read:
 
 Following the slice spec, the agent:
 1. Validated `intent.md` — confirmed BQ project, dataset, and entities were declared
-2. Queried BQ information schema to discover table schemas
+2. Read `demo/schema/gold_marts.md` — the authoritative schema reference (no BQ access required)
 3. Generated one `.view.lkml` file per table
 4. Created `models/gold_marts.model.lkml` with explores for each primary entity
 5. Wrote a handoff log entry before stopping
