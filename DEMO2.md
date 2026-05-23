@@ -1,73 +1,45 @@
-# Run Demo 2 — Iterative Feature Work
+# Run Demo 2 — Iterative Feature Work + Live Spec Authoring
 
-You are an agent working with the operator in an active pair programming session.
-`project/` is an established LookML project. A new business requirement has arrived:
-the data team has provisioned `gcs-automation-project.gold_marts.fct_promotions`.
+You are an agent working with the operator in a live pair programming session.
+`project/` is an established LookML project (3 slices stable). A new BigQuery table
+`gcs-automation-project.gold_marts.fct_promotions` has been provisioned.
 
-This demo runs in two phases with a human review gate between them.
+This demo runs in two phases. Phase 1 is autonomous execution. Phase 2 is collaborative.
 
 ---
 
-## Phase 1 — Orient and Present the Plan
-
-**Do not execute any work yet.** Read the project state and present what you're about to do.
+## Phase 1 — Execute Slice 04 (autonomous)
 
 ### 1 — Orient from the Conductor spine
 
 Read in order:
 
-1. `project/AGENTS.md` — behavioral rules
-2. `project/intent.md` — project description and BQ context
-3. `project/conductor/index.md` — current queue state
-4. `project/conductor/handoff-log.md` — what the last agent left, including Exact Next Steps
-5. `project/conductor/slice-04-promotions-view.md` — the active slice spec
+1. `project/AGENTS.md`
+2. `project/intent.md`
+3. `project/conductor/index.md` — active slice is slice-04
+4. `project/conductor/handoff-log.md` — state from last agent
+5. `project/conductor/slice-04-promotions-view.md` — your task
 
-### 2 — Present the plan to the operator
-
-After reading, summarize out loud:
-
-- What the last agent completed (from the handoff)
-- What slice-04 will do and why (derived from the Exact Next Steps in the handoff)
-- What files will be created or changed
-- What the validator will check
-
-**Stop here. Wait for the operator to review `slice-04-promotions-view.md` and confirm
-or adjust the scope before executing.**
-
-The operator may edit the slice spec directly. When they say "go" — proceed to Phase 2.
-
----
-
-## Phase 2 — Execute
-
-### 3 — Create your branch
+### 2 — Create your branch
 
 ```bash
 git checkout -b feat/slice-04-promotions-view
 ```
 
-### 4 — Read the schema
+### 3 — Generate the view
 
-Open `demo/schema/gold_marts.md`. Find `fct_promotions`. Do not invent columns.
-
-### 5 — Generate the view file
+Read `demo/schema/gold_marts.md` — find `fct_promotions`. Do not invent columns.
 
 Create `project/views/fct_promotions.view.lkml`:
-
-- One `dimension` per column:
-  - `STRING` → `type: string`
-  - `INTEGER` / `FLOAT` → `type: number`
-  - `BOOLEAN` → `type: yesno`
-  - `DATE` → `type: date`
-- One measure only: `measure: count { type: count }`
+- One dimension per column (STRING→string, INTEGER/FLOAT→number, DATE→date)
+- One measure: `count { type: count }` — only measure for this slice
 - `sql_table_name: \`gcs-automation-project.gold_marts.fct_promotions\``
-- No value formats, no descriptions, no hidden fields — baseline only
 
 Commit: `feat(views): add fct_promotions view`
 
-### 6 — Update the model file
+### 4 — Update the model
 
-Add a ninth explore to `project/models/gold_marts.model.lkml`:
+Add to `project/models/gold_marts.model.lkml`:
 
 ```lookml
 explore: fct_promotions {}
@@ -75,21 +47,21 @@ explore: fct_promotions {}
 
 Commit: `feat(model): add fct_promotions explore`
 
-### 7 — Run the spine validator
+### 5 — Validate
 
 ```bash
 python3 scripts/validate.py
 ```
 
-Required gate. Fix any failures before proceeding.
+Fix any failures before proceeding.
 
-### 8 — Write the handoff
+### 6 — Write the slice-04 handoff
 
-Mark `project/conductor/slice-04-promotions-view.md` `status: stable`.
-Advance `project/conductor/index.md` — slice-04 ACTIVE → STABLE.
-Move current handoff entry to `project/conductor/handoff-archive.md`.
+Mark `slice-04-promotions-view.md` `status: stable`.
+Advance `conductor/index.md` — slice-04 ACTIVE → STABLE, set `Active slice: none — awaiting slice-05`.
+Move current handoff entry to `conductor/handoff-archive.md`.
 
-Write an entry at the top of `project/conductor/handoff-log.md`:
+Write entry at the top of `conductor/handoff-log.md`:
 
 ```
 ## Slice 04 — Promotions View
@@ -101,25 +73,24 @@ Commit: <7-char hash>
 Add fct_promotions baseline view and explore to the established gold_marts project.
 
 ### Current State
-- project/views/fct_promotions.view.lkml — baseline view (11 dimensions, count measure)
-- project/models/gold_marts.model.lkml — 9 explores
+- views/fct_promotions.view.lkml — 11 dimensions, count measure
+- models/gold_marts.model.lkml — 9 explores
 
 ### Files Changed
-- project/views/fct_promotions.view.lkml (new)
-- project/models/gold_marts.model.lkml (updated)
-- project/conductor/slice-04-promotions-view.md (stable)
-- project/conductor/index.md (queue closed)
+- views/fct_promotions.view.lkml (new)
+- models/gold_marts.model.lkml (updated)
+- conductor/slice-04-promotions-view.md (stable)
+- conductor/index.md (slice-04 stable, awaiting slice-05)
 
 ### Validation
 - python3 scripts/validate.py: <X passed | Y warnings | 0 failed>
-- lkml: not run — pending tooling approval
 
 ### Exact Next Steps
 1. Enrich fct_promotions: sum for revenue_attributed and cost, average for roas
-2. Add dimension_group for start_date and end_date
-3. Add value_format_name: usd for revenue/cost measures
-4. Add group_label to dimensions for field picker organization
-5. Consider hidden: yes on promotion_id (primary key)
+2. Add dimension_group for start_date and end_date with date/week/month/quarter/year timeframes
+3. Add value_format_name: usd for revenue/cost, decimal_2 for roas
+4. Add group_label to organize dimensions in the field picker
+5. Hide promotion_id — primary key, not useful in the field picker
 
 ### Blockers
 - None
@@ -129,26 +100,67 @@ Commit: `docs(handoff): record slice 04 completion`
 
 ---
 
+## Phase 2 — Build and Execute Slice 05 (collaborative)
+
+**Do not start this phase until Phase 1 is committed and the operator has reviewed the handoff.**
+
+### 7 — Propose slice-05
+
+Read the Exact Next Steps from the handoff you just wrote.
+Draft `project/conductor/slice-05-promotions-enrichment.md` based on those steps.
+
+The slice spec should follow the standard format:
+- Objective
+- Required Reads
+- Execution Steps (numbered, specific)
+- Acceptance Criteria (checkboxes)
+
+Add it to `conductor/index.md`:
+- New row: `| ACTIVE | conductor/slice-05-promotions-enrichment.md |`
+- Update `Active slice:` line to `conductor/slice-05-promotions-enrichment.md`
+
+Commit the draft: `spec(conductor): draft slice-05 promotions enrichment`
+
+**Stop here. Present the draft to the operator.**
+The operator will review the slice spec in the IDE, adjust scope or wording, and say "go."
+
+### 8 — Execute slice-05
+
+After operator approval, execute slice-05 exactly as specified.
+
+Apply to `project/views/fct_promotions.view.lkml`:
+- Typed measures for numeric fields
+- dimension_group for date fields
+- value_format_name on financial measures
+- group_label on key dimensions
+- hidden: yes on promotion_id
+
+Run `python3 scripts/validate.py` — fix any failures.
+
+Mark slice-05 stable, advance the queue, write the handoff with Exact Next Steps.
+
+Commit: `docs(handoff): record slice 05 completion`
+
+---
+
 ## Rules
 
-- Use only columns from `demo/schema/gold_marts.md` — no invented fields
+- Use only columns from `demo/schema/gold_marts.md`
 - No hardcoded credentials
-- Only `type: count` measures — baseline only for this slice
-- `demo/views/fct_promotions.view.lkml` is reference output — write to `project/views/`
 - Commit as you go
+- Slice-05 spec is written by you and reviewed by the operator — it is the contract
 
 ---
 
 ## What This Demo Shows
 
-The Conductor iterative loop in a live pair programming session:
-
 ```
-Handoff Exact Next Steps → operator writes slice spec
-→ agent reads + presents plan → operator reviews diff → approves or adjusts
-→ agent executes → output diff reviewed live in IDE
-→ handoff written → loop ready for next session
+Autonomous execution (slice-04)
+    → handoff with Exact Next Steps
+    → agent proposes next spec (slice-05)
+    → operator reviews diff, adjusts, approves
+    → agent executes
+    → loop closes
 ```
 
-The slice spec is the contract between operator and agent. The review gate is where
-judgment lives — the agent proposes, the operator approves.
+The spec is the contract. The review gate is where judgment lives.
