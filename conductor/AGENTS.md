@@ -1,4 +1,4 @@
-# GEMINI agent guide — Conductor
+# Agent guide — Conductor
 
 ## What This Directory Is
 
@@ -12,7 +12,7 @@ Before planning or implementing, read in order:
 2. `conductor/index.md`
 3. `conductor/CONDUCTOR_MODES.md`
 4. `conductor/README.md`
-5. `conductor/GEMINI.md`
+5. `conductor/AGENTS.md`
 6. `conductor/tracks.md`
 7. the active `conductor/slice-*.md` file
 8. `conductor/handoff-log.md` when resuming active work
@@ -24,11 +24,24 @@ Do not start from `archive/` or `handoff-archive.md` unless the active slice exp
 ## Authority Order
 
 1. `AGENTS.md`
-2. root `GEMINI.md` / `CLAUDE.md`
-3. `conductor/GEMINI.md`
+2. root `AGENTS.md` (or `CLAUDE.md` / `GEMINI.md` — whichever your CLI reads)
+3. `conductor/AGENTS.md`
 4. `conductor/index.md`
 5. `conductor/README.md`
 6. active Conductor workflow docs
+
+## The Conductor Loop
+
+The self-scheduling mechanism. Every session:
+
+1. Agent reads the active slice spec
+2. Agent executes bounded work
+3. Agent writes handoff — the **Next Slice Proposal** field is the recommendation for the next slice
+4. Operator reviews, approves or redirects, promotes to `conductor/slice-N+1-*.md`
+5. Next session begins at step 1
+
+The agent generates the next work order. The operator approves it. No scope is generated
+from scratch after the first session. See `demo/LOOP.md` for a concrete example.
 
 ## Locked Contract
 
@@ -49,7 +62,7 @@ When creating or updating a slice:
 
 When closing a slice:
 
-1. update `handoff-log.md` with objective, current state, files changed, and exact next steps
+1. update `handoff-log.md` with objective, current state, files changed, and **Next Slice Proposal**
 2. move older handoff entries to `handoff-archive.md` so `handoff-log.md` stays current-state only
 3. move the slice to `archive/` after the stable checkpoint is cut
 

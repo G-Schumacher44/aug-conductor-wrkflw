@@ -47,6 +47,29 @@ The handoff the agent wrote is in:
 
 ---
 
+## What You're Actually Seeing — The Conductor Loop
+
+Open [`demo/handoff-example.md`](./handoff-example.md) and scroll to **Next Slice Proposal**.
+
+That section was written by the agent — not the operator. The agent built slice 01, then
+proposed slices 02–04 in the handoff. The operator's only job after slice 01 was to read
+that proposal and decide whether to promote it to the next slice spec.
+
+**This is the Conductor Loop:**
+
+```
+operator sets intent → agent reads slice → agent executes → agent writes handoff
+       ↑                                                              ↓
+operator approves ←←←←← Next Slice Proposal ←←←←←←←←←←←←←←←←←←←←←←
+```
+
+The agent is scheduling its own next unit of work. The operator approves or redirects.
+No scope is generated from scratch after the first slice — the agent proposes it.
+
+→ See [`demo/LOOP.md`](./LOOP.md) for a full walkthrough of the loop mechanics.
+
+---
+
 ## Try It Yourself
 
 1. Copy `demo/intent-example.md` content into the root `intent.md` — or write your own
