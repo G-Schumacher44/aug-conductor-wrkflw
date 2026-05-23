@@ -119,7 +119,7 @@ skip this step — note it in the handoff and record Looker IDE as the pending v
 ### Step 7 — Run the spine validator (required gate)
 
 ```bash
-node scripts/validate.js
+python scripts/validate.py
 ```
 
 Required before writing the handoff. Checks the Conductor spine, reads this slice's
@@ -132,7 +132,7 @@ Write a `project/conductor/handoff-log.md` entry recording:
 - Tables discovered and views generated
 - Any schema gaps (tables with no useful columns, ambiguous types)
 - Connection name placeholder (operator must fill in)
-- **Validation** — include `scripts/validate.js` output (pass count)
+- **Validation** — include `scripts/validate.py` output (pass count)
 - **Next Slice Proposal** — what the next agent should do, in order
 
 ## Acceptance Criteria
@@ -145,4 +145,4 @@ Write a `project/conductor/handoff-log.md` entry recording:
 - [ ] No placeholder values in generated LookML (except connection name)
 - [ ] No hardcoded credentials
 - [ ] CI stub present at `project/.github/workflows/lookml-ci.yml`
-- [ ] `scripts/validate.js` exits 0
+- [ ] `scripts/validate.py` exits 0

@@ -203,7 +203,7 @@ write a model file with explores, and record a handoff.
 - [ ] No non-baseline measures (no sum, average, max, min)
 - [ ] models/gold_marts.model.lkml with 8 explores
 - [ ] CI stub present at .github/workflows/lookml-ci.yml
-- [ ] scripts/validate.js exits 0 (run from repo root before writing handoff)
+- [ ] scripts/validate.py exits 0 (run from repo root before writing handoff)
 - [ ] Handoff written with Next Slice Proposal and validator output in Validation field
 - [ ] No hardcoded credentials
 ```
@@ -326,7 +326,7 @@ See [`demo/tools/lkml-validator.md`](./demo/tools/lkml-validator.md) for the eva
 ### 6 — Run the spine validator
 
 ```bash
-node scripts/validate.js
+python scripts/validate.py
 ```
 
 This is a **required gate** before writing the handoff. The script checks the Conductor
@@ -357,7 +357,7 @@ Bootstrap LookML views for all 8 gold_marts tables.
 - project/models/gold_marts.model.lkml
 
 ### Validation
-- scripts/validate.js: <X passed | 0 warnings | 0 failed>
+- scripts/validate.py: <X passed | 0 warnings | 0 failed>
 - lkml: <exit 0 for all 8 views and model | "not run — not approved">
 
 ### Next Slice Proposal
