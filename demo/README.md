@@ -45,6 +45,16 @@ The views and model the agent generated are in:
 The handoff the agent wrote is in:
 - [`demo/handoff-example.md`](./handoff-example.md)
 
+**A note on the demo output:** The views in `demo/views/` are intentionally minimal —
+dimensions and a `count` measure only. This is the same baseline Looker produces when
+you use "Create View from Table" in the IDE: it reads the BQ schema and generates one
+dimension per column, nothing more. The schema in `demo/schema/gold_marts.md` is the
+same data `bq show --schema` or `INFORMATION_SCHEMA.COLUMNS` would return.
+
+The demo is showing you the starting point, not the finished product. The agent's job
+in slice 02+ is to enrich these views — adding typed measures, value formats, hidden PK
+dimensions, label overrides, and explore joins — the things Looker's auto-gen doesn't do.
+
 ---
 
 ## What You're Actually Seeing — The Conductor Loop
@@ -77,5 +87,6 @@ No scope is generated from scratch after the first slice — the agent proposes 
 3. The agent will execute `conductor/slice-01-initial-bootstrap.md`
 4. Watch it build, then read the handoff it writes
 
-To use your own BQ data: update `intent.md` with your GCP project ID, dataset, and entities.
-The agent will discover your schema and generate your views.
+To use your own BQ data: update `intent.md` with your GCP project ID, dataset, and entities,
+and add your own schema reference to `demo/schema/`. The agent reads that file — no live
+BQ access required to run the demo.
