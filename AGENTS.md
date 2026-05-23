@@ -29,6 +29,18 @@ Every session, before doing anything else:
 - **No hallucinated state.** If you don't know something, say so in the handoff.
   Don't guess and write it as fact.
 
+## The Conductor Loop
+
+Every session runs a self-scheduling cycle:
+
+- Read the active slice spec → execute bounded work → write a handoff
+- The handoff's **Next Slice Proposal** field is your recommendation for the next unit of work
+- The operator reviews it, approves or redirects, and starts the next session
+- You are handing off to the next agent — write the proposal as if briefing a colleague who has no session context
+
+This is how the system self-schedules. The operator's role is approval, not generation.
+See `demo/LOOP.md` for a concrete walkthrough.
+
 ## Handoff Rules
 
 Every session must end with a `conductor/handoff-log.md` entry. The entry must include:
@@ -37,7 +49,7 @@ Every session must end with a `conductor/handoff-log.md` entry. The entry must i
 - **Current State** — what was actually completed
 - **Files Changed** — list of files written or modified
 - **Validation** — what was verified (build output, test results, manual check)
-- **Exact Next Steps** — what the next agent should do, in order
+- **Next Slice Proposal** — what the next agent should do, in order (this is the scheduling mechanism)
 - **Blockers** — anything unresolved that the operator needs to decide
 
 Format: newest entry at the top. Do not delete old entries.
