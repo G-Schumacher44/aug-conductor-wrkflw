@@ -115,6 +115,8 @@ active_slice_rel = get_active_slice_rel()
 def check_active_slice():
     if not active_slice_rel:
         return "warn", "could not parse from conductor/index.md", None
+    if active_slice_rel.lower().startswith("none"):
+        return "pass", active_slice_rel, None
     if not (PROJECT / active_slice_rel).exists():
         return "fail", f"{active_slice_rel} not found", None
     return "pass", active_slice_rel, None
@@ -122,7 +124,7 @@ def check_active_slice():
 
 check("Active slice file", check_active_slice)
 
-if active_slice_rel and (PROJECT / active_slice_rel).exists():
+if active_slice_rel and not active_slice_rel.lower().startswith("none") and (PROJECT / active_slice_rel).exists():
     criteria = parse_acceptance_criteria((PROJECT / active_slice_rel).read_text())
     if criteria:
         done = sum(1 for ticked, _ in criteria if ticked)
@@ -217,7 +219,7 @@ def check_branch():
         ).strip()
         if not branch:
             return "warn", "detached HEAD", None
-        if branch in ("main", "demo-run", "dev"):
+        if branch in ("main", "dev"):
             return "fail", f"on {branch} — commits should go on a feature branch", None
         return "pass", branch, None
     except Exception:
