@@ -1,6 +1,6 @@
 # Conductor Index
 
-Status: active
+Status: stable
 Type: conductor-index
 
 Machine-first routing entry for Conductor-aware agents.
@@ -17,19 +17,15 @@ Machine-first routing entry for Conductor-aware agents.
 
 ---
 
-## Active Strategy
+## Active Slice
 
-**Active Slice:** [Slice 01: Initial Project Bootstrap](./slice-01-initial-bootstrap.md)
+Active slice: none — bootstrap complete, project/ deployed
 
-### Queue
+## Queue
 
 | Status | Slice |
 |---|---|
-| ACTIVE | [slice-01-initial-bootstrap.md](./slice-01-initial-bootstrap.md) |
-
-> This is the outer demo repo's Conductor index — it routes the agent to the bootstrap
-> slice which scaffolds `project/` as a standalone Conductor project.
-> Once `project/` is scaffolded, execution continues from `project/conductor/index.md`.
+| STABLE | conductor/slice-01-initial-bootstrap.md |
 
 ---
 
@@ -46,7 +42,8 @@ When running a full-index workflow, update this table as slices complete:
 Agent end-of-slice responsibilities:
 1. Mark current slice `status: stable` in the slice doc
 2. Update this table (ACTIVE → STABLE, next QUEUED → ACTIVE)
-3. Commit slice doc + index.md + handoff-log.md together
+3. Update `Active slice:` line to point to next slice
+4. Commit slice doc + index.md + handoff-log.md together
 
 ---
 
