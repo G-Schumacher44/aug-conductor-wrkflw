@@ -4,6 +4,31 @@
 
 ---
 
+## Slice 03 — Model Layer
+
+Date: 2026-05-03
+Commit: a4f9c1e
+
+### Objective
+Polish the model file — add explore labels, group_label organization, and hidden
+primary key dimensions. No joins without operator confirmation.
+
+### Current State
+- project/models/gold_marts.model.lkml — 8 labeled explores with descriptions
+- project/views/ — all 8 views updated with group_label on key dimensions, PK dimensions hidden
+- All Phase 1 slices complete and stable
+
+### Exact Next Steps
+1. fct_promotions table has been provisioned in gold_marts — add baseline view and explore
+2. Confirm grain alignment between fct_finance_revenue and fct_marketing_attribution
+3. After fct_promotions: enrich with typed measures, dimension_group for date fields
+
+### Blockers
+- Connection name is a placeholder
+- Join approval pending
+
+---
+
 ## Slice 02 — View Enrichment
 
 Date: 2026-05-02

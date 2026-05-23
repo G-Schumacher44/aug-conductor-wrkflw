@@ -41,3 +41,8 @@ explore: fct_daily_dashboard {
   label: "Daily Dashboard"
   description: "Daily KPI rollup across all domains — revenue, orders, returns."
 }
+
+explore: fct_promotions {
+  label: "Promotions"
+  description: "Promotional campaign performance — attribution, ROAS, and revenue by channel."
+}
