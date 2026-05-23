@@ -51,7 +51,9 @@ Bootstrap LookML views for all 8 `gold_marts` tables and add a model stub with e
   - `fct_shipping_analysis`: 8 dimensions
   - `fct_cart_abandonment`: 8 dimensions
   - `fct_daily_dashboard`: 14 dimensions
-- `lkml` CLI was not available locally, so no parser-level LookML validation was run.
+- Installed `lkml` 1.3.7 in a temporary local `.venv` and removed the venv after validation.
+- `lkml models/gold_marts.model.lkml` exited 0.
+- `lkml` accepts one file per invocation, so each root view was validated individually; all 8 root views exited 0.
 - No BigQuery or Looker live validation was attempted, per demo constraints.
 
 ### Next Slice Proposal
@@ -61,5 +63,4 @@ Bootstrap LookML views for all 8 `gold_marts` tables and add a model stub with e
 
 ### Blockers
 - Looker connection name is a placeholder. Operator must set the real connection before deploying to Looker.
-- Optional `lkml` parser validation was skipped because the tool was not available locally and was not approved for installation in this session. Looker IDE validation remains the pending validation gate once a connection is available.
 - No joins should be added until the operator confirms shared grains or bridge logic; the current schema states all 8 tables are independently aggregated.
