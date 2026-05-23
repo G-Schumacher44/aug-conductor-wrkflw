@@ -1,0 +1,12 @@
+{
+  "files.watcherExclude": {
+    "**/.git/**": true,
+    "**/.venv/**": true,
+    "**/project/**": true
+  },
+  "search.exclude": {
+    "**/.venv": true,
+    "**/project": true
+  },
+  "git.autorefresh": false
+}
