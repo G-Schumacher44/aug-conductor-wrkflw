@@ -1,0 +1,32 @@
+name: Conductor Maintenance
+# Scheduled health check — mirrors what Demo 3 runs manually via Codex app cron.
+# Runs validate.py and reports conductor spine status.
+# Stub — uncomment jobs after connecting to a live repo with project/ committed.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Monday 6am UTC
+  workflow_dispatch:      # allow manual trigger
+
+# jobs:
+#   health-check:
+#     name: Conductor spine validation
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.12'
+#       - name: Run spine validator
+#         run: python scripts/validate.py
+#       - name: Check queue completeness
+#         run: |
+#           python -c "
+#           import re, sys
+#           index = open('project/conductor/index.md').read()
+#           non_stable = re.findall(r'\|\s*(ACTIVE|QUEUED|IN-PROGRESS)\s*\|', index)
+#           if non_stable:
+#               print(f'WARN: non-stable slices found: {non_stable}')
+#               sys.exit(1)
+#           print('All slices STABLE')
+#           "

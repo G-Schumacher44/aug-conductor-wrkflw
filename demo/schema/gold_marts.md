@@ -135,3 +135,23 @@ KPI rollup across all domains. One row per day.
 | revenue_30d_avg | FLOAT | rolling average |
 | revenue_30d_std | FLOAT | rolling std dev |
 | revenue_anomaly_flag | BOOLEAN | true = statistical outlier |
+
+---
+
+## fct_promotions
+
+Promotional campaign performance. One row per promotion per channel.
+
+| Column | BQ Type | Notes |
+|---|---|---|
+| promotion_id | STRING | |
+| promotion_name | STRING | |
+| start_date | DATE | |
+| end_date | DATE | |
+| channel | STRING | e.g. email, social, display |
+| discount_type | STRING | e.g. percentage, flat |
+| discount_value | FLOAT | |
+| orders_attributed | INTEGER | |
+| revenue_attributed | FLOAT | |
+| cost | FLOAT | |
+| roas | FLOAT | revenue / cost |
