@@ -6,7 +6,7 @@ Conductor owns the workflow pipeline, planning artifacts, control-doc hierarchy,
 
 - `index.md` — machine-first routing entry for context-pack and workflow discovery
 - `README.md` — directory conventions, lifecycle model, and archive policy
-- `GEMINI.md` — local workflow rules for Conductor
+- `AGENTS.md` — local workflow rules for Conductor (rename to `CLAUDE.md` or `GEMINI.md` for your CLI)
 - `CONDUCTOR_MODES.md` — execution-mode contract for Patch, Slice, Full Conductor, and Audit work
 - `tracks.md` — active initiative registry
 - `slice-*.md` — active commit/PR-sized execution artifacts

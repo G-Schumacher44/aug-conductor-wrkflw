@@ -68,7 +68,7 @@ When closing a slice:
 
 ## Git Discipline
 
-- `main` branch is the stable baseline.
-- Branch from `main` for a specific slice or session.
-- Make scoped, focused commits within that slice.
-- Merge feature branches back to `main` via Pull Request when stable.
+- Create a feature branch before writing any files: `git checkout -b feat/slice-<n>-<description>`
+- Branch from the current working branch — never commit directly to `main` or the base branch
+- Make scoped, focused commits within that slice
+- Merge feature branches back to the base branch via Pull Request when stable

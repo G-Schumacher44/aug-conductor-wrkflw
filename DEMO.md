@@ -81,23 +81,30 @@ Add an entry to `conductor/handoff-log.md` (newest at top):
 ## Slice 01 — LookML Bootstrap
 
 Date: <today>
-Commit: <short hash>
+Commit: <7-char hash>
 
-### What Was Built
+### Objective
+Bootstrap LookML views for all 8 gold_marts tables.
+
+### Current State
 - <list of view files generated>
+- models/gold_marts.model.lkml
+
+### Files Changed
+- views/fct_*.view.lkml (8 files)
 - models/gold_marts.model.lkml
 
 ### Validation
 - <confirm each view has correct column count>
 - <confirm model file includes all 8 explores>
 
-### Open Questions
-- Connection name is a placeholder — operator sets it when connecting to a real Looker instance
-- <any schema gaps or type ambiguities you noticed>
-
 ### Next Slice Proposal
 1. <what slice 02 should do>
 2. <what slice 03 should do>
+
+### Blockers
+- Connection name is a placeholder — operator sets it when connecting to a real Looker instance
+- <any schema gaps or type ambiguities you noticed>
 ```
 
 ---
