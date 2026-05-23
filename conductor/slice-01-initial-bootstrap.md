@@ -1,5 +1,6 @@
-# Slice 01: Initial Project Bootstrap
+# Slice 01: LookML Bootstrap — Schema Discovery & View Generation
 
+Date: 2026-05-23
 Status: active
 Type: workflow-slice
 Owner: agent
@@ -7,63 +8,88 @@ Owner: agent
 ```yaml
 conductor_mode: slice
 context_budget: medium
+stage_required: false
 handoff_required: true
+stable_tag_required: false
 ```
 
 ## Objective
 
-Read `intent.md`, set up the foundational project structure for the declared stack,
-and leave the repository in a buildable, runnable state. Write a handoff when done.
+Read the project intent, discover the BigQuery schema for each declared dataset,
+and generate an initial LookML view file for every table found. Write a model
+file stub with explores. Record a handoff when done.
 
 ## Required Reads
 
-1. `intent.md` — stack, entities, definition of done
-2. `AGENTS.md` — execution and handoff rules
-3. `conductor/index.md`
+1. `intent.md` — BQ project ID, dataset names, entities, relationships, modeling goals
+2. `AGENTS.md` — LookML conventions, type mapping, naming rules
+3. `conductor/index.md` — routing
 4. This slice
+
+## Mode And Context Contract
+
+- Mode: `slice`
+- Required reads: listed above
+- Forbidden reads without reason: unrelated directories, external repos
+- Stage/DUOS: not required for this slice
+- Tag posture: no tag — bootstrap is not a stable milestone
 
 ## Execution Steps
 
 ### Step 1 — Validate Intent
 
-Read `intent.md`. Confirm the stack is declared and the definition of done is filled in.
-If placeholders remain, stop and ask the operator to complete `intent.md` before proceeding.
+Read `intent.md`. Confirm:
+- GCP Project ID is filled in (not a placeholder)
+- At least one dataset is named
+- At least one entity is listed
 
-### Step 2 — Bootstrap Project Structure
+If any placeholder values remain, stop and ask the operator to fill in `intent.md`.
 
-Based on the declared stack in `intent.md`, create the foundational project files:
+### Step 2 — Discover Schema
 
-- Package manifest or dependency file (`package.json`, `requirements.txt`, `go.mod`, etc.)
-- Entry point file (`index.ts`, `main.py`, `main.go`, etc.)
-- Config files appropriate to the stack (`.gitignore`, `tsconfig.json`, `Makefile`, etc.)
-- Any directory structure needed (`src/`, `tests/`, etc.)
+For each dataset listed in `intent.md`, discover all tables and their column schemas.
 
-Do not install packages yet — just write the manifests.
+**Primary method:** Use the BigQuery information schema or `bq show --schema <project>:<dataset>.<table>`.
 
-### Step 3 — Verify
+**Fallback (no BQ access):** Use `demo/schema/gold_marts.md` as the authoritative schema
+reference. Do not invent column names or types — only generate views for columns
+that appear in the schema reference.
 
-Confirm the project is in a valid starting state:
-- No syntax errors in generated files
-- Build or lint passes if applicable
-- Git status is clean after committing bootstrap files
+Record what you find — table names, column names, types — before writing any files.
 
-### Step 4 — Write Handoff
+### Step 3 — Generate View Files
 
-Write a `conductor/handoff-log.md` entry at the top of the file recording:
-- What was bootstrapped (files created)
-- Validation result
-- What is next (recommended Slice 02 objective)
-- Any open questions for the operator
+For each table discovered:
+- Create `views/<table_name>.view.lkml`
+- Map every column to a LookML dimension using the type mapping in `AGENTS.md`
+- Add a `count` measure
+- Add `sum` and `average` measures for columns that represent money, quantity, or duration
+- Set `sql_table_name: \`<project>.<dataset>.<table>\``
+
+Commit each view file as you go: `feat(views): add <table_name> view`
+
+### Step 4 — Generate Model File
+
+Create `models/gold_marts.model.lkml`:
+- Set `connection: "<your-looker-connection-name>"` (operator will fill in the real value)
+- Add one `explore:` block per primary entity listed in `intent.md`
+- Leave a `# TODO` comment for any relationships not yet confirmed
+
+Commit: `feat(model): add initial model and explores`
+
+### Step 5 — Write Handoff
+
+Write a `conductor/handoff-log.md` entry recording:
+- Tables discovered and views generated
+- Any schema gaps (tables with no useful columns, ambiguous types)
+- Connection name placeholder (operator must fill in)
+- **Next Slice Proposal** — what the next agent should do, in order
 
 ## Acceptance Criteria
 
-- [ ] `intent.md` has no unfilled placeholders
-- [ ] Project has a functional, stack-appropriate baseline structure
-- [ ] Handoff log entry written with next steps
-- [ ] No sensitive values (API keys, passwords) committed
-
-## Out of Scope
-
-- Installing dependencies (that's Slice 02)
-- Writing application logic (that's Slice 03+)
-- Database migrations or schema setup
+- [ ] One `.view.lkml` file exists for every table in `gold_marts`
+- [ ] `models/gold_marts.model.lkml` exists with at least one explore
+- [ ] Every view has a `count` measure
+- [ ] Handoff log entry written with Next Slice Proposal
+- [ ] No placeholder values in generated LookML (except connection name)
+- [ ] No hardcoded credentials
