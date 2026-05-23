@@ -1,5 +1,5 @@
-view: fct_finance_revenue {
-  sql_table_name: `gcs-automation-project.gold_marts.fct_finance_revenue` ;;
+view: fct_shipping_analysis {
+  sql_table_name: `gcs-automation-project.gold_marts.fct_shipping_analysis` ;;
 
   dimension: order_date {
     type: date
@@ -11,14 +11,14 @@ view: fct_finance_revenue {
     sql: ${TABLE}.order_channel ;;
   }
 
-  dimension: gross_revenue {
-    type: number
-    sql: ${TABLE}.gross_revenue ;;
+  dimension: shipping_speed {
+    type: string
+    sql: ${TABLE}.shipping_speed ;;
   }
 
-  dimension: net_revenue {
+  dimension: orders {
     type: number
-    sql: ${TABLE}.net_revenue ;;
+    sql: ${TABLE}.orders ;;
   }
 
   dimension: shipping_revenue {
@@ -34,6 +34,11 @@ view: fct_finance_revenue {
   dimension: shipping_margin {
     type: number
     sql: ${TABLE}.shipping_margin ;;
+  }
+
+  dimension: shipping_margin_pct {
+    type: number
+    sql: ${TABLE}.shipping_margin_pct ;;
   }
 
   measure: count {
