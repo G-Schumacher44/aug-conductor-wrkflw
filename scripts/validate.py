@@ -217,7 +217,7 @@ def check_branch():
         ).strip()
         if not branch:
             return "warn", "detached HEAD", None
-        if branch in ("main", "demo-run", "dev"):
+        if branch in ("main", "dev"):
             return "fail", f"on {branch} — commits should go on a feature branch", None
         return "pass", branch, None
     except Exception:

@@ -1,7 +1,6 @@
 .env
 *.credentials.json
 .DS_Store
-project/
 .venv/
 .tools/
 __pycache__/

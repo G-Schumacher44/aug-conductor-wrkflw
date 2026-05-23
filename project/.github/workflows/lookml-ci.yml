@@ -1,0 +1,40 @@
+name: LookML CI
+# Stub — operator enables jobs after a Looker connection is provisioned
+on:
+  push:
+    paths: ['views/**', 'models/**']
+  pull_request:
+
+jobs:
+  syntax:
+    name: lkml syntax check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install lkml
+      - run: lkml views/*.view.lkml models/*.model.lkml
+
+  lint:
+    name: LAMS style check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install -g @looker/look-at-me-sideways
+      - run: lams --source="."
+
+# spectacles-lookml:
+#   Requires live Looker connection — uncomment after provisioning
+#   steps:
+#     - run: pip install spectacles
+#     - run: spectacles lookml --project gold_marts
+
+# spectacles-sql:
+#   Requires Looker + BigQuery — uncomment after provisioning
+#   steps:
+#     - run: spectacles sql --project gold_marts --explore fct_finance_revenue
