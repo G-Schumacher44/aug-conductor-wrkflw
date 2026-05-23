@@ -2,6 +2,14 @@
 
 Optional tooling for this repo. All items are independent — set up what applies to your environment.
 
+**Note:** `mcp.json` and `settings.json` are shipped as `.example` files so VS Code doesn't
+auto-load them and produce errors on clone. Copy them when you're ready to set up:
+
+```bash
+cp .vscode/mcp.example.json .vscode/mcp.json
+cp .vscode/settings.example.json .vscode/settings.json
+```
+
 ---
 
 ## 1. Recommended Extensions
