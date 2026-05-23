@@ -40,14 +40,34 @@ using this exact Conductor workflow. You can see the filled-in intent, the slice
 
 ```
 intent.md              ← fill this in first
-AGENTS.md              ← agent behavioral rules
+AGENTS.md              ← agent rules (rename to CLAUDE.md or GEMINI.md for your CLI)
 conductor/
   index.md             ← agent routing entry point
+  AGENTS.md            ← conductor context pack (same name-swap applies)
   tracks.md            ← active work and roadmap
   slice-01-*.md        ← active slice spec
   handoff-log.md       ← session history
 demo/                  ← worked LookML example (read-only reference)
 ```
+
+## Agent CLI Setup — Name Swap
+
+This repo uses `AGENTS.md` as the canonical, client-agnostic name for the agent rules file.
+Different CLI agents load their rules file by a different name:
+
+| CLI Agent | Reads automatically |
+|---|---|
+| Codex (OpenAI) | `AGENTS.md` |
+| Claude Code | `CLAUDE.md` |
+| Gemini CLI | `GEMINI.md` |
+
+**To use this repo with Claude Code:** copy or rename `AGENTS.md` → `CLAUDE.md`  
+**To use this repo with Gemini CLI:** copy or rename `AGENTS.md` → `GEMINI.md`
+
+The same swap applies inside `conductor/` — `conductor/AGENTS.md` becomes
+`conductor/CLAUDE.md` or `conductor/GEMINI.md` depending on your agent.
+Gemini CLI in particular walks the directory tree loading every `GEMINI.md` it finds,
+so the rename in `conductor/` matters for context packs.
 
 ## Adapting For Your Project
 
