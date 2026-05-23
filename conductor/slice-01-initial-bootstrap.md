@@ -103,7 +103,7 @@ Create `project/models/gold_marts.model.lkml`:
 
 Commit: `feat(model): add initial model and explores`
 
-### Step 6 — Validate (Optional)
+### Step 6 — Validate LookML syntax (Optional)
 
 If `lkml` is available and approved in your environment, run a syntax check:
 
@@ -116,21 +116,24 @@ lkml project/models/gold_marts.model.lkml
 A clean exit means valid LookML syntax. If `lkml` is not available or not approved,
 skip this step — note it in the handoff and record Looker IDE as the pending validation gate.
 
-### Step 7 — Write Handoff
-
-Write a `project/conductor/handoff-log.md` entry recording:
-- Tables discovered and views generated
-- Any schema gaps (tables with no useful columns, ambiguous types)
-- Connection name placeholder (operator must fill in)
-- **Next Slice Proposal** — what the next agent should do, in order
-
-### Step 8 — Run Validation Script (Optional)
+### Step 7 — Run the spine validator (required gate)
 
 ```bash
 node scripts/validate.js
 ```
 
-Reports pass/warn/fail per acceptance criterion.
+Required before writing the handoff. Checks the Conductor spine, reads this slice's
+acceptance criteria checkboxes, and reports pass/warn/fail. Fix any failures before
+proceeding to Step 8.
+
+### Step 8 — Write Handoff
+
+Write a `project/conductor/handoff-log.md` entry recording:
+- Tables discovered and views generated
+- Any schema gaps (tables with no useful columns, ambiguous types)
+- Connection name placeholder (operator must fill in)
+- **Validation** — include `scripts/validate.js` output (pass count)
+- **Next Slice Proposal** — what the next agent should do, in order
 
 ## Acceptance Criteria
 
@@ -142,3 +145,4 @@ Reports pass/warn/fail per acceptance criterion.
 - [ ] No placeholder values in generated LookML (except connection name)
 - [ ] No hardcoded credentials
 - [ ] CI stub present at `project/.github/workflows/lookml-ci.yml`
+- [ ] `scripts/validate.js` exits 0
