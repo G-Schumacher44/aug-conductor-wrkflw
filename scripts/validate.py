@@ -4,7 +4,7 @@ Conductor spine validator — agnostic to workflow type.
 
 Tier 1: Conductor governance checks (always runs, zero dependencies)
   - project/ spine structure
-  - handoff format (Commit:, Next Slice Proposal)
+  - handoff format (Commit:, Exact Next Steps)
   - active slice acceptance criteria checkboxes
   - git branch state
 
@@ -63,8 +63,8 @@ def check_handoff():
     missing = []
     if "Commit:" not in content:
         missing.append("Commit:")
-    if "Next Slice Proposal" not in content:
-        missing.append("Next Slice Proposal")
+    if "Exact Next Steps" not in content:
+        missing.append("Exact Next Steps")
     if missing:
         return "warn", f"required fields missing: {', '.join(missing)}", None
     return "pass", "", None
@@ -95,7 +95,7 @@ def get_active_slice_rel():
 
 
 def parse_acceptance_criteria(content):
-    m = re.search(r"##\s+Acceptance Criteria(.*?)(?=\n##|$)", content, re.DOTALL | re.MULTILINE)
+    m = re.search(r"##\s+Acceptance Criteria(.*?)(?=\n##|\Z)", content, re.DOTALL)
     if not m:
         return []
     items = []

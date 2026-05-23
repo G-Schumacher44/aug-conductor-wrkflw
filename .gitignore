@@ -1,7 +1,8 @@
 .env
 *.credentials.json
 .DS_Store
-project/
+# project/ committed on demo-2-start and demo-3-start branches
+# project/
 .venv/
 .tools/
 __pycache__/
