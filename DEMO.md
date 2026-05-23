@@ -82,7 +82,7 @@ Commit: <short hash>
 - <confirm model file includes all 8 explores>
 
 ### Open Questions
-- Connection name is a placeholder — operator must set in Looker admin
+- Connection name is a placeholder — operator sets it when connecting to a real Looker instance
 - <any schema gaps or type ambiguities you noticed>
 
 ### Next Slice Proposal
