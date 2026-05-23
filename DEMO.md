@@ -22,6 +22,16 @@ marketing attribution, shipping, cart abandonment, and a daily KPI dashboard.
 
 ## Steps
 
+### 0 — Create your branch
+
+Before writing any files, create a feature branch from `demo-run`:
+
+```bash
+git checkout -b feat/slice-01-lookml-bootstrap
+```
+
+All commits go on this branch. Do not commit directly to `demo-run` or `main`.
+
 ### 1 — Read the schema
 
 Open `demo/schema/gold_marts.md`. It lists all 8 tables with every column name and type.
