@@ -15,9 +15,9 @@ stable_tag_required: false
 
 ## Objective
 
-Read the project intent, discover the BigQuery schema for each declared dataset,
-and generate an initial LookML view file for every table found. Write a model
-file stub with explores. Record a handoff when done.
+Read the project intent, read the schema reference file, and generate an initial
+LookML view file for every table found. Write a model file stub with explores.
+Record a handoff when done.
 
 ## Required Reads
 

@@ -45,6 +45,7 @@ See `demo/LOOP.md` for a concrete walkthrough.
 
 Every session must end with a `conductor/handoff-log.md` entry. The entry must include:
 
+- **Commit:** — 7-char hash of the anchor commit for this session
 - **Objective** — what this session set out to do
 - **Current State** — what was actually completed
 - **Files Changed** — list of files written or modified
@@ -52,17 +53,18 @@ Every session must end with a `conductor/handoff-log.md` entry. The entry must i
 - **Next Slice Proposal** — what the next agent should do, in order (this is the scheduling mechanism)
 - **Blockers** — anything unresolved that the operator needs to decide
 
-Format: newest entry at the top. Do not delete old entries.
+Format: newest entry at the top. Keep `handoff-log.md` current-state only — move older entries to `conductor/handoff-archive.md`.
 
 ## Git Rules
 
-- Work on a feature branch, not directly on `main` or `dev`
+- Create a feature branch before writing any files: `git checkout -b feat/slice-01-<description>`
+- Branch from the current working branch (e.g. `demo-run`) — never commit directly to `main` or the base branch
 - Commit after each meaningful unit of work — not one giant commit at the end
 - Commit message format: `type(scope): description`
   - `feat(views): add fct_orders view`
   - `fix(model): correct join type on users explore`
   - `docs(conductor): update handoff log`
-- Merge to `dev` when slice acceptance criteria are met
+- Merge to the base branch via Pull Request when slice acceptance criteria are met
 
 ## Mode Selection
 

@@ -3,7 +3,7 @@
 ## How To Start A Session
 
 1. Run: `git status -sb && git log -n 5 --oneline && cat conductor/handoff-log.md`
-2. Read the required docs in order from `conductor/GEMINI.md`
+2. Read the required docs in order from `conductor/AGENTS.md`
 3. Select a mode from `conductor/CONDUCTOR_MODES.md`
 4. Read the active `conductor/slice-*.md` before implementing anything
 

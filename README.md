@@ -46,7 +46,7 @@ conductor/
   AGENTS.md            ← conductor context pack (same name-swap applies)
   tracks.md            ← active work and roadmap
   slice-01-*.md        ← active slice spec
-  handoff-log.md       ← session history
+  handoff-log.md       ← current-state handoff only
 demo/                  ← worked LookML example (read-only reference)
 ```
 
