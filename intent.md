@@ -39,8 +39,7 @@ risk, and attributing marketing spend.
 
 - [ ] One `.view.lkml` file for every table in `gold_marts`
 - [ ] `models/gold_marts.model.lkml` with explores for each primary entity
-- [ ] Every view has a `count` measure
-- [ ] Sum/average measures on revenue, profit, and quantity columns
+- [ ] Every view has a `count` measure (baseline only — sum/average is slice 02+)
 - [ ] Handoff log entry written with connection placeholder noted
 - [ ] No hardcoded credentials in any LookML file
 
