@@ -56,7 +56,7 @@ dimension_group: <field_name> {
 Run from the **repo root**:
 
 ```bash
-python scripts/validate.py
+python3 scripts/validate.py
 ```
 
 Fix any failures before writing the handoff.

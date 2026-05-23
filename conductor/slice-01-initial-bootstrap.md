@@ -119,7 +119,7 @@ skip this step — note it in the handoff and record Looker IDE as the pending v
 ### Step 7 — Run the spine validator (required gate)
 
 ```bash
-python scripts/validate.py
+python3 scripts/validate.py
 ```
 
 Required before writing the handoff. Checks the Conductor spine, reads this slice's
