@@ -67,7 +67,7 @@ No state lives in the agent's memory. Everything the next agent needs is in thes
 
 ## Starting Your Own Loop
 
-1. Copy this repo (or deploy a fresh `lookml-bq` blueprint via Workspace Partner)
+1. Copy or fork this repo
 2. Fill in `intent.md` with your BQ project and dataset
 3. Start an agent session — point it at this directory
 4. Agent reads `AGENTS.md` → `conductor/index.md` → `conductor/slice-01-*.md` → executes

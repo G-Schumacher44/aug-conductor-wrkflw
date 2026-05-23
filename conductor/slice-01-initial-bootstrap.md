@@ -31,7 +31,7 @@ a handoff in `project/conductor/handoff-log.md`.
 - Mode: `slice`
 - Required reads: listed above
 - Forbidden reads without reason: unrelated directories, external repos
-- Stage/DUOS: not required for this slice
+- Coordination surfaces: not required for this slice
 - Tag posture: no tag — bootstrap is not a stable milestone
 
 ## Execution Steps
