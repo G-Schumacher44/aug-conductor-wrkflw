@@ -2,3 +2,7 @@
 *.credentials.json
 .DS_Store
 project/
+.venv/
+.tools/
+__pycache__/
+*.pyc

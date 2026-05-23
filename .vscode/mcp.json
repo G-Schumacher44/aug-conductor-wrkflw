@@ -1,0 +1,17 @@
+{
+  "servers": {
+    "bigquery": {
+      "command": "${workspaceFolder}/.tools/toolbox",
+      "args": ["--prebuilt", "bigquery", "--stdio"],
+      "env": {
+        "BIGQUERY_PROJECT": "gcs-automation-project"
+      }
+    },
+    "google-developer-knowledge": {
+      "url": "https://developerknowledge.googleapis.com/mcp",
+      "headers": {
+        "X-Goog-Api-Key": "${env:GOOGLE_DEV_KNOWLEDGE_API_KEY}"
+      }
+    }
+  }
+}
