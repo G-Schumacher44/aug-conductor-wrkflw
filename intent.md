@@ -14,7 +14,7 @@ risk, and attributing marketing spend.
 
 - **Language / Framework:** LookML (Looker)
 - **Data Warehouse:** Google BigQuery
-- **Build Tool:** Looker IDE or lkml-tools for local validation
+- **Build Tool:** lkml-tools for local syntax validation (no live Looker access in this demo)
 
 ## Primary Data Sources
 
@@ -48,6 +48,6 @@ risk, and attributing marketing spend.
 
 - Gold mart tables are already aggregated — no row-level customer or order IDs
 - No joins between tables (each fact is independent at this grain)
-- Looker connection name is a placeholder — operator must set it in Looker admin
-- **BQ access fallback:** if `bq` CLI is unavailable, use `demo/schema/gold_marts.md`
-  as the authoritative schema reference — do not invent column names
+- Looker connection name is a placeholder — operator sets it when connecting to a real Looker instance
+- **No live BQ or Looker access in this demo** — use `demo/schema/gold_marts.md` as the
+  authoritative schema reference; do not attempt BQ CLI queries or Looker IDE validation

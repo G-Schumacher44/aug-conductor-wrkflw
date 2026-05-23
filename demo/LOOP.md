@@ -27,7 +27,7 @@ Open [`demo/handoff-example.md`](./handoff-example.md). Scroll to **Next Slice P
 That section was written by the agent — not the operator. It reads:
 
 > 1. **Operator**: Set the Looker connection name in `models/gold_marts.model.lkml`
-> 2. **Slice 02**: Validate all views in Looker IDE — fix any type inference issues
+> 2. **Slice 02**: Validate LookML syntax locally with lkml-tools — fix any type or field errors
 > 3. **Slice 03**: Review `fct_daily_dashboard` and decide if it warrants its own explore
 > 4. **Slice 04**: Add hidden dimensions for ID/key columns
 
@@ -39,7 +39,7 @@ The operator's job is to read those proposals and decide which one to promote to
 
 1. Read `intent.md` — learned the BQ project, dataset, and modeling goals
 2. Read `conductor/slice-01-initial-bootstrap.md` — learned the acceptance criteria
-3. Connected to BigQuery, ran schema discovery on all 8 tables in `gold_marts`
+3. Read `demo/schema/gold_marts.md` — all 8 table schemas, no BQ access required
 4. Generated 8 LookML view files (one per table) in `views/`
 5. Generated `models/gold_marts.model.lkml` with 8 explores
 6. Wrote `conductor/handoff-log.md` with current state + Next Slice Proposal

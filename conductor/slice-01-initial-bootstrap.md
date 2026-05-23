@@ -45,17 +45,13 @@ Read `intent.md`. Confirm:
 
 If any placeholder values remain, stop and ask the operator to fill in `intent.md`.
 
-### Step 2 — Discover Schema
+### Step 2 — Read the Schema Reference
 
-For each dataset listed in `intent.md`, discover all tables and their column schemas.
+Open `demo/schema/gold_marts.md`. This is the authoritative schema for the demo — all
+8 tables, every column name and type, in one file.
 
-**Primary method:** Use the BigQuery information schema or `bq show --schema <project>:<dataset>.<table>`.
-
-**Fallback (no BQ access):** Use `demo/schema/gold_marts.md` as the authoritative schema
-reference. Do not invent column names or types — only generate views for columns
-that appear in the schema reference.
-
-Record what you find — table names, column names, types — before writing any files.
+Do not use `bq` CLI, do not connect to BigQuery, do not invent columns.
+Only generate views for what is explicitly listed in the schema reference.
 
 ### Step 3 — Generate View Files
 
