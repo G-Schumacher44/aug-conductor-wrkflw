@@ -11,7 +11,7 @@ A Looker data model on top of 8 pre-aggregated BigQuery fact tables covering an
 e-commerce business: revenue, sales ops, customer segments, product profitability,
 marketing attribution, shipping, cart abandonment, and a daily KPI dashboard.
 
-**BQ project:** `gcs-automation-project`
+**BQ project:** `your-gcp-project`
 **Dataset:** `gold_marts`
 **Schema reference:** [`demo/schema/gold_marts.md`](./demo/schema/gold_marts.md)
 **Reference output:** [`demo/views/`](./demo/views/) — what a correct slice 01 produces

@@ -3,7 +3,7 @@
 You are an agent. `project/` already exists as a functioning LookML project.
 A new business requirement has arrived: the business team wants to analyze promotional
 campaign performance. The data team has provisioned a new BigQuery table:
-`gcs-automation-project.gold_marts.fct_promotions`.
+`your-gcp-project.gold_marts.fct_promotions`.
 
 The operator has written a new slice spec for this work. Your job is to read the current
 project state, execute the slice, validate, and hand off.
@@ -53,7 +53,7 @@ Create `project/views/fct_promotions.view.lkml`:
   - `BOOLEAN` → `type: yesno`
   - `DATE` → `type: date`
 - One `measure: count { type: count }` — only measure for this slice
-- `sql_table_name: \`gcs-automation-project.gold_marts.fct_promotions\``
+- `sql_table_name: \`your-gcp-project.gold_marts.fct_promotions\``
 - No value formats, no descriptions, no hidden fields — baseline only
 
 Commit: `feat(views): add fct_promotions view`

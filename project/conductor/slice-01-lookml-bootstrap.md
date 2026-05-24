@@ -47,7 +47,7 @@ Type mapping:
 Rules:
 - One `dimension` per column
 - One measure only: `measure: count { type: count }` — **no other measures in slice 01**
-- `sql_table_name: \`gcs-automation-project.gold_marts.<table_name>\``
+- `sql_table_name: \`your-gcp-project.gold_marts.<table_name>\``
 - No value formats, descriptions, or hidden fields — baseline only
 
 Commit after each view: `feat(views): add <table_name> view`

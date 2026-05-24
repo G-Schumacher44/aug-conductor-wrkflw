@@ -1,5 +1,5 @@
 view: fct_customer_segments {
-  sql_table_name: `gcs-automation-project.gold_marts.fct_customer_segments` ;;
+  sql_table_name: `your-gcp-project.gold_marts.fct_customer_segments` ;;
 
   dimension: customer_segment {
     type: string
