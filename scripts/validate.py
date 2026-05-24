@@ -84,18 +84,6 @@ def check_ci_stub():
 check("CI workflow stub", check_ci_stub)
 
 
-def check_manifest():
-    manifest = PROJECT / "manifest.lkml"
-    if not manifest.exists():
-        return "warn", "manifest.lkml missing — add project_name declaration", None
-    if not re.search(r"project_name\s*:", manifest.read_text()):
-        return "warn", "manifest.lkml present but missing project_name:", None
-    return "pass", "", None
-
-
-check("manifest.lkml", check_manifest)
-
-
 # ── Active slice + acceptance criteria ───────────────────────────────────────
 
 def get_active_slice_rel():
@@ -163,6 +151,16 @@ views_dir = PROJECT / "views"
 models_dir = PROJECT / "models"
 
 if views_dir.exists() or models_dir.exists():
+
+    def check_manifest():
+        manifest = PROJECT / "manifest.lkml"
+        if not manifest.exists():
+            return "warn", "manifest.lkml missing — add project_name declaration", None
+        if not re.search(r"project_name\s*:", manifest.read_text()):
+            return "warn", "manifest.lkml present but missing project_name:", None
+        return "pass", "", None
+
+    check("manifest.lkml", check_manifest)
 
     def check_views_structure():
         if not views_dir.exists():
