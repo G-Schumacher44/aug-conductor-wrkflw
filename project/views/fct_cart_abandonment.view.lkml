@@ -1,5 +1,5 @@
 view: fct_cart_abandonment {
-  sql_table_name: `gcs-automation-project.gold_marts.fct_cart_abandonment` ;;
+  sql_table_name: `your-gcp-project.gold_marts.fct_cart_abandonment` ;;
 
   dimension: cart_date {
     type: date

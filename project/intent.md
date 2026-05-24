@@ -1,6 +1,6 @@
 # Intent
 
-BQ Project: gcs-automation-project
+BQ Project: your-gcp-project
 Dataset: gold_marts
 Schema reference: ../demo/schema/gold_marts.md
 

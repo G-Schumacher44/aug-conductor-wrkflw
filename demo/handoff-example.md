@@ -6,7 +6,7 @@
 
 ## Objective
 
-Discover schema for `gcs-automation-project.gold_marts`, generate LookML views
+Discover schema for `your-gcp-project.gold_marts`, generate LookML views
 for all 8 tables, create a model file with explores, and write this handoff.
 
 ## Current State

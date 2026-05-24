@@ -12,7 +12,7 @@ provisioned in gold_marts, and register it as a ninth explore in the model file.
 ## Context
 
 The business team wants to analyze promotional campaign performance. The data team
-has added `gcs-automation-project.gold_marts.fct_promotions` to the dataset.
+has added `your-gcp-project.gold_marts.fct_promotions` to the dataset.
 Schema reference: `../demo/schema/gold_marts.md` — find the `fct_promotions` section.
 
 ## Required Reads
@@ -27,7 +27,7 @@ Schema reference: `../demo/schema/gold_marts.md` — find the `fct_promotions` s
 1. Create `views/fct_promotions.view.lkml`
    - One dimension per column (use standard type mapping)
    - One measure: `count { type: count }` — only measure for this slice
-   - `sql_table_name: \`gcs-automation-project.gold_marts.fct_promotions\``
+   - `sql_table_name: \`your-gcp-project.gold_marts.fct_promotions\``
    - No value formats, no descriptions, no hidden fields — baseline only
 2. Add ninth explore to `models/gold_marts.model.lkml`: `explore: fct_promotions {}`
 3. Run `python scripts/validate.py` — fix any failures

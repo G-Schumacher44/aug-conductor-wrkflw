@@ -7,7 +7,7 @@ Type: workflow-master-plan
 ## Objective
 
 Build a production-ready LookML data model on top of pre-aggregated BigQuery
-fact tables for gcs-automation-project.gold_marts.
+fact tables for your-gcp-project.gold_marts.
 
 Done = all tables have enriched views with typed measures, a clean model with
 labeled explores, and the project validates in the Looker IDE when a connection

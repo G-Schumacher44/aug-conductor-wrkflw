@@ -1,6 +1,6 @@
 connection: "your-looker-connection-name"  # TODO: set this in Looker admin
 
-# Auto-discovered views from gcs-automation-project.gold_marts
+# Auto-discovered views from your-gcp-project.gold_marts
 include: "../views/*.view.lkml"
 
 # ---- Explores ----

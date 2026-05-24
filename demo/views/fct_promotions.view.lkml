@@ -1,5 +1,5 @@
 view: fct_promotions {
-  sql_table_name: `gcs-automation-project.gold_marts.fct_promotions` ;;
+  sql_table_name: `your-gcp-project.gold_marts.fct_promotions` ;;
 
   dimension: promotion_id {
     type: string
