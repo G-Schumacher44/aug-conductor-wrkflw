@@ -3,23 +3,9 @@
 Status: stable
 Type: conductor-index
 
-Machine-first routing entry for Conductor-aware agents.
-
----
-
-## Context Pack
-
-- [Project Intent](../intent.md)
-- [Master Plan Template](./master-plan-template.md)
-- [Agent Rules](../AGENTS.md)
-- [Conductor Modes](./CONDUCTOR_MODES.md)
-- [Track Registry](./tracks.md)
-
----
-
 ## Active Slice
 
-Active slice: none — bootstrap complete, project/ deployed
+Active slice: none — all slices stable
 
 ## Queue
 
@@ -27,27 +13,21 @@ Active slice: none — bootstrap complete, project/ deployed
 |---|---|
 | STABLE | conductor/slice-01-initial-bootstrap.md |
 
----
+## Required Reads
 
-## Queue Format (for reference)
+- [Master Plan Template](./master-plan-template.md)
+- [Agent Rules](./AGENTS.md)
+- [Conductor Modes](./CONDUCTOR_MODES.md)
+- [Track Registry](./tracks.md)
+- [Workflow Pattern](./README.md)
 
-When running a full-index workflow, update this table as slices complete:
+## Agent — end-of-slice responsibilities
 
-```
-| STABLE | slice-01-*.md |
-| ACTIVE | slice-02-*.md |
-| QUEUED | slice-03-*.md |
-```
-
-Agent end-of-slice responsibilities:
-1. Mark current slice `status: stable` in the slice doc
-2. Update this table (ACTIVE → STABLE, next QUEUED → ACTIVE)
+1. Mark completed slice `status: stable` in its slice doc
+2. Update queue table (ACTIVE → STABLE, next QUEUED → ACTIVE)
 3. Update `Active slice:` line to point to next slice
 4. Commit slice doc + index.md + handoff-log.md together
-
----
 
 ## Reference
 
 - [Handoff Log](./handoff-log.md)
-- [Workflow Pattern](./README.md)
