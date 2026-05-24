@@ -53,12 +53,11 @@ from scratch after the first session. See `demo/LOOP.md` for a concrete example.
 
 When creating or updating a slice:
 
-1. anchor it to the current track in `tracks.md`
-2. spell out exact writable surfaces and scope boundaries
-3. include validation gates and the smallest sufficient verification steps
-4. call out explicit out-of-scope items
-5. declare `conductor_mode`, handoff posture, and tag posture
-6. update `conductor/tracks.md` if the active initiative registry changes
+1. spell out exact writable surfaces and scope boundaries
+2. include validation gates and the smallest sufficient verification steps
+3. call out explicit out-of-scope items
+4. declare `conductor_mode`, handoff posture, and tag posture
+5. update `conductor/tracks.md` if cross-repo dependencies change
 
 When closing a slice:
 

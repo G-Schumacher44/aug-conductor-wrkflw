@@ -90,7 +90,7 @@ the agent knows what comes after the current slice.
 
 ## Naming And Placement
 
-- Machine-first routing stays at `conductor/index.md`.
+- Active slice routing stays at `conductor/index.md`.
 - Active workflow docs stay at `conductor/slice-*.md`.
 - Completed slices move to `conductor/archive/` after the stable checkpoint is cut.
 - `handoff-log.md` holds only the current active handoff block; older entries move to `handoff-archive.md`.
