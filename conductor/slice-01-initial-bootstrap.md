@@ -1,30 +1,25 @@
-# Slice 01: LookML Bootstrap — Schema Discovery & View Generation
+# Slice 01: Initial Project Bootstrap
 
-Date: 2026-05-23
+Date: <project-start-date>
 Status: stable
 Type: workflow-slice
 Owner: agent
 
-```yaml
-conductor_mode: slice
-context_budget: medium
-stage_required: false
-handoff_required: true
-stable_tag_required: false
-```
-
 ## Objective
 
-Read the schema reference file, scaffold `project/` as a new Conductor-governed repo,
-generate a LookML view for every table, write a model stub with explores, and record
-a handoff in `project/conductor/handoff-log.md`.
+Establish the initial project state: orient from intent, do the first bounded unit of work,
+validate, and write a handoff that proposes what comes next.
+
+Replace this section with the specific objective for your project's first slice.
 
 ## Required Reads
 
-1. `intent.md` — BQ project ID, dataset names, entities, modeling goals
-2. `AGENTS.md` — LookML conventions, type mapping, naming rules
+1. `intent.md` — project goals, constraints, entities
+2. `AGENTS.md` — behavioral rules for this project
 3. `conductor/index.md` — routing
 4. This slice
+
+Add any project-specific schema references, design docs, or context files here.
 
 ## Mode And Context Contract
 
@@ -36,113 +31,84 @@ a handoff in `project/conductor/handoff-log.md`.
 
 ## Execution Steps
 
-### Step 0 — Scaffold project/
-
-Before creating a branch or writing any LookML, scaffold `project/` as a new repo.
-See `DEMO.md` Step 0 for the full file list and content spec.
-
-Create this structure:
-```
-project/
-  AGENTS.md                        ← agent behavioral rules for this LookML project
-  intent.md                        ← BQ project, dataset, entities (pre-filled)
-  conductor/
-    index.md                       ← active slice routing
-    tracks.md                      ← cross-repo connections (stub)
-    handoff-log.md                 ← agent writes here after Step 6
-    slice-01-lookml-bootstrap.md   ← the slice spec you are executing, adapted for project/ paths
-  views/                           ← agent generates .view.lkml files here
-  models/                          ← agent generates .model.lkml here
-  .github/
-    workflows/
-      lookml-ci.yml                ← CI stub (lkml + LAMS; spectacles commented out)
-```
-
-### Step 1 — Create Your Branch
-
-After scaffolding project/:
+### Step 1 — Create your branch
 
 ```bash
-git checkout -b feat/slice-01-lookml-bootstrap
+git checkout -b feat/slice-01-<description>
 ```
 
-All commits for this slice go on this branch. Do not commit to `demo-run` or `main` directly.
+All commits for this slice go on this branch. Do not commit to `main` directly.
 
-### Step 2 — Validate Intent
+### Step 2 — Validate intent
 
-Read `project/intent.md`. Confirm:
-- GCP Project ID is filled in (not a placeholder)
-- At least one dataset is named
-- At least one entity is listed
+Read `intent.md`. Confirm all required fields are filled in — no placeholders remaining.
+If anything is missing, stop and ask the operator before proceeding.
 
-If any placeholder values remain, stop and ask the operator to fill in `project/intent.md`.
+### Step 3 — Do the work
 
-### Step 3 — Read the Schema Reference
+Replace this step with the specific bounded task for your slice.
 
-Open `demo/schema/gold_marts.md`. This is the authoritative schema for the demo — all
-8 tables, every column name and type, in one file.
+Rules:
+- Work only within the scope defined by this slice
+- Commit after each meaningful unit: `feat(<scope>): <description>`
+- Do not invent requirements — only build what is specified
 
-Do not use `bq` CLI, do not connect to BigQuery, do not invent columns.
-Only generate views for what is explicitly listed in the schema reference.
-
-### Step 4 — Generate View Files
-
-For each table discovered:
-- Create `project/views/<table_name>.view.lkml`
-- Map every column to a LookML dimension using the type mapping in `AGENTS.md`
-- Add a `count` measure — this is the **only** measure for slice 01 (no sum, average, max, min)
-- Set `sql_table_name: \`<project>.<dataset>.<table>\``
-
-Commit each view file as you go: `feat(views): add <table_name> view`
-
-### Step 5 — Generate Model File
-
-Create `project/models/gold_marts.model.lkml`:
-- Set `connection: "<your-looker-connection-name>"` (operator will fill in the real value)
-- Add one `explore:` block per primary entity listed in `project/intent.md`
-
-Commit: `feat(model): add initial model and explores`
-
-### Step 6 — Validate LookML syntax (Optional)
-
-If `lkml` is available and approved in your environment, run a syntax check:
-
-```bash
-pip install lkml
-lkml project/views/*.view.lkml
-lkml project/models/gold_marts.model.lkml
-```
-
-A clean exit means valid LookML syntax. If `lkml` is not available or not approved,
-skip this step — note it in the handoff and record Looker IDE as the pending validation gate.
-
-### Step 7 — Run the spine validator (required gate)
+### Step 4 — Run the spine validator (required gate)
 
 ```bash
 python3 scripts/validate.py
 ```
 
-Required before writing the handoff. Checks the Conductor spine, reads this slice's
-acceptance criteria checkboxes, and reports pass/warn/fail. Fix any failures before
-proceeding to Step 8.
+Fix any failures before writing the handoff.
 
-### Step 8 — Write Handoff
+### Step 5 — Mark stable and advance the queue
 
-Write a `project/conductor/handoff-log.md` entry recording:
-- Tables discovered and views generated
-- Any schema gaps (tables with no useful columns, ambiguous types)
-- Connection name placeholder (operator must fill in)
-- **Validation** — include `scripts/validate.py` output (pass count)
-- **Exact Next Steps** — what the next agent should do, in order
+In this file: `Status: <active>` → `Status: stable`
+
+In `conductor/index.md`:
+- Update queue row: slice-01 `ACTIVE` → `STABLE`
+- Advance next slice: `QUEUED` → `ACTIVE`
+- Update `Active slice:` line
+
+### Step 6 — Write the handoff
+
+Write an entry at the top of `conductor/handoff-log.md`:
+
+```
+## Slice 01 — Initial Bootstrap
+
+Date: <today>
+Commit: <7-char hash>
+
+### Objective
+<what this slice set out to do>
+
+### Current State
+<what was actually completed>
+
+### Files Changed
+<list of created or modified files>
+
+### Validation
+- python3 scripts/validate.py: <X passed | Y warnings | 0 failed>
+
+### Exact Next Steps
+1. <first thing the next agent or operator should do>
+2. <second thing>
+3. <etc>
+
+### Blockers
+<anything the operator must resolve before work can continue, or "None">
+```
+
+Commit: `docs(handoff): record slice 01 completion`
 
 ## Acceptance Criteria
 
-- [ ] `project/` is fully scaffolded (AGENTS.md, intent.md, conductor/, .github/workflows/)
-- [ ] One `.view.lkml` file exists for every table in `gold_marts` (8 total)
-- [ ] `project/models/gold_marts.model.lkml` exists with 8 explores
-- [ ] Every view has exactly one measure: `count` — no other measures
-- [ ] Handoff log entry written to `project/conductor/handoff-log.md` with Exact Next Steps
-- [ ] No placeholder values in generated LookML (except connection name)
-- [ ] No hardcoded credentials
-- [ ] CI stub present at `project/.github/workflows/lookml-ci.yml`
-- [ ] `scripts/validate.py` exits 0
+- [ ] Branch created from main or dev — not committed directly
+- [ ] Work matches the scope defined in this slice — nothing more
+- [ ] `python3 scripts/validate.py` exits 0
+- [ ] Slice marked stable in this file
+- [ ] `conductor/index.md` queue advanced to next slice
+- [ ] Handoff written with Commit: hash and Exact Next Steps
+- [ ] No hardcoded credentials or secrets
