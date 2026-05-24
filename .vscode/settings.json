@@ -25,8 +25,8 @@
   "python.defaultInterpreterPath": "python3",
 
   // ── Looker extension — fill in after provisioning a Looker connection ────
-  // Do NOT hardcode credentials here. Set clientId/clientSecret as env vars
-  // or via VS Code's secret storage (Cmd+Shift+P → "Preferences: Open User Settings").
+  // Do NOT hardcode credentials here. Set via shell env vars
+  // (LOOKER_INSTANCE_URL, LOOKER_CLIENT_ID, LOOKER_CLIENT_SECRET).
   //
   // "looker.instanceUrl": "https://your-instance.looker.com",
   // "looker.clientId": "",
