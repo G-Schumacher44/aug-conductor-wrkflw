@@ -1,13 +1,8 @@
-# Conductor spine validator — no pip dependencies (pure stdlib)
-# python scripts/validate.py
+# Conductor spine validator has zero pip dependencies — runs on stdlib only.
+# python3 scripts/validate.py
 
-# ── Pending opsec approval ──────────────────────────────────────────────────
-# Uncomment each line when approved by your security team.
+# ── Optional LookML tooling ──────────────────────────────────────────────────
+# Uncomment when approved for your environment. See demo/tools/ for eval briefs.
 
-# LookML syntax validation (offline, no Looker connection required)
-# See demo/tools/lkml-validator.md for evaluation brief
-# lkml==1.3.7
-
-# LookML CI test suite (requires live Looker + BigQuery connection)
-# See demo/tools/lookml-tooling.md for evaluation brief
-# spectacles==2.4.17
+# lkml==1.3.7        — offline LookML syntax validation (demo/tools/lkml-validator.md)
+# spectacles==2.4.17 — live LookML + SQL validation, requires Looker + BQ connection

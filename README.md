@@ -146,7 +146,7 @@ No state lives in the agent's memory. Everything the next session needs is in th
 
 ## Conductor Scaffold
 
-The `conductor/` directory is a reusable, domain-agnostic scaffold. Copy it into any project to deploy Conductor.
+The `conductor/` directory is a reusable, domain-agnostic scaffold. To deploy: copy `conductor/`, `intent.md`, `AGENTS.md`, and `scripts/validate.py` into your repo. The `demo/` and `project/` directories are demo artifacts — do not copy them.
 
 <details>
 <summary><strong>Repo structure</strong></summary>
