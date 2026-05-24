@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Conductor — Structured Agent Workflow</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+  <style>
+    :root {
+      --accent:   #00d9c0;
+      --dim:      #8b949e;
+      --code-bg:  #0d1117;
+      --border:   #30363d;
+      --row-bg:   #161b22;
+      --warn:     #f78166;
+    }
+
+    /* ── Base ── */
+    .reveal {
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      background: #0d1117;
+    }
+    .reveal .slide-background { background: #0d1117; }
+
+    /* ── Typography ── */
+    .reveal h1 { font-size: 2.4em; color: var(--accent); text-transform: none; letter-spacing: -0.02em; }
+    .reveal h2 { font-size: 1.6em; color: var(--accent); text-transform: none; letter-spacing: -0.01em; }
+    .reveal h3 { font-size: 1em;   color: #e6edf3;       text-transform: none; }
+    .reveal p  { font-size: 0.85em; line-height: 1.7; color: #e6edf3; }
+    .reveal a  { color: var(--accent); }
+
+    /* ── Lists ── */
+    .reveal ul { list-style: none; padding: 0; margin: 0; }
+    .reveal ul li { font-size: 0.82em; line-height: 1.8; color: #e6edf3; }
+    .reveal ul li::before { content: "→ "; color: var(--accent); }
+
+    /* ── Code ── */
+    .reveal code {
+      background: var(--code-bg); color: #e6edf3;
+      padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.88em;
+    }
+    .reveal pre {
+      background: var(--code-bg); border: 1px solid var(--border);
+      border-radius: 6px; padding: 1em 1.2em; width: 100%; box-shadow: none; margin: 0;
+    }
+    .reveal pre code {
+      font-size: 0.72em; line-height: 1.55;
+      color: #e6edf3; background: transparent; padding: 0;
+    }
+
+    /* ── Helpers ── */
+    .dim       { color: var(--dim) !important; }
+    .accent    { color: var(--accent) !important; }
+    .warn      { color: var(--warn) !important; }
+    .ok        { color: #3fb950 !important; }
+
+    /* ── Layout ── */
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2em; text-align: left; align-items: start;
+    }
+    .card {
+      background: var(--row-bg); border: 1px solid var(--border);
+      border-radius: 6px; padding: 1em 1.4em;
+    }
+    .card h3 { margin: 0 0 0.6em; }
+    .card ul li { font-size: 0.78em; margin: 0.15em 0; }
+
+    /* ── Loop diagram ── */
+    .loop {
+      display: flex; flex-direction: column; align-items: center; gap: 0.25em;
+    }
+    .loop-step {
+      background: var(--row-bg); border: 1px solid var(--border);
+      border-radius: 5px; padding: 0.38em 1.8em;
+      font-size: 0.78em; min-width: 260px; text-align: center;
+      color: #e6edf3;
+    }
+    .loop-step.hi { border-color: var(--accent); color: var(--accent); }
+    .loop-arrow { color: var(--accent); font-size: 1em; line-height: 1; }
+
+    /* ── Table ── */
+    .data-table { font-size: 0.72em; border-collapse: collapse; width: 100%; }
+    .data-table th {
+      color: var(--accent); border-bottom: 1px solid var(--border);
+      padding: 0.4em 0.9em; text-align: left;
+    }
+    .data-table td { padding: 0.35em 0.9em; border-bottom: 1px solid #1c2128; color: #e6edf3; }
+
+    /* ── Badges ── */
+    .badges { display: flex; gap: 0.5em; justify-content: center; flex-wrap: wrap; margin: 1em 0 0; }
+    .badges img { height: 20px; }
+
+    /* ── Controls / Progress ── */
+    .reveal .controls button { color: var(--accent); }
+    .reveal .progress span   { background: var(--accent); }
+  </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 1 — TITLE
+══════════════════════════════════════════════ -->
+<section>
+  <h1>Conductor</h1>
+  <p class="dim" style="margin-top:-0.3em;">structured agent workflow · for any project</p>
+  <div class="badges">
+    <img src="https://img.shields.io/badge/status-active-brightgreen" alt="active">
+    <img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white" alt="Python">
+    <img src="https://img.shields.io/badge/Codex-412991?logo=openai&logoColor=white" alt="Codex">
+    <img src="https://img.shields.io/badge/Claude-CC785C?logo=anthropic&logoColor=white" alt="Claude">
+    <img src="https://img.shields.io/badge/Gemini-4285F4?logo=google&logoColor=white" alt="Gemini">
+    <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT">
+  </div>
+  <p class="dim" style="font-size:0.6em; margin-top:2.5em;">
+    G-Schumacher44 &nbsp;·&nbsp;
+    <a href="https://github.com/G-Schumacher44/aug-conductor-wrkflw">github.com/G-Schumacher44/aug-conductor-wrkflw</a>
+  </p>
+  <aside class="notes">
+    Welcome. Conductor is a structured agent workflow system — a scaffold you drop into any repo to give AI agents durable context, structured execution, and safe handoffs between sessions. Today: what it is, where it came from, and three live demos.
+  </aside>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 2 — THE PROBLEM
+══════════════════════════════════════════════ -->
+<section>
+  <h2>The Problem</h2>
+  <p style="font-size:1.1em; margin:1.2em 0 1.5em;">Agents forget.</p>
+  <ul>
+    <li class="fragment">Every new session starts cold — no memory of prior work</li>
+    <li class="fragment">No structured handoff between sessions or agents</li>
+    <li class="fragment">No scheduling mechanism — "what comes next?"</li>
+    <li class="fragment">Result: meta-work, re-explanation, scope drift</li>
+  </ul>
+  <aside class="notes">
+    The core problem with AI agents today: they're stateless. Every session you re-explain the project. The agent re-discovers the codebase. Decisions made last session aren't recorded. The result is that the human does a lot of meta-work that shouldn't be their job.
+  </aside>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 3 — THE SOLUTION / LOOP
+══════════════════════════════════════════════ -->
+<section>
+  <h2>The Conductor Loop</h2>
+  <p class="dim" style="font-size:0.75em; margin-bottom:1.4em;">State lives in files, not in the model.</p>
+  <div class="loop">
+    <div class="loop-step">intent defined</div>
+    <div class="loop-arrow">↓</div>
+    <div class="loop-step hi">slice executed</div>
+    <div class="loop-arrow">↓</div>
+    <div class="loop-step">handoff written</div>
+    <div class="loop-arrow">↓</div>
+    <div class="loop-step hi">Exact Next Steps</div>
+    <div class="loop-arrow">↓</div>
+    <div class="loop-step">operator approves</div>
+    <div class="loop-arrow">↓</div>
+    <div class="loop-step hi">repeat</div>
+  </div>
+  <aside class="notes">
+    The solution: treat the filesystem as persistent memory. Every agent session reads a structured spine — the intent, the active slice, the handoff. It executes bounded work. It writes a handoff with Exact Next Steps. The next session picks up from the handoff. No state lives in the agent's memory. The handoff IS the scheduling mechanism.
+  </aside>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 4 — WHAT IS A SLICE
+══════════════════════════════════════════════ -->
+<section>
+  <h2>What Is a Slice?</h2>
+  <div class="two-col" style="margin-top:1.2em;">
+    <div>
+      <p class="dim" style="font-size:0.75em; margin-bottom:0.8em;">A bounded unit of work:</p>
+      <ul>
+        <li>Explicit scope + gates</li>
+        <li>Out-of-scope declarations</li>
+        <li>Acceptance criteria (checkboxes)</li>
+        <li>One commit or PR</li>
+        <li>Completable in a single session</li>
+      </ul>
+    </div>
+    <div>
+      <pre><code>slice-04-promotions-view.md
+
+objective:
+  add fct_promotions view
+  and 9th explore
+
+out of scope:
+  - field enrichment (slice-05)
+  - backfill logic
+
+gate:
+  python3 scripts/validate.py
+
+status: active</code></pre>
+    </div>
+  </div>
+  <aside class="notes">
+    A slice is the atomic unit of work. Small enough that one agent session completes it. It declares exactly what's in scope, what's explicitly out, and what the validation gate is. When done, the agent marks it stable, advances the queue, and writes a handoff. The agent never invents next steps from scratch — the Exact Next Steps in the handoff do that.
+  </aside>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 5 — THE SCAFFOLD
+══════════════════════════════════════════════ -->
+<section>
+  <h2>The Scaffold</h2>
+  <p class="dim" style="font-size:0.72em; margin-bottom:1em;">Drop into any repo · fill <code>intent.md</code> · point an agent at it.</p>
+  <pre><code>conductor/
+  index.md              ← active slice pointer + queue
+  master-plan-*.md      ← full project scope + phases
+  slice-NN-*.md         ← active execution artifact
+  handoff-log.md        ← current-state handoff only
+  handoff-archive.md    ← older entries archived here
+  tracks.md             ← cross-repo dependencies
+  AGENTS.md             ← rename to CLAUDE.md or GEMINI.md
+
+intent.md               ← fill this in first
+scripts/
+  validate.py           ← governance gate (zero deps)</code></pre>
+  <p class="dim" style="font-size:0.65em; margin-top:1em;">
+    Everything else — handoff format, queue advancement, archive pattern — is identical regardless of domain.
+  </p>
+  <aside class="notes">
+    This is the full scaffold. Copy it into any repo. Fill in intent.md with your project goal, stack, and first milestone. Edit slice-01 for your first unit of work. Everything else runs the same whether you're building LookML, a REST API, a data pipeline, or anything else.
+  </aside>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 6 — ORIGINS
+══════════════════════════════════════════════ -->
+<section>
+  <h2>Origins</h2>
+  <div class="two-col" style="margin-top:1.2em;">
+    <div class="card">
+      <h3 class="accent">Google Conductor · Dec 17, 2025</h3>
+      <ul>
+        <li>Ballinger, Kornder, Aitbayev</li>
+        <li>Gemini CLI extension</li>
+        <li>Tracks + spec + plan + metadata</li>
+        <li>Filesystem-as-state</li>
+      </ul>
+      <p class="dim" style="font-size:0.65em; margin-top:0.8em;">
+        Filesystem-as-state traces to<br>Anthropic's CLAUDE.md convention
+      </p>
+    </div>
+    <div class="card">
+      <h3 class="accent">This repo extends it:</h3>
+      <ul>
+        <li>Slice-based execution</li>
+        <li>Exact Next Steps handoff</li>
+        <li>Multi-agent (Codex / Claude / Gemini)</li>
+        <li>validate.py governance gate</li>
+        <li>Cross-repo tracks</li>
+        <li>Zero external dependencies</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">
+    Conductor traces to Google — released December 17, 2025 by the Gemini CLI team. The core idea: keep project state in a conductor/ directory so agents can orient without session context. Powerful foundation. The filesystem-as-state principle itself traces to Anthropic's CLAUDE.md convention: put what the agent needs in files, not in the model's memory. This repo extends the foundation with slices, a structured handoff mechanism, multi-agent support, a validation gate, and cross-repo coordination.
+  </aside>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 7 — THREE DEMOS
+══════════════════════════════════════════════ -->
+<section>
+  <h2>Three Demos</h2>
+  <table class="data-table" style="margin-top:1.5em;">
+    <tr>
+      <th>#</th><th>Pattern</th><th>Branch</th><th>Entry</th><th>Time</th>
+    </tr>
+    <tr>
+      <td class="accent">1</td>
+      <td>Greenfield bootstrap</td>
+      <td><code>main</code></td>
+      <td><code>DEMO.md</code></td>
+      <td class="dim">~5 min</td>
+    </tr>
+    <tr>
+      <td class="accent">2</td>
+      <td>Iterative feature + pair programming</td>
+      <td><code>demo-2-start</code></td>
+      <td><code>DEMO2.md</code></td>
+      <td class="dim">~8 min</td>
+    </tr>
+    <tr>
+      <td class="accent">3</td>
+      <td>Automated maintenance (cron)</td>
+      <td><code>demo-3-start</code></td>
+      <td><code>DEMO3.md</code></td>
+      <td class="dim">~2 min</td>
+    </tr>
+  </table>
+  <p class="dim" style="font-size:0.68em; margin-top:1.8em;">
+    Each demo runs independently from its branch.<br>
+    One prompt: <span class="accent">"Read DEMO.md and execute it."</span>
+  </p>
+  <aside class="notes">
+    Three demos, three branches, fully independent. You don't need to run demo 1 before demo 2. Each branch is pre-seeded with the right starting state. Total runtime: about 15 minutes for all three.
+  </aside>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 8 — DEMO 1
+══════════════════════════════════════════════ -->
+<section>
+  <h2>Demo 1 — Greenfield Bootstrap</h2>
+  <p class="dim" style="font-size:0.7em;">Branch: <code>main</code> · Entry: <code>DEMO.md</code> · ~5 min</p>
+  <ul style="margin:1.3em 0;">
+    <li>Pre-deployed <code>project/conductor/</code> spine — 3 slices queued</li>
+    <li class="fragment">Agent reads spine → branches → generates 8 LookML views</li>
+    <li class="fragment">One scoped commit per view</li>
+    <li class="fragment">Generates model with 8 explores</li>
+    <li class="fragment">Runs <code>python3 scripts/validate.py</code> — required gate</li>
+    <li class="fragment">Marks slice stable · advances queue · writes handoff</li>
+  </ul>
+  <p class="dim fragment" style="font-size:0.7em; margin-top:1.2em;">
+    No scaffolding, no meta-work. First prompt → first commit → first handoff.
+  </p>
+  <aside class="notes">
+    Demo 1 is the greenfield case. The conductor spine is pre-deployed — the agent doesn't scaffold it, it uses it. One prompt, and it immediately starts executing real work. By the end: 8 view files, a model file, a passing validator, and a handoff with Exact Next Steps ready for operator review.
+  </aside>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 9 — DEMO 2
+══════════════════════════════════════════════ -->
+<section>
+  <h2>Demo 2 — Pair Programming</h2>
+  <p class="dim" style="font-size:0.7em;">Branch: <code>demo-2-start</code> · Entry: <code>DEMO2.md</code> · ~8 min</p>
+  <div class="two-col" style="margin-top:1.2em;">
+    <div class="card">
+      <h3 class="accent">Phase 1 — Autonomous</h3>
+      <ul>
+        <li>Reads slice-04</li>
+        <li>Generates fct_promotions view</li>
+        <li>Adds 9th explore to model</li>
+        <li>Validates → writes handoff</li>
+        <li><span class="dim">Exact Next Steps → slice-05</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 class="accent">Phase 2 — Collaborative</h3>
+      <ul>
+        <li>Reads Exact Next Steps</li>
+        <li>Drafts slice-05 spec</li>
+        <li>Commits draft → <span class="warn">stops</span></li>
+        <li>Operator reviews diff in IDE</li>
+        <li>Approves → agent executes</li>
+      </ul>
+    </div>
+  </div>
+  <p class="dim" style="font-size:0.65em; margin-top:1.5em;">
+    Agent proposes · Operator approves · Agent executes
+  </p>
+  <aside class="notes">
+    Demo 2 shows the pair programming pattern. Phase 1 is fully autonomous — the agent picks up slice-04 and runs it. Then it writes a handoff with Exact Next Steps for slice-05. Phase 2: the agent reads those steps, drafts the slice-05 spec, commits it, and stops. The operator reviews the diff live in the IDE — adjusts scope or wording — then approves. The agent executes. This is the core collaboration model.
+  </aside>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 10 — DEMO 3
+══════════════════════════════════════════════ -->
+<section>
+  <h2>Demo 3 — Automated Maintenance</h2>
+  <p class="dim" style="font-size:0.7em;">Branch: <code>demo-3-start</code> · Entry: <code>DEMO3.md</code> · ~2 min</p>
+  <div style="margin: 1.2em auto; max-width: 560px;">
+    <pre><code>You are an automated maintenance agent.
+A cron job fired you — no human is present.
+You have no session context.
+Orient yourself from the Conductor spine only.</code></pre>
+  </div>
+  <ul>
+    <li class="fragment">Runs <code>python3 scripts/validate.py</code></li>
+    <li class="fragment">Verifies all slices STABLE in <code>index.md</code></li>
+    <li class="fragment">Checks <code>handoff-log.md</code> for open blockers</li>
+    <li class="fragment">Writes status: <span class="ok">clean</span> or <span class="warn">degraded</span></li>
+    <li class="fragment">Commits and exits</li>
+  </ul>
+  <p class="dim fragment" style="font-size:0.68em; margin-top:1em;">
+    A well-formed Conductor spine is self-describing.<br>Any agent, any time, can orient from it alone.
+  </p>
+  <aside class="notes">
+    Demo 3 simulates a nightly cron job. No human, no session context. The agent wakes up cold, reads the spine, runs the validator, checks for open blockers, and writes a structured maintenance report. Status is clean or degraded — it does not auto-fix. Commits and exits. This is the proof that a well-formed Conductor spine is self-describing.
+  </aside>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 11 — VALIDATOR
+══════════════════════════════════════════════ -->
+<section>
+  <h2>Validator</h2>
+  <div class="two-col" style="margin-top:1em;">
+    <div>
+      <p class="accent" style="font-size:0.78em; margin-bottom:0.5em;">Tier 1 — Conductor governance</p>
+      <ul style="font-size:0.78em;">
+        <li>Spine structure present</li>
+        <li>Handoff has <code>Commit:</code> + <code>Exact Next Steps</code></li>
+        <li>Active slice acceptance criteria</li>
+        <li>Git branch state</li>
+      </ul>
+      <p class="accent" style="font-size:0.78em; margin:1em 0 0.5em;">Tier 2 — Structural checks</p>
+      <ul style="font-size:0.78em;">
+        <li>Runs when <code>project/</code> exists</li>
+        <li>View blocks + dimensions + measure</li>
+        <li>Model connection + explores</li>
+      </ul>
+    </div>
+    <div>
+      <pre><code>$ python3 scripts/validate.py
+
+✓ conductor/index.md present
+✓ conductor/handoff-log.md present
+✓ active slice: none —
+    all slices stable
+✓ 8 views — structural checks pass
+✓ model: gold_marts — 8 explores
+
+All checks passed.</code></pre>
+      <p class="dim" style="font-size:0.62em; margin-top:0.8em;">stdlib only · zero external deps · CI-safe</p>
+    </div>
+  </div>
+  <aside class="notes">
+    The validator is the governance gate — never optional. Tier 1 checks the Conductor spine: is the handoff correctly formatted? Does the active slice exist? Are we on a feature branch? Tier 2 kicks in when project/ exists and checks structural correctness of the actual project output. Stdlib only, no pip installs, CI-safe.
+  </aside>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 12 — ANY AGENT + ADAPT
+══════════════════════════════════════════════ -->
+<section>
+  <h2>Any Agent · Any Project</h2>
+  <div class="two-col" style="margin-top:1.2em;">
+    <div>
+      <p class="accent" style="font-size:0.78em; margin-bottom:0.6em;">Rename for your CLI</p>
+      <table class="data-table">
+        <tr><th>CLI</th><th>Reads automatically</th></tr>
+        <tr><td>Codex</td><td><code>AGENTS.md</code></td></tr>
+        <tr><td>Claude Code</td><td><code>CLAUDE.md</code></td></tr>
+        <tr><td>Gemini CLI</td><td><code>GEMINI.md</code></td></tr>
+      </table>
+    </div>
+    <div>
+      <p class="accent" style="font-size:0.78em; margin-bottom:0.6em;">To adapt for any project</p>
+      <ul>
+        <li>Copy <code>conductor/</code> into your repo</li>
+        <li>Fill in <code>intent.md</code></li>
+        <li>Edit <code>slice-01</code> for your first work unit</li>
+        <li>Point agent at the root</li>
+      </ul>
+    </div>
+  </div>
+  <p class="dim" style="font-size:0.65em; margin-top:2em;">
+    The LookML demo is the worked example. The scaffold is the product.
+  </p>
+  <aside class="notes">
+    The scaffold is agent-agnostic and domain-agnostic. Rename AGENTS.md to match your CLI — that's the only change needed to switch agents. The same four-step adaptation process works for any project type.
+  </aside>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 13 — SHIP IT
+══════════════════════════════════════════════ -->
+<section>
+  <h2>Ship It</h2>
+  <div class="loop" style="margin: 1.8em auto; max-width: 420px;">
+    <div class="loop-step">copy <code>conductor/</code> into your repo</div>
+    <div class="loop-arrow">↓</div>
+    <div class="loop-step hi">fill <code>intent.md</code></div>
+    <div class="loop-arrow">↓</div>
+    <div class="loop-step">"Read DEMO.md and execute it."</div>
+  </div>
+  <p style="margin-top:2em;">
+    <a href="https://github.com/G-Schumacher44/aug-conductor-wrkflw" style="font-size:0.8em;">
+      github.com/G-Schumacher44/aug-conductor-wrkflw
+    </a>
+  </p>
+  <p class="dim" style="font-size:0.62em; margin-top:0.4em;">MIT License</p>
+  <aside class="notes">
+    That's Conductor. Three demos, fifteen minutes, one repo. MIT licensed, no external dependencies, works with any AI CLI. The scaffold is ready to drop into any project. Clone the repo, open the branch for the demo you want, give your agent one sentence.
+  </aside>
+</section>
+
+
+</div><!-- /slides -->
+</div><!-- /reveal -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    progress: true,
+    controls: true,
+    controlsTutorial: false,
+    center: true,
+    width: 1200,
+    height: 700,
+    margin: 0.04,
+    plugins: []
+  });
+</script>
+</body>
+</html>
