@@ -1,4 +1,5 @@
 {
+  // ── File watcher (prevents CPU spike on rapid agent writes) ──────────────
   "files.watcherExclude": {
     "**/.git/**": true,
     "**/.venv/**": true,
@@ -8,5 +9,26 @@
     "**/.venv": true,
     "**/project": true
   },
-  "git.autorefresh": false
+  "git.autorefresh": false,
+
+  // ── LookML ───────────────────────────────────────────────────────────────
+  "files.associations": {
+    "*.lkml": "lookml"
+  },
+  "[lookml]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.formatOnSave": false
+  },
+
+  // ── Python (validate.py) ─────────────────────────────────────────────────
+  "python.defaultInterpreterPath": "python3",
+
+  // ── Looker extension — fill in after provisioning a Looker connection ────
+  // Do NOT hardcode credentials here. Set clientId/clientSecret as env vars
+  // or via VS Code's secret storage (Cmd+Shift+P → "Preferences: Open User Settings").
+  //
+  // "looker.instanceUrl": "https://your-instance.looker.com",
+  // "looker.clientId": "",
+  // "looker.clientSecret": ""
 }
