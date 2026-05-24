@@ -407,16 +407,17 @@ Orient yourself from the Conductor spine only.</code></pre>
   <h2>Validator</h2>
   <div class="two-col" style="margin-top:1em;">
     <div>
-      <p class="accent" style="font-size:0.78em; margin-bottom:0.5em;">Tier 1 — Conductor governance</p>
+      <p class="accent" style="font-size:0.78em; margin-bottom:0.5em;">scripts/validate.py — core</p>
       <ul style="font-size:0.78em;">
         <li>Spine structure present</li>
         <li>Handoff has <code>Commit:</code> + <code>Exact Next Steps</code></li>
         <li>Active slice acceptance criteria</li>
+        <li>CI stub present</li>
         <li>Git branch state</li>
       </ul>
-      <p class="accent" style="font-size:0.78em; margin:1em 0 0.5em;">Tier 2 — Structural checks</p>
+      <p class="accent" style="font-size:0.78em; margin:1em 0 0.5em;">demo/scripts/validate_lookml.py — extension</p>
       <ul style="font-size:0.78em;">
-        <li>Runs when <code>project/</code> exists</li>
+        <li>manifest.lkml + project_name</li>
         <li>View blocks + dimensions + measure</li>
         <li>Model connection + explores</li>
       </ul>
@@ -426,17 +427,16 @@ Orient yourself from the Conductor spine only.</code></pre>
 
 ✓ conductor/index.md present
 ✓ conductor/handoff-log.md present
-✓ active slice: none —
-    all slices stable
-✓ 8 views — structural checks pass
-✓ model: gold_marts — 8 explores
+✓ active slice: none — all slices stable
+✓ CI workflow stub
+✓ Git branch: feat/slice-01
 
 All checks passed.</code></pre>
-      <p class="dim" style="font-size:0.62em; margin-top:0.8em;">stdlib only · zero external deps · CI-safe</p>
+      <p class="dim" style="font-size:0.62em; margin-top:0.8em;">stdlib only · zero deps · CI-safe · extensible</p>
     </div>
   </div>
   <aside class="notes">
-    The validator is the governance gate — never optional. Tier 1 checks the Conductor spine: is the handoff correctly formatted? Does the active slice exist? Are we on a feature branch? Tier 2 kicks in when project/ exists and checks structural correctness of the actual project output. Stdlib only, no pip installs, CI-safe.
+    The validator is the governance gate — never optional. scripts/validate.py is domain-agnostic: spine structure, handoff format, active slice, git branch. Domain-specific checks are separate extension scripts. For this demo, validate_lookml.py handles LookML structural checks. Same pattern works for any domain — copy it and replace the checks.
   </aside>
 </section>
 
