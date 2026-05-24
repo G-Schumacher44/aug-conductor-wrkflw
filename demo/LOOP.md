@@ -11,7 +11,7 @@ Agent reads slice-01-initial-bootstrap.md
        ↓
 Agent discovers BQ schema, generates 8 view files, writes model file
        ↓
-Agent writes handoff — including Next Slice Proposal
+Agent writes handoff — including Exact Next Steps
        ↓
 You read the proposal, decide whether to run slice 02
        ↓
@@ -22,7 +22,7 @@ repeat
 
 ## Slice 01 → Handoff → Slice 02 Proposal
 
-Open [`demo/handoff-example.md`](./handoff-example.md). Scroll to **Next Slice Proposal**.
+Open [`demo/handoff-example.md`](./handoff-example.md). Scroll to **Exact Next Steps**.
 
 That section was written by the agent — not the operator. It reads:
 
@@ -42,7 +42,7 @@ The operator's job is to read those proposals and decide which one to promote to
 3. Read `demo/schema/gold_marts.md` — all 8 table schemas, no BQ access required
 4. Generated 8 LookML view files (one per table) in `views/`
 5. Generated `models/gold_marts.model.lkml` with 8 explores
-6. Wrote `conductor/handoff-log.md` with current state + Next Slice Proposal
+6. Wrote `conductor/handoff-log.md` with current state + Exact Next Steps
 7. Committed: `feat(conductor): initial agnostic workflow deployment with LookML demo`
 
 ## What The Operator Did In Slice 01
@@ -71,5 +71,5 @@ No state lives in the agent's memory. Everything the next agent needs is in thes
 2. Fill in `intent.md` with your BQ project and dataset
 3. Start an agent session — point it at this directory
 4. Agent reads `AGENTS.md` → `conductor/index.md` → `conductor/slice-01-*.md` → executes
-5. Read the handoff. Promote the Next Slice Proposal to `conductor/slice-02-*.md`
+5. Read the handoff. Promote the Exact Next Steps to `conductor/slice-02-*.md`
 6. Repeat

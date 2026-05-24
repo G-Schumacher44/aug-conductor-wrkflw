@@ -59,7 +59,7 @@ dimensions, label overrides, and explore joins — the things Looker's auto-gen 
 
 ## What You're Actually Seeing — The Conductor Loop
 
-Open [`demo/handoff-example.md`](./handoff-example.md) and scroll to **Next Slice Proposal**.
+Open [`demo/handoff-example.md`](./handoff-example.md) and scroll to **Exact Next Steps**.
 
 That section was written by the agent — not the operator. The agent built slice 01, then
 proposed slices 02–04 in the handoff. The operator's only job after slice 01 was to read
@@ -70,7 +70,7 @@ that proposal and decide whether to promote it to the next slice spec.
 ```
 operator sets intent → agent reads slice → agent executes → agent writes handoff
        ↑                                                              ↓
-operator approves ←←←←← Next Slice Proposal ←←←←←←←←←←←←←←←←←←←←←←
+operator approves ←←←←← Exact Next Steps ←←←←←←←←←←←←←←←←←←←←←←
 ```
 
 The agent is scheduling its own next unit of work. The operator approves or redirects.

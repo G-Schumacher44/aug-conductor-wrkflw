@@ -1,80 +1,205 @@
+<p align="center">
+  <img src="assets/gs-bootcamps-banner.png" alt="GS Analytics Bootcamps" width="720">
+</p>
+
+<p align="center">
+  <sub>lookml-bq-camp · LookML + BigQuery onboarding curriculum for BI analysts</sub>
+</p>
+
+<p align="center">
+  <em>Conductor.</em>
+</p>
+
+<p align="center">
+  <img alt="Status" src="https://img.shields.io/badge/status-active-brightgreen">
+  <img alt="BigQuery" src="https://img.shields.io/badge/BigQuery-4285F4?logo=google-cloud&logoColor=white">
+  <img alt="LookML" src="https://img.shields.io/badge/LookML-FF6600?logo=looker&logoColor=white">
+  <img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue">
+</p>
+
+---
+
 # Conductor Workflow
 
-A project-agnostic agent workflow system. Point any AI agent at this repo and it will
-work in a structured, documented, handoff-safe way — regardless of what you're building.
+A project-agnostic agent workflow system. Drop the `conductor/` scaffold into any repo, point an AI agent at it, and it will work in a structured, documented, handoff-safe way — regardless of what you're building.
 
-## What Is Conductor?
+This repo demonstrates the full Conductor loop across three progressive live demos using a LookML + BigQuery data model as the worked example.
 
-Conductor is a lightweight workflow system for AI agents. It gives the agent:
+---
 
-- **`intent.md`** — a contract describing what you want built and why
-- **`conductor/tracks.md`** — what's in progress and what's next
-- **`conductor/slice-*.md`** — the current bounded unit of work, with acceptance criteria
-- **`conductor/handoff-log.md`** — a written record of every session
+## Three Demos
 
-Each session the agent reads the slice spec, does the work, and writes a handoff before stopping.
-No state lives in the agent's memory — it's all in the files.
+| # | Pattern | Branch | Entry | Time |
+|---|---|---|---|---|
+| 1 | Greenfield bootstrap | `main` | `DEMO.md` | ~5 min |
+| 2 | Iterative feature + pair programming | `demo-2-start` | `DEMO2.md` | ~8 min |
+| 3 | Automated maintenance | `demo-3-start` | `DEMO3.md` | ~2 min |
 
-## Quick Start
+Each demo runs independently from its branch — no sequential dependency.
 
-1. **Fill in `intent.md`** — describe your project: what you're building, what stack, what the
-   first milestone looks like.
+<details>
+<summary><strong>Demo 1 — Greenfield Bootstrap</strong></summary>
 
-2. **Point an agent at this directory** — open Claude Code, Gemini CLI, or Codex here.
-   The agent reads `AGENTS.md`, then `conductor/index.md`, then executes the active slice.
+<br>
 
-3. **Watch it work** — the agent does the slice work and writes a handoff when done.
+`project/` is pre-deployed with a full Conductor instance — index, master plan, slice specs, handoff stub. The agent reads the spine and immediately starts generating LookML. No scaffolding, no meta-work.
 
-4. **Run the next slice** — update `conductor/tracks.md` with the next slice spec,
-   start a new session.
+**What the agent does:**
+1. Reads `project/AGENTS.md` → `project/intent.md` → `project/conductor/index.md` → active slice spec
+2. Creates branch `feat/slice-01-lookml-bootstrap`
+3. Reads `demo/schema/gold_marts.md` — 8 tables, no live BQ access required
+4. Generates 8 `.view.lkml` files, one commit per view
+5. Generates `models/gold_marts.model.lkml` with 8 explores
+6. Runs `python3 scripts/validate.py` — required gate before handoff
+7. Marks slice stable, advances the queue, writes handoff with Exact Next Steps
 
-## See It In Action
+```bash
+git checkout main
+# Prompt: "Read DEMO.md and execute it."
+```
 
-The `demo/` folder shows a complete worked example: a LookML project built on BigQuery,
-using this exact Conductor workflow. You can see the filled-in intent, the slice-01 output
-(generated LookML views and model), and the handoff the agent wrote when it finished.
+</details>
 
-→ Start with [`demo/README.md`](./demo/README.md)
+<details>
+<summary><strong>Demo 2 — Iterative Feature + Pair Programming</strong></summary>
 
-## Repo Structure
+<br>
+
+Project is established (slices 01–03 stable). A new table `fct_promotions` has been provisioned in BigQuery. Two phases — one autonomous, one collaborative.
+
+**Phase 1 — Autonomous execution (~3 min)**
+Agent executes `slice-04`: generates the `fct_promotions` view and adds a ninth explore. Writes handoff with Exact Next Steps.
+
+**Phase 2 — Collaborative spec authoring (~5 min)**
+Agent reads the Exact Next Steps, drafts `slice-05` (view enrichment), commits the draft, and stops for review. Operator reviews the diff live in the IDE — adjusts scope or wording — then approves. Agent executes.
+
+This is the pair programming pattern: **agent proposes, operator approves, agent executes.** The slice spec is the contract between them.
+
+```bash
+git checkout demo-2-start
+# Prompt: "Read DEMO2.md and execute it."
+```
+
+</details>
+
+<details>
+<summary><strong>Demo 3 — Automated Maintenance</strong></summary>
+
+<br>
+
+Simulates a nightly cron job. No human present. The agent wakes up cold with zero session context, orients entirely from the Conductor spine, runs the validator, checks for open blockers, and writes a structured maintenance report.
+
+Status is `clean` (0 failures, 0 blockers) or `degraded` (anything else). Read-and-report only — no auto-fixes. Commits and exits.
+
+This demonstrates that a well-formed Conductor spine is **self-describing** — any agent, any time, can orient from it alone.
+
+```bash
+git checkout demo-3-start
+# Prompt: "Read DEMO3.md and execute it."
+```
+
+</details>
+
+---
+
+## The Conductor Loop
 
 ```
-intent.md              ← fill this in first
-AGENTS.md              ← agent rules (rename to CLAUDE.md or GEMINI.md for your CLI)
+intent defined → slice executed → handoff written → Exact Next Steps → operator approves → repeat
+```
+
+Every agent session does three things:
+
+- **Read** — orient from the spine (`intent.md`, `conductor/index.md`, active slice spec)
+- **Execute** — bounded work defined by the slice, committed as it goes
+- **Hand off** — write a `handoff-log.md` entry with current state and Exact Next Steps
+
+No state lives in the agent's memory. Everything the next session needs is in the files. The handoff's **Exact Next Steps** field is the scheduling mechanism — the agent proposes what comes next, the operator approves or redirects.
+
+→ Full pattern: [`conductor/README.md`](./conductor/README.md)
+
+---
+
+## Conductor Scaffold
+
+The `conductor/` directory is a reusable, domain-agnostic scaffold. Copy it into any project to deploy Conductor.
+
+<details>
+<summary><strong>Repo structure</strong></summary>
+
+<br>
+
+```
 conductor/
-  index.md             ← agent routing entry point
-  AGENTS.md            ← conductor context pack (same name-swap applies)
-  tracks.md            ← active work and roadmap
-  slice-01-*.md        ← active slice spec
-  handoff-log.md       ← current-state handoff only
-demo/                  ← worked LookML example (read-only reference)
+  index.md                       ← agent routing — Active slice: + queue table
+  master-plan-template.md        ← project scope, phases, architecture decisions
+  slice-01-initial-bootstrap.md  ← generic first-slice template
+  handoff-log.md                 ← current-state handoff only
+  handoff-archive.md             ← older entries archived here
+  tracks.md                      ← cross-repo dependencies (stub)
+  README.md                      ← full workflow pattern documentation
+  AGENTS.md                      ← agent behavioral rules
+  CONDUCTOR_MODES.md             ← Patch / Slice / Full Conductor / Audit
+  AGENT_PROMPT.md                ← starter prompt for any agent CLI
+intent.md                        ← fill this in first
+AGENTS.md                        ← root agent rules
+scripts/
+  validate.py                    ← Conductor spine validator (stdlib only)
+demo/
+  schema/                        ← authoritative schema reference (no live BQ needed)
+  views/                         ← reference LookML output
+  models/                        ← reference model output
 ```
 
-## Agent CLI Setup — Name Swap
+</details>
 
-This repo uses `AGENTS.md` as the canonical, client-agnostic name for the agent rules file.
-Different CLI agents load their rules file by a different name:
+<details>
+<summary><strong>Adapting for your project</strong></summary>
 
-| CLI Agent | Reads automatically |
+<br>
+
+1. Copy `conductor/` into your repo
+2. Fill in `intent.md` — project goal, stack, first milestone definition
+3. Edit `conductor/slice-01-initial-bootstrap.md` — replace the objective, steps, and acceptance criteria with your first slice
+4. Point an agent at the repo root
+
+Everything else — handoff format, queue advancement, archive pattern, validator — is the same regardless of domain.
+
+</details>
+
+<details>
+<summary><strong>Agent CLI name swap</strong></summary>
+
+<br>
+
+`AGENTS.md` is the canonical name used here. Rename or copy to match your CLI:
+
+| CLI | Reads automatically |
 |---|---|
 | Codex (OpenAI) | `AGENTS.md` |
 | Claude Code | `CLAUDE.md` |
 | Gemini CLI | `GEMINI.md` |
 
-**To use this repo with Claude Code:** copy or rename `AGENTS.md` → `CLAUDE.md`  
-**To use this repo with Gemini CLI:** copy or rename `AGENTS.md` → `GEMINI.md`
+Apply the same rename inside `conductor/` — `conductor/AGENTS.md` → `conductor/CLAUDE.md` etc. Gemini CLI walks the directory tree loading every `GEMINI.md` it finds, so the rename in `conductor/` matters.
 
-The same swap applies inside `conductor/` — `conductor/AGENTS.md` becomes
-`conductor/CLAUDE.md` or `conductor/GEMINI.md` depending on your agent.
-Gemini CLI in particular walks the directory tree loading every `GEMINI.md` it finds,
-so the rename in `conductor/` matters for context packs.
+</details>
 
-## Adapting For Your Project
+---
 
-The only files you need to change to start a new project:
+## Validator
 
-1. `intent.md` — describe your actual project
-2. `conductor/slice-01-initial-bootstrap.md` — update the objective and acceptance criteria
-   to match your first milestone
+`scripts/validate.py` checks the Conductor spine with zero external dependencies — stdlib only, CI-safe.
 
-Everything else (the conductor spine, agent rules, handoff pattern) stays the same.
+**Tier 1** — Conductor governance (always runs): spine structure, handoff format (`Commit:`, `Exact Next Steps`), active slice acceptance criteria, git branch state.
+
+**Tier 2** — Structural LookML checks (runs when `project/views/` or `project/models/` exist): view blocks, `sql_table_name`, dimensions, `count` measure, model `connection:` and explores.
+
+```bash
+python3 scripts/validate.py
+```
+
+---
+
+## License
+
+MIT — see [LICENSE](./LICENSE)
