@@ -28,7 +28,7 @@ This repo extends that foundation:
 - **Slice-based execution** replaces the single spec+plan model. Each unit of work is a bounded slice with explicit scope, gates, and out-of-scope declarations.
 - **Exact Next Steps** replaces open-ended "next track" proposals. The agent writes a concrete recommendation; the operator approves or redirects. The handoff is the scheduling mechanism.
 - **Multi-agent support** — the same scaffold runs with Codex, Claude, and Gemini by renaming `AGENTS.md` to match each CLI's convention.
-- **Validation gate** — `scripts/validate.py` enforces Conductor governance (Tier 1) and structural project checks (Tier 2) with zero external dependencies before any handoff is written.
+- **Validation gate** — `scripts/validate.py` enforces Conductor governance with zero external dependencies before any handoff is written. Domain-specific checks live as separate extension scripts — see `demo/scripts/`.
 - **Cross-repo tracks** — `conductor/tracks.md` tracks dependencies across repos; spokes coordinate without merging codebases.
 - **No external dependencies** — the entire workflow runs from the filesystem. No hosted service, no database, no API calls.
 
@@ -221,15 +221,13 @@ Apply the same rename inside `conductor/` — `conductor/AGENTS.md` → `conduct
 
 ## Validator
 
-`scripts/validate.py` checks the Conductor spine with zero external dependencies — stdlib only, CI-safe.
-
-**Tier 1** — Conductor governance (always runs): spine structure, handoff format (`Commit:`, `Exact Next Steps`), active slice acceptance criteria, git branch state.
-
-**Tier 2** — Structural LookML checks (runs when `project/views/` or `project/models/` exist): view blocks, `sql_table_name`, dimensions, `count` measure, model `connection:` and explores.
+`scripts/validate.py` checks the Conductor spine — domain-agnostic, stdlib only, CI-safe. Checks: spine structure, handoff format (`Commit:`, `Exact Next Steps`), active slice acceptance criteria, CI stub, git branch state.
 
 ```bash
 python3 scripts/validate.py
 ```
+
+Domain-specific checks (LookML, dbt, etc.) live as separate extension scripts. See [`demo/scripts/`](./demo/scripts/) for the pattern and a LookML reference implementation.
 
 ---
 

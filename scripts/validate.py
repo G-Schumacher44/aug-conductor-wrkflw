@@ -1,24 +1,20 @@
 #!/usr/bin/env python3
 """
-Conductor spine validator — agnostic to workflow type.
+Conductor spine validator — domain-agnostic, stdlib only.
 
-Tier 1: Conductor governance checks (always runs, zero dependencies)
-  - project/ spine structure
+Checks:
+  - project/ spine structure and required files
   - handoff format (Commit:, Exact Next Steps)
   - active slice acceptance criteria checkboxes
+  - CI workflow stub presence
   - git branch state
 
-Tier 2: Simulated CI — structural LookML shape checks (no external tooling required)
-  - view files: view block, sql_table_name, dimensions, count measure
-  - model file: connection, explore blocks
-  Runs when project/views/ and project/models/ exist.
-  Records NOT RUN for any check that requires external tooling (lkml, LAMS, Spectacles).
+For domain-specific checks (LookML, dbt, etc.) see demo/scripts/.
 
 Usage:
-  python scripts/validate.py
+  python3 scripts/validate.py
 """
 
-import os
 import re
 import sys
 import subprocess
@@ -38,7 +34,7 @@ def check(name, fn):
         results.append({"name": name, "status": "fail", "message": str(e), "detail": None})
 
 
-# ── Tier 1: Conductor spine ──────────────────────────────────────────────────
+# ── Spine structure ───────────────────────────────────────────────────────────
 
 check("project/ directory", lambda: (
     ("pass", "", None) if PROJECT.exists()
@@ -46,12 +42,14 @@ check("project/ directory", lambda: (
 ))
 
 for rel in ["AGENTS.md", "intent.md", "conductor/index.md", "conductor/handoff-log.md"]:
-    path = rel  # capture for closure
+    path = rel
     check(f"project/{rel}", lambda p=path: (
         ("pass", "", None) if (PROJECT / p).exists()
         else ("fail", "missing — scaffold incomplete", None)
     ))
 
+
+# ── Handoff format ────────────────────────────────────────────────────────────
 
 def check_handoff():
     f = PROJECT / "conductor" / "handoff-log.md"
@@ -69,9 +67,10 @@ def check_handoff():
         return "warn", f"required fields missing: {', '.join(missing)}", None
     return "pass", "", None
 
-
 check("handoff-log.md written", check_handoff)
 
+
+# ── CI workflow stub ──────────────────────────────────────────────────────────
 
 def check_ci_stub():
     workflows = PROJECT / ".github" / "workflows"
@@ -79,7 +78,6 @@ def check_ci_stub():
         return "warn", "no .github/workflows — stub recommended", None
     files = [f.name for f in workflows.iterdir()]
     return "pass", ", ".join(files), None
-
 
 check("CI workflow stub", check_ci_stub)
 
@@ -121,7 +119,6 @@ def check_active_slice():
         return "fail", f"{active_slice_rel} not found", None
     return "pass", active_slice_rel, None
 
-
 check("Active slice file", check_active_slice)
 
 if active_slice_rel and not active_slice_rel.lower().startswith("none") and (PROJECT / active_slice_rel).exists():
@@ -145,81 +142,7 @@ if active_slice_rel and not active_slice_rel.lower().startswith("none") and (PRO
         })
 
 
-# ── Tier 2: Simulated CI — LookML structural checks ─────────────────────────
-
-views_dir = PROJECT / "views"
-models_dir = PROJECT / "models"
-
-if views_dir.exists() or models_dir.exists():
-
-    def check_manifest():
-        manifest = PROJECT / "manifest.lkml"
-        if not manifest.exists():
-            return "warn", "manifest.lkml missing — add project_name declaration", None
-        if not re.search(r"project_name\s*:", manifest.read_text()):
-            return "warn", "manifest.lkml present but missing project_name:", None
-        return "pass", "", None
-
-    check("manifest.lkml", check_manifest)
-
-    def check_views_structure():
-        if not views_dir.exists():
-            return "fail", "project/views/ not found", None
-        view_files = list(views_dir.glob("*.view.lkml"))
-        if not view_files:
-            return "fail", "no .view.lkml files found", None
-        issues = []
-        for vf in view_files:
-            content = vf.read_text()
-            name = vf.name
-            if not re.search(r"\bview\s*:", content):
-                issues.append(f"{name}: missing view block")
-            if not re.search(r"\bsql_table_name\s*:", content):
-                issues.append(f"{name}: missing sql_table_name")
-            if not re.search(r"\bdimension\s*:", content):
-                issues.append(f"{name}: no dimensions found")
-            if not re.search(r"type\s*:\s*count", content):
-                issues.append(f"{name}: missing count measure")
-        if issues:
-            return "warn", f"{len(issues)} structural issue(s)", "\n".join(f"       {i}" for i in issues)
-        return "pass", f"{len(view_files)} view(s) structurally valid (sim — lkml pending approval)", None
-
-    check("LookML views — simulated check", check_views_structure)
-
-    def check_model_structure():
-        if not models_dir.exists():
-            return "fail", "project/models/ not found", None
-        model_files = list(models_dir.glob("*.model.lkml"))
-        if not model_files:
-            return "fail", "no .model.lkml files found", None
-        content = model_files[0].read_text()
-        issues = []
-        if not re.search(r"\bconnection\s*:", content):
-            issues.append("missing connection:")
-        explores = re.findall(r"\bexplore\s*:\s*\w+", content)
-        if not explores:
-            issues.append("no explore blocks found")
-        if issues:
-            return "warn", "; ".join(issues), None
-        return "pass", f"{len(explores)} explore(s) — sim (lkml pending approval)", None
-
-    check("LookML model — simulated check", check_model_structure)
-
-    results.append({
-        "name": "lkml syntax check",
-        "status": "skip",
-        "message": "NOT RUN — pending tooling approval",
-        "detail": None,
-    })
-    results.append({
-        "name": "LAMS style check",
-        "status": "skip",
-        "message": "NOT RUN — pending tooling approval",
-        "detail": None,
-    })
-
-
-# ── Git state ────────────────────────────────────────────────────────────────
+# ── Git branch ────────────────────────────────────────────────────────────────
 
 def check_branch():
     try:
@@ -235,15 +158,14 @@ def check_branch():
     except Exception:
         return "warn", "could not determine branch", None
 
-
 check("Git branch is a feature branch", check_branch)
 
 
-# ── Report ───────────────────────────────────────────────────────────────────
+# ── Report ────────────────────────────────────────────────────────────────────
 
-passed = sum(1 for r in results if r["status"] == "pass")
-warned = sum(1 for r in results if r["status"] == "warn")
-failed = sum(1 for r in results if r["status"] == "fail")
+passed  = sum(1 for r in results if r["status"] == "pass")
+warned  = sum(1 for r in results if r["status"] == "warn")
+failed  = sum(1 for r in results if r["status"] == "fail")
 skipped = sum(1 for r in results if r["status"] == "skip")
 
 icons = {"pass": "✓", "warn": "~", "fail": "✗", "skip": "-"}
