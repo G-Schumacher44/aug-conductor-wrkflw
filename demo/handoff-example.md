@@ -43,7 +43,7 @@ Slice 01 complete. All acceptance criteria met.
 - **`fct_daily_dashboard`**: This appears to be a KPI rollup across multiple domains. Worth reviewing whether it should be an explore or just a dashboard-only view.
 - **Value formats**: If adding `value_format_name: usd` in a future slice, confirm currency is USD with the operator first
 
-## Next Slice Proposal
+## Exact Next Steps
 
 *This section was written by the agent. The operator reviews and promotes one of these to the next `conductor/slice-02-*.md` file.*
 
