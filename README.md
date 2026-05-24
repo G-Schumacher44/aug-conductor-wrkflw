@@ -3,15 +3,15 @@
 </p>
 
 <p align="center">
-  <sub>lookml-bq-camp · LookML + BigQuery onboarding curriculum for BI analysts</sub>
-</p>
-
-<p align="center">
-  <em>Conductor.</em>
+  <sub>conductor · structured agent workflow for any project</sub>
 </p>
 
 <p align="center">
   <img alt="Status" src="https://img.shields.io/badge/status-active-brightgreen">
+  <img alt="Python" src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white">
+  <img alt="Codex" src="https://img.shields.io/badge/Codex-412991?logo=openai&logoColor=white">
+  <img alt="Claude" src="https://img.shields.io/badge/Claude-CC785C?logo=anthropic&logoColor=white">
+  <img alt="Gemini" src="https://img.shields.io/badge/Gemini-4285F4?logo=google&logoColor=white">
   <img alt="BigQuery" src="https://img.shields.io/badge/BigQuery-4285F4?logo=google-cloud&logoColor=white">
   <img alt="LookML" src="https://img.shields.io/badge/LookML-FF6600?logo=looker&logoColor=white">
   <img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue">
