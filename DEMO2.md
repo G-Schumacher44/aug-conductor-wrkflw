@@ -1,5 +1,8 @@
 # Run Demo 2 — Ad-hoc Feature Work
 
+> **CLI note:** This repo uses `AGENTS.md` as the agent rules file (Codex default).
+> For Claude Code rename to `CLAUDE.md`, for Gemini CLI rename to `GEMINI.md`.
+
 You are an agent. `project/` already exists as a functioning LookML project.
 A new business requirement has arrived: the business team wants to analyze promotional
 campaign performance. The data team has provisioned a new BigQuery table:

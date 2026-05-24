@@ -1,5 +1,8 @@
 # Run This Demo
 
+> **CLI note:** This repo uses `AGENTS.md` as the agent rules file (Codex default).
+> For Claude Code rename to `CLAUDE.md`, for Gemini CLI rename to `GEMINI.md` — same content, just the filename your CLI auto-loads.
+
 You are an agent. `project/` is a deployed Conductor instance ready for LookML generation.
 Read the conductor spine and execute the active slice.
 

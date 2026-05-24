@@ -59,7 +59,9 @@ Rules:
 python3 scripts/validate.py
 ```
 
-Fix any failures before writing the handoff.
+Fix any **failures** before writing the handoff. Warnings are acceptable — they flag
+recommendations, not blocking issues. The exit code is what matters: exit 0 = proceed,
+exit 1 = fix before continuing.
 
 ### Step 5 — Mark stable and advance the queue
 
