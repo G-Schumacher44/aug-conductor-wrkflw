@@ -1,5 +1,5 @@
 view: fct_shipping_analysis {
-  sql_table_name: `gcs-automation-project.gold_marts.fct_shipping_analysis` ;;
+  sql_table_name: `your-gcp-project.gold_marts.fct_shipping_analysis` ;;
 
   dimension: order_date {
     type: date

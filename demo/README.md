@@ -2,7 +2,7 @@
 
 This folder shows a complete worked example of the Conductor workflow in action.
 
-**The setup:** A BigQuery gold mart (`gcs-automation-project.gold_marts`) with 8 fact tables
+**The setup:** A BigQuery gold mart (`your-gcp-project.gold_marts`) with 8 fact tables
 covering an e-commerce business — revenue, sales operations, customer segments, product
 profitability, marketing attribution, shipping, cart abandonment, and a daily dashboard.
 

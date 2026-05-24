@@ -1,6 +1,6 @@
-# Schema Reference — gcs-automation-project.gold_marts
+# Schema Reference — your-gcp-project.gold_marts
 
-Source: BigQuery dataset `gcs-automation-project.gold_marts`
+Source: BigQuery dataset `your-gcp-project.gold_marts`
 Domain: E-commerce (orders, revenue, shipping, customers, marketing)
 
 All 8 tables are independently aggregated gold-layer fact tables. No FK joins exist between them at this grain.

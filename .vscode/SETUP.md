@@ -54,7 +54,7 @@ Provides BigQuery schema exploration and query tools directly in your IDE.
 gcloud auth application-default login
 ```
 
-The MCP server in `.vscode/mcp.json` is pre-configured for project `gcs-automation-project`.
+The MCP server in `.vscode/mcp.json` is pre-configured for project `your-gcp-project`.
 Change `BIGQUERY_PROJECT` in `.vscode/mcp.json` if using a different project.
 
 ---

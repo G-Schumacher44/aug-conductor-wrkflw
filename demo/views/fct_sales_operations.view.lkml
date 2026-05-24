@@ -1,5 +1,5 @@
 view: fct_sales_operations {
-  sql_table_name: `gcs-automation-project.gold_marts.fct_sales_operations` ;;
+  sql_table_name: `your-gcp-project.gold_marts.fct_sales_operations` ;;
 
   dimension: product_id {
     type: string

@@ -1,5 +1,5 @@
 view: fct_daily_dashboard {
-  sql_table_name: `gcs-automation-project.gold_marts.fct_daily_dashboard` ;;
+  sql_table_name: `your-gcp-project.gold_marts.fct_daily_dashboard` ;;
 
   dimension: metric_date {
     type: date

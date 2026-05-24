@@ -1,5 +1,5 @@
 view: fct_marketing_attribution {
-  sql_table_name: `gcs-automation-project.gold_marts.fct_marketing_attribution` ;;
+  sql_table_name: `your-gcp-project.gold_marts.fct_marketing_attribution` ;;
 
   dimension: metric_date {
     type: date

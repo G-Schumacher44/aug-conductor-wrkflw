@@ -12,7 +12,7 @@ A Looker data model on top of 8 pre-aggregated BigQuery fact tables covering an
 e-commerce business: revenue, sales ops, customer segments, product profitability,
 marketing attribution, shipping, cart abandonment, and a daily KPI dashboard.
 
-**BQ project:** `gcs-automation-project`
+**BQ project:** `your-gcp-project`
 **Dataset:** `gold_marts`
 **Schema reference:** [`demo/schema/gold_marts.md`](./demo/schema/gold_marts.md)
 **Intent (full):** [`demo/intent-example.md`](./demo/intent-example.md)
@@ -111,7 +111,7 @@ Newest entry at top. Move older entries to `conductor/handoff-archive.md`.
 ```markdown
 # Intent
 
-BQ Project: gcs-automation-project
+BQ Project: your-gcp-project
 Dataset: gold_marts
 Schema reference: ../demo/schema/gold_marts.md
 
@@ -176,7 +176,7 @@ Type: workflow-master-plan
 ## Objective
 
 Build a production-ready LookML data model on top of 8 pre-aggregated BigQuery
-fact tables for gcs-automation-project.gold_marts.
+fact tables for your-gcp-project.gold_marts.
 
 Done = all 8 tables have enriched views with typed measures, a clean model with
 labeled explores, and the project validates in the Looker IDE when a connection
@@ -265,7 +265,7 @@ write a model file with explores, and record a handoff.
 3. For each table: create `views/<table>.view.lkml`
    - One dimension per column (STRING→string, INTEGER/FLOAT→number, BOOLEAN→yesno, DATE→date)
    - One measure: count { type: count } — this is the only measure
-   - sql_table_name: `gcs-automation-project.gold_marts.<table>`
+   - sql_table_name: `your-gcp-project.gold_marts.<table>`
 4. Create `models/gold_marts.model.lkml` with 8 explores
 5. Optional: validate with `lkml views/*.view.lkml`
 6. Write handoff to `conductor/handoff-log.md`
@@ -448,7 +448,7 @@ For each of the 8 tables, create `project/views/<table_name>.view.lkml`:
   - `BOOLEAN` → `type: yesno`
   - `DATE` → `type: date`
 - One `measure: count { type: count }` in every view — **only measure for slice 01**
-- `sql_table_name: \`gcs-automation-project.gold_marts.<table_name>\``
+- `sql_table_name: \`your-gcp-project.gold_marts.<table_name>\``
 - No value formats, no descriptions, no hidden fields — baseline only
 
 Commit after each view: `feat(views): add <table_name> view`

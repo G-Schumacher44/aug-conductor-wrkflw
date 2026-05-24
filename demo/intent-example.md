@@ -1,5 +1,5 @@
 # Project Intent & Contract
-# (Demo — filled-in example for gcs-automation-project:gold_marts)
+# (Demo — filled-in example for your-gcp-project:gold_marts)
 
 ## What We Are Building
 
@@ -19,7 +19,7 @@ risk, and attributing marketing spend.
 
 ## Primary Data Sources
 
-- **BigQuery project:** `gcs-automation-project`
+- **BigQuery project:** `your-gcp-project`
 - **Dataset:** `gold_marts`
 - **Tables:** fct_finance_revenue, fct_sales_operations, fct_customer_segments,
   fct_product_profitability, fct_marketing_attribution, fct_shipping_analysis,

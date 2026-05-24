@@ -2,7 +2,7 @@
 
 You are an agent working with the operator in a live pair programming session.
 `project/` is an established LookML project (3 slices stable). A new BigQuery table
-`gcs-automation-project.gold_marts.fct_promotions` has been provisioned.
+`your-gcp-project.gold_marts.fct_promotions` has been provisioned.
 
 This demo runs in two phases. Phase 1 is autonomous execution. Phase 2 is collaborative.
 
@@ -33,7 +33,7 @@ Read `demo/schema/gold_marts.md` — find `fct_promotions`. Do not invent column
 Create `project/views/fct_promotions.view.lkml`:
 - One dimension per column (STRING→string, INTEGER/FLOAT→number, DATE→date)
 - One measure: `count { type: count }` — only measure for this slice
-- `sql_table_name: \`gcs-automation-project.gold_marts.fct_promotions\``
+- `sql_table_name: \`your-gcp-project.gold_marts.fct_promotions\``
 
 Commit: `feat(views): add fct_promotions view`
 
