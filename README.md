@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/gs-bootcamps-banner.png" alt="GS Analytics Bootcamps" width="720">
+  <img src="assets/gs-cond-demo-bnr.png" alt="GS Analytics Bootcamps" width="720">
 </p>
 
 <p align="center">
@@ -16,6 +16,23 @@
   <img alt="LookML" src="https://img.shields.io/badge/LookML-FF6600?logo=looker&logoColor=white">
   <img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue">
 </p>
+
+---
+
+## Origins
+
+Conductor as a pattern traces to Google's Gemini CLI extension, released December 17, 2025 by Keith Ballinger, Jay Kornder, and Sherzat Aitbayev. The original design introduced a `conductor/` directory as a filesystem-based context store — tracks with `spec.md`, `plan.md`, and `metadata.json` — and a set of slash commands (`/conductor:newTrack`, `/conductor:implement`, `/conductor:status`) that gave a Gemini agent durable, session-independent context. The filesystem-as-state idea itself traces further back to Anthropic's `CLAUDE.md` convention: put what the agent needs to know in files, not in the model's memory.
+
+This repo extends that foundation:
+
+- **Slice-based execution** replaces the single spec+plan model. Each unit of work is a bounded slice with explicit scope, gates, and out-of-scope declarations.
+- **Exact Next Steps** replaces open-ended "next track" proposals. The agent writes a concrete recommendation; the operator approves or redirects. The handoff is the scheduling mechanism.
+- **Multi-agent support** — the same scaffold runs with Codex, Claude, and Gemini by renaming `AGENTS.md` to match each CLI's convention.
+- **Validation gate** — `scripts/validate.py` enforces Conductor governance (Tier 1) and structural project checks (Tier 2) with zero external dependencies before any handoff is written.
+- **Cross-repo tracks** — `conductor/tracks.md` tracks dependencies across repos; spokes coordinate without merging codebases.
+- **No external dependencies** — the entire workflow runs from the filesystem. No hosted service, no database, no API calls.
+
+Sources: [Google Developers Blog — Conductor: Introducing context-driven development for Gemini CLI](https://developers.googleblog.com/2025/12/conductor-introducing-context-driven-development-for-gemini-cli/) · [MarkTechPost — Google Releases Conductor](https://www.marktechpost.com/2026/02/02/google-releases-conductor-a-context-driven-ai-development-framework-for-gemini-cli/)
 
 ---
 
