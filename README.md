@@ -121,8 +121,15 @@ git checkout demo-3-start
 
 ## The Conductor Loop
 
-```
-intent defined → slice executed → handoff written → Exact Next Steps → operator approves → repeat
+```mermaid
+flowchart TD
+    A([intent.md]) --> B[slice spec]
+    B --> C[agent executes bounded work]
+    C --> D[handoff-log.md\nExact Next Steps]
+    D --> E{operator reviews}
+    E -- approves --> F[advance queue]
+    E -- redirects --> B
+    F --> B
 ```
 
 Every agent session does three things:
@@ -158,7 +165,7 @@ conductor/
   AGENTS.md                      ← agent behavioral rules
   CONDUCTOR_MODES.md             ← Patch / Slice / Full Conductor / Audit
   AGENT_PROMPT.md                ← starter prompt for any agent CLI
-intent.md                        ← fill this in first
+intent.md                        ← fill this in first (scaffold template — your project goal + stack)
 AGENTS.md                        ← root agent rules
 scripts/
   validate.py                    ← Conductor spine validator (stdlib only)
@@ -166,7 +173,12 @@ demo/
   schema/                        ← authoritative schema reference (no live BQ needed)
   views/                         ← reference LookML output
   models/                        ← reference model output
+
+project/                         ← demo instance only, not part of the scaffold
+  intent.md                      ← demo-specific intent the agent reads during the demo
 ```
+
+> Two `intent.md` files exist in this repo. `intent.md` at root is the scaffold template you replace with your own project's goal and stack. `project/intent.md` is the pre-deployed demo instance the agent works from. In your own repo there will be only one.
 
 </details>
 
@@ -175,12 +187,16 @@ demo/
 
 <br>
 
-1. Copy `conductor/` into your repo
-2. Fill in `intent.md` — project goal, stack, first milestone definition
-3. Edit `conductor/slice-01-initial-bootstrap.md` — replace the objective, steps, and acceptance criteria with your first slice
-4. Point an agent at the repo root
+**First 10 minutes:**
 
-Everything else — handoff format, queue advancement, archive pattern, validator — is the same regardless of domain.
+1. Copy `conductor/` into your repo
+2. Fill in `intent.md` — three things: what you're building, your stack, and what "done" looks like for the first slice. Two paragraphs is enough. The agent reads this every session to stay grounded.
+3. Edit `conductor/slice-01-initial-bootstrap.md` — replace the objective, steps, and acceptance criteria with your first slice. Keep it small: one feature, one file set, completable in a single agent session. The handoff format, queue, and archive pattern stay as-is.
+4. Rename `AGENTS.md` → `CLAUDE.md` or `GEMINI.md` to match your CLI (or leave as `AGENTS.md` for Codex). Do the same inside `conductor/`.
+5. Run `python3 scripts/validate.py` — it checks the spine before any agent runs. Fix any warnings.
+6. Point an agent at the repo root: `"Read AGENTS.md and execute the active slice."`
+
+First agent run → first commit → first handoff: under an hour for most projects. After that the loop self-schedules — the agent's Exact Next Steps guide the next slice, the operator approves or redirects, repeat.
 
 </details>
 
