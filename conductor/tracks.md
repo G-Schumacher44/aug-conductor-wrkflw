@@ -3,97 +3,57 @@
 Status: active
 Type: track-registry
 
-## About Tracks
+## About This File
 
-Tracks let multiple repos coordinate without merging codebases. Each repo has its own
-`conductor/` directory with its own slice queue. `tracks.md` records cross-repo
-dependencies so agents know what they're blocked on and what they're blocking.
-
-The pattern: upstream repos declare what they produce; downstream repos declare what
-they're waiting for. Agents read both before marking a slice stable.
+`tracks.md` records cross-repo dependencies so agents know what they're blocked on
+and what they're unblocking. It is only relevant in multi-repo setups — this demo
+repo is standalone, so the registry below is empty.
 
 ---
 
-## Worked Example — Analytics Pipeline
+## How It Works
 
-Below is a representative three-repo cross-repo setup. Use this as a template.
+Each repo has its own `conductor/` directory and slice queue. When a slice in repo A
+produces an artifact that repo B depends on, both repos declare the dependency here:
 
-```
-analytics-pipeline/          ← produces: dbt gold models
-  conductor/tracks.md        ← upstream of: reporting-dashboard
-  conductor/index.md
+- **Upstream repo** lists what it produces and who it feeds
+- **Downstream repo** lists what it's waiting for and which slice is blocked
 
-reporting-dashboard/         ← consumes: gold models / produces: embed package
-  conductor/tracks.md        ← downstream of: analytics-pipeline
-                             ← upstream of: client-portal
-  conductor/index.md
-
-client-portal/               ← consumes: embed package
-  conductor/tracks.md        ← downstream of: reporting-dashboard
-  conductor/index.md
-```
-
-### analytics-pipeline/conductor/tracks.md
-
-```markdown
-## Upstream of
-
-| Repo               | Artifact                  | Status  |
-|--------------------|---------------------------|---------|
-| reporting-dashboard | gold_marts dbt models     | STABLE  |
-```
-
-### reporting-dashboard/conductor/tracks.md
-
-```markdown
-## Upstream of
-
-| Repo          | Artifact                    | Status  |
-|---------------|-----------------------------|---------|
-| client-portal | embed package v2            | ACTIVE  |
-
-## Downstream of
-
-| Repo               | Artifact               | Blocking slice |
-|--------------------|------------------------|----------------|
-| analytics-pipeline | gold_marts dbt models  | slice-04       |
-```
-
-### client-portal/conductor/tracks.md
-
-```markdown
-## Downstream of
-
-| Repo                | Artifact          | Blocking slice |
-|---------------------|-------------------|----------------|
-| reporting-dashboard | embed package v2  | slice-07       |
-```
-
-### How an agent uses tracks.md
-
-Before marking a slice stable, the agent reads `conductor/tracks.md` and checks:
-
-1. Are all "Downstream of" entries STABLE? If not, the slice is blocked — record the
-   blocker in `handoff-log.md` under `Blockers:` and stop.
-2. After marking stable, surface this in `handoff-log.md` so downstream agents know
-   they can unblock.
+An agent reads `tracks.md` before marking a slice stable. If a dependency isn't
+resolved, it records the blocker in `handoff-log.md` and stops — it does not
+auto-advance.
 
 ---
 
-## This Repo
+## Example — LookML project + dbt upstream
 
-This repo is a standalone scaffold demo — no cross-repo dependencies. The registry
-below is a scaffold stub; replace it with your own repos when adapting.
+If this repo's LookML views were generated from dbt gold models owned by a separate
+repo, tracks.md in each repo would look like this:
 
-### Active Initiatives
+**dbt-gold-models/conductor/tracks.md**
+```
+## Downstream dependents
+| Repo                  | Waiting for          | Their blocking slice |
+|-----------------------|----------------------|----------------------|
+| lookml-gold-marts     | gold_marts models    | slice-01             |
+```
 
-| Repo | Role | Status |
-|------|------|--------|
-| aug-conductor-wrkflw (this repo) | standalone demo | active |
+**this repo / conductor/tracks.md**
+```
+## Upstream dependencies
+| Repo             | Artifact          | Status  | Blocking slice |
+|------------------|-------------------|---------|----------------|
+| dbt-gold-models  | gold_marts models | STABLE  | slice-01       |
+```
 
-### Registry Rules
+Once the dbt repo marks the artifact STABLE, this repo's agent can unblock and proceed.
 
-- One active slice at a time unless explicitly parallelized in the slice spec.
-- When a slice completes: move it to `review/` or `archive/`, update this file.
-- When starting the next slice: create the slice doc, update `index.md`, update this file.
-- When a cross-repo dependency resolves: update the status column here and in `handoff-log.md`.
+---
+
+## Registry (this repo)
+
+This repo is standalone — no cross-repo dependencies.
+
+| Repo | Role | Tracks status |
+|------|------|---------------|
+| aug-conductor-wrkflw (this repo) | standalone demo | no external dependencies |
