@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conductor — Speaker Notes</title>
+  <style>
+    :root {
+      --bg:      #0c0d10;
+      --surface: #13151a;
+      --border:  #1f2229;
+      --brand:   #6699cc;
+      --text:    #e9edf1;
+      --muted:   #7a8494;
+      --ok:      #4caf82;
+      --warn:    #e8a44a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+      font-size: 15px; line-height: 1.7;
+      padding: 2rem 1.25rem 4rem;
+      max-width: 760px; margin: 0 auto;
+    }
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem; margin-bottom: 2.5rem;
+    }
+    header h1 { font-size: 1.15rem; color: var(--brand); letter-spacing: -0.02em; }
+    header p  { font-size: 0.8rem; color: var(--muted); margin-top: 0.3rem; }
+    .slide {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.5rem 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .slide-header {
+      display: flex; align-items: baseline; gap: 1rem;
+      margin-bottom: 0.9rem;
+    }
+    .num {
+      font-size: 0.7rem; color: var(--brand);
+      background: rgba(102,153,204,0.12);
+      padding: 0.2em 0.6em; border-radius: 4px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .title { font-size: 0.85rem; color: var(--muted); }
+    .note  { font-size: 0.88rem; color: var(--text); line-height: 1.75; }
+    .divider {
+      border: none; border-top: 1px solid var(--border);
+      margin: 2.5rem 0 2rem;
+    }
+    .faq-header {
+      font-size: 0.7rem; color: var(--warn); letter-spacing: 0.08em;
+      text-transform: uppercase; margin-bottom: 1.5rem;
+    }
+    .faq { margin-bottom: 1.5rem; }
+    .faq .q { color: var(--brand); font-size: 0.85rem; margin-bottom: 0.4rem; }
+    .faq .a { color: var(--text); font-size: 0.85rem; line-height: 1.75; }
+    footer {
+      margin-top: 3rem; padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem; color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Conductor — Speaker Notes</h1>
+  <p>conductor · structured agent workflow · GS Analytics</p>
+</header>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="num">01</span>
+    <span class="title">Title</span>
+  </div>
+  <p class="note">Welcome. Conductor is a structured agent workflow system — a scaffold you drop into any repo to give AI agents durable context, structured execution, and safe handoffs between sessions. Today I'll walk through what it is, where it came from, and three live demos that run from one prompt each. Total demo runtime is about fifteen minutes if you want to run all three back-to-back.</p>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="num">02</span>
+    <span class="title">The Problem</span>
+  </div>
+  <p class="note">The core problem with AI coding agents today is that they're stateless. Every session you re-explain the project. The agent re-discovers the codebase. Decisions made last session aren't recorded anywhere durable. The result is that the human becomes the memory layer — doing meta-work, re-orientation, reconciling context. That's not where the operator's leverage should be.</p>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="num">03</span>
+    <span class="title">Without / With Conductor</span>
+  </div>
+  <p class="note">Conductor's solution is to treat the filesystem as persistent memory. Every agent session reads a structured spine — the intent, the active slice, the latest handoff. It executes bounded work. It writes a new handoff. The next session picks up from there. State is independent of any one model context, any one agent, any one session. That's the whole pattern.</p>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="num">04</span>
+    <span class="title">The Loop</span>
+  </div>
+  <p class="note">This is the loop. The operator defines intent. The agent executes a slice. The agent writes a handoff with Exact Next Steps. The operator reviews and approves or redirects. The queue advances. Repeat. The handoff is the scheduling mechanism — the agent proposes what comes next, the operator decides whether to promote it to the next slice spec. Agent proposes, operator approves, agent executes.</p>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="num">05</span>
+    <span class="title">What Is a Slice</span>
+  </div>
+  <p class="note">A slice is the atomic unit of work in this system. Small enough that one agent session completes it. It declares exactly what's in scope and what's explicitly out — scope drift is the default failure mode and the slice format kills it. Acceptance criteria are real checkboxes, not vibes. And the validation gate is non-optional — no handoff is written until the validator passes.</p>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="num">06</span>
+    <span class="title">The Scaffold</span>
+  </div>
+  <p class="note">This is the entire scaffold. Twelve files. No service, no database, no API. The conductor directory is identical regardless of domain — LookML, REST APIs, dbt pipelines, frontend work, all the same format. You fill in intent.md, you edit slice-01 for your first piece of work, you point an agent at the repo root with one sentence. That's it.</p>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="num">07</span>
+    <span class="title">Origins</span>
+  </div>
+  <p class="note">Conductor as a pattern traces to Google — released December 17, 2025 by the Gemini CLI team. The core idea — keep project state in a conductor directory so agents can orient without session context — is their contribution. The filesystem-as-state principle itself goes further back to Anthropic's CLAUDE.md convention. This repo extends that foundation with slice-based execution, the Exact Next Steps handoff, multi-agent support, the validation gate, and cross-repo coordination.</p>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="num">08</span>
+    <span class="title">Three Demos</span>
+  </div>
+  <p class="note">Three demos, three branches, fully independent — you don't need to run demo one before demo two. Each branch is pre-seeded with the right starting state. Greenfield bootstrap on main. Iterative feature with pair programming on demo-2-start. Automated maintenance on demo-3-start. One prompt per demo: read DEMO.md and execute it. Total runtime, all three together: about fifteen minutes.</p>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="num">09</span>
+    <span class="title">Demo 1 — Greenfield Bootstrap</span>
+  </div>
+  <p class="note">Demo one is the greenfield case. The conductor spine is pre-deployed — the agent doesn't scaffold it, it uses it. It reads the active slice, branches, generates eight LookML views from the schema document, writes the model file with eight explores, runs the validator, marks the slice stable, writes a handoff with Exact Next Steps. No scaffolding, no meta-work. First prompt to first commit to first handoff in five minutes.</p>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="num">10</span>
+    <span class="title">Demo 2 — Pair Programming</span>
+  </div>
+  <p class="note">Demo two shows the pair programming pattern, which is the core collaboration model. Phase one is fully autonomous — the agent picks up slice-04, generates the new view, adds the ninth explore, validates, hands off. Then phase two: the agent reads the Exact Next Steps from its own handoff, drafts slice-05 as a new spec, commits the draft, and stops. The operator reviews the diff live in the IDE — adjusts scope, sharpens wording — and approves. The agent picks back up and executes.</p>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="num">11</span>
+    <span class="title">Demo 3 — Automated Maintenance</span>
+  </div>
+  <p class="note">Demo three simulates a nightly cron job. No human present. The agent wakes up cold, with zero session context, and orients entirely from the conductor spine. Runs the validator. Checks the queue. Reads blockers. Writes a structured status entry — clean or degraded. Does not auto-fix anything. Commits and exits. This is the proof that a well-formed conductor spine is self-describing — any agent, any time, can orient from it alone.</p>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="num">12</span>
+    <span class="title">Validator</span>
+  </div>
+  <p class="note">The validator is the governance gate, and it is non-optional. scripts/validate.py is domain-agnostic — it checks spine structure, handoff format, active slice acceptance criteria, CI stub, git branch state. Stdlib only, zero dependencies, CI-safe. Domain-specific checks live as separate extension scripts — validate_lookml.py for this demo. Same pattern works for any domain — copy the extension, replace the checks.</p>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="num">13</span>
+    <span class="title">Any Agent · Any Project</span>
+  </div>
+  <p class="note">The scaffold is agent-agnostic. Rename AGENTS.md to match your CLI — that's the only file change needed to switch agents. Same content, just the filename your CLI auto-loads. To adapt for any project: copy the conductor directory, fill in intent.md, edit slice-01, point an agent at the root. The LookML demo is the worked example. The scaffold is the product.</p>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="num">14</span>
+    <span class="title">Ship It</span>
+  </div>
+  <p class="note">That's conductor — structured agent workflow for any project. Three demos, three branches, one prompt each: read the DEMO file and execute. The repo is on the screen, MIT licensed, zero dependencies. Clone it, pick a branch, paste the prompt into your agent of choice and watch the loop run. Happy to take questions.</p>
+</div>
+
+<hr class="divider">
+
+<p class="faq-header">Questions you'll get</p>
+
+<div class="faq">
+  <p class="q">→ How is this different from AutoGen / CrewAI / TaskWeaver?</p>
+  <p class="a">Those are multi-agent orchestration frameworks — they manage agent-to-agent communication at runtime. Conductor is a workflow governance layer — it manages human-to-agent handoffs across sessions. They're not in competition. You could run Conductor to manage the development lifecycle of a system that uses AutoGen internally.</p>
+</div>
+
+<div class="faq">
+  <p class="q">→ Why not just use a well-structured CLAUDE.md?</p>
+  <p class="a">CLAUDE.md is always-on context — it loads every session whether relevant or not. Conductor is scoped and active: the slice spec tells the agent exactly what this session's job is, the handoff records what actually happened, and the validator enforces it. CLAUDE.md is configuration. Conductor is workflow.</p>
+</div>
+
+<div class="faq">
+  <p class="q">→ Does the agent ever go off-script?</p>
+  <p class="a">The slice's out-of-scope declarations are instructions, not enforcement. An agent can violate them. That's why the validator and the operator approval step exist — they're the catch. The pattern assumes you review the diff before advancing the queue.</p>
+</div>
+
+<div class="faq">
+  <p class="q">→ What if the handoff is wrong?</p>
+  <p class="a">The operator reads it before the next session starts. That's the approval step. If the handoff doesn't reflect reality, the operator corrects it before promoting to the next slice. The system doesn't auto-advance — every slice promotion is a human decision.</p>
+</div>
+
+<div class="faq">
+  <p class="q">→ Does this work with local models?</p>
+  <p class="a">Yes — any agent that can read files and write files. The scaffold has no opinion on what model runs it. Local models tend to be weaker at following multi-step structured instructions, but the format itself is model-agnostic.</p>
+</div>
+
+<footer>
+  conductor · GS Analytics · github.com/G-Schumacher44/aug-conductor-wrkflw · MIT
+</footer>
+
+</body>
+</html>
