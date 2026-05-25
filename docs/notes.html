@@ -164,7 +164,7 @@
     <span class="num">12</span>
     <span class="title">Validator</span>
   </div>
-  <p class="note">The validator is the governance gate, and it is non-optional. scripts/validate.py is domain-agnostic — it checks spine structure, handoff format, active slice acceptance criteria, CI stub, git branch state. Stdlib only, zero dependencies, CI-safe. Domain-specific checks live as separate extension scripts — validate_lookml.py for this demo. Same pattern works for any domain — copy the extension, replace the checks.</p>
+  <p class="note">validate.py enforces what's programmatically verifiable: spine structure, handoff format, commit hash existence in git, acceptance criteria all checked, CI stub presence. Stdlib only, zero dependencies, CI-safe. Domain-specific checks live as extension scripts — see demo/scripts/ for the pattern. What the script can't catch: whether the agent checked boxes it didn't earn. That's the diff review — the operator reads the diff before advancing the queue. The script gates the format. The diff review gates the truth.</p>
 </div>
 
 <div class="slide">
