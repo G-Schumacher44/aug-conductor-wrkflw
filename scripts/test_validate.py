@@ -14,8 +14,13 @@ import tempfile
 from pathlib import Path
 
 SCRIPT = Path(__file__).parent / "validate.py"
-PASS = 0
 FAIL_COUNT = [0]
+
+# Use a real commit hash from HEAD so commit-existence checks pass in fixtures.
+_REAL_HASH = subprocess.check_output(
+    ["git", "rev-parse", "--short", "HEAD"],
+    cwd=Path(__file__).parent.parent, text=True
+).strip()
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -56,7 +61,7 @@ def make_good_project(tmp: Path) -> Path:
         "# Slice 01\n## Acceptance Criteria\n- [x] Thing done\n"
     )
     (p / "conductor" / "handoff-log.md").write_text(
-        "# Handoff\nCommit: abc1234\nExact Next Steps: do the next thing\n"
+        f"# Handoff\nCommit: {_REAL_HASH}\nExact Next Steps: do the next thing\n"
     )
     (p / ".github" / "workflows" / "ci.yml").write_text(
         "name: CI\non: push\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps: []\n"
@@ -129,8 +134,19 @@ def test_acceptance_criteria_partial():
             "# Slice 01\n## Acceptance Criteria\n- [x] Done\n- [ ] Not done yet\n"
         )
         rc, out = run(p)
-        ok("partial criteria exits 0 (warn)", rc == 0, out)
+        ok("partial criteria exits 1 (fail — blocks handoff)", rc == 1, out)
         ok("reports 1/2 criteria checked", "1/2" in out, out)
+
+
+def test_hallucinated_commit_hash():
+    with tempfile.TemporaryDirectory() as tmp:
+        p = make_good_project(Path(tmp))
+        (p / "conductor" / "handoff-log.md").write_text(
+            "# Handoff\nCommit: deadbeef\nExact Next Steps: do the next thing\n"
+        )
+        rc, out = run(p)
+        ok("fake commit hash exits 1", rc == 1, out)
+        ok("reports fail for hallucinated hash", "does not exist" in out, out)
 
 
 def test_acceptance_criteria_all_checked():
@@ -177,6 +193,7 @@ tests = [
     test_acceptance_criteria_all_checked,
     test_active_slice_none,
     test_no_ci_stub,
+    test_hallucinated_commit_hash,
 ]
 
 hr = "─" * 52

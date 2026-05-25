@@ -78,6 +78,38 @@ def check_handoff():
 check("handoff-log.md written", check_handoff)
 
 
+def check_commit_hash():
+    if not project_deployed:
+        return "skip", "project/ not deployed", None
+    f = PROJECT / "conductor" / "handoff-log.md"
+    if not f.exists():
+        return "skip", "handoff-log.md missing", None
+    content = re.sub(r"<!--.*?-->", "", f.read_text(), flags=re.DOTALL)
+    m = re.search(r"Commit:\s*([0-9a-f]{7,40})", content, re.IGNORECASE)
+    if not m:
+        return "warn", "no commit hash found in Commit: field", None
+    commit = m.group(1)
+    try:
+        subprocess.check_output(
+            ["git", "cat-file", "-e", commit],
+            cwd=REPO_ROOT, stderr=subprocess.DEVNULL
+        )
+    except subprocess.CalledProcessError:
+        return "fail", f"Commit: {commit} does not exist in git — handoff may be hallucinated", None
+    try:
+        log = subprocess.check_output(
+            ["git", "log", "--oneline", "--ancestry-path", f"{commit}^..HEAD"],
+            cwd=REPO_ROOT, text=True, stderr=subprocess.DEVNULL
+        )
+        if commit[:7] not in log:
+            return "warn", f"Commit: {commit} exists but is not reachable from HEAD", None
+    except Exception:
+        pass
+    return "pass", commit, None
+
+check("Handoff commit hash is real", check_commit_hash)
+
+
 # ── CI workflow stub ──────────────────────────────────────────────────────────
 
 def check_ci_stub():
@@ -141,8 +173,8 @@ if active_slice_rel and not active_slice_rel.lower().startswith("none") and (PRO
         lines = "\n".join(f"       {'[x]' if t else '[ ]'} {text}" for t, text in criteria)
         results.append({
             "name": f"Acceptance criteria  {done}/{total} checked",
-            "status": "pass" if done == total else "warn",
-            "message": "",
+            "status": "pass" if done == total else "fail",
+            "message": "" if done == total else "unchecked items block handoff",
             "detail": lines,
         })
     else:
