@@ -32,7 +32,11 @@ This repo extends that foundation:
 - **Cross-repo tracks** — `conductor/tracks.md` tracks dependencies across repos; spokes coordinate without merging codebases.
 - **No external dependencies** — the entire workflow runs from the filesystem. No hosted service, no database, no API calls.
 
-Sources: [Google Developers Blog — Conductor: Introducing context-driven development for Gemini CLI](https://developers.googleblog.com/2025/12/conductor-introducing-context-driven-development-for-gemini-cli/) · [MarkTechPost — Google Releases Conductor](https://www.marktechpost.com/2026/02/02/google-releases-conductor-a-context-driven-ai-development-framework-for-gemini-cli/)
+**Sources:**
+- [Google Developers Blog — Conductor: Introducing context-driven development for Gemini CLI](https://developers.googleblog.com/conductor-introducing-context-driven-development-for-gemini-cli/)
+- [MarkTechPost — Google Releases Conductor](https://www.marktechpost.com/2026/02/02/google-releases-conductor-a-context-driven-gemini-cli-extension-that-stores-knowledge-as-markdown-and-orchestrates-agentic-workflows/)
+- [InfoQ — Google Introduces Conductor, a Context-Driven Development Extension for Gemini CLI](https://www.infoq.com/news/2026/01/google-conductor/)
+- [GitHub — gemini-cli-extensions/conductor](https://github.com/gemini-cli-extensions/conductor)
 
 ---
 
