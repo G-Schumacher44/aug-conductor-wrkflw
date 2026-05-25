@@ -1,0 +1,273 @@
+/* ============================================================
+   GS Analytics — Colors & Type Tokens
+   Source of truth lifted from G-Schumacher44/portfolio-site
+   (src/styles/globals.css). All values here are 1:1 with that
+   repo's `@theme` block unless explicitly extended.
+   ============================================================ */
+
+/* ---------- Web fonts (Google CDN — see README) ---------- */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Caveat:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ---------- CORE PALETTE — DARK (default) ---------- */
+  /* The product lives in dark mode. Light is rare/comic-page only. */
+
+  /* Surfaces — near-black blues */
+  --bg:            #0c0d10;   /* page */
+  --card:          #14161a;   /* raised card */
+  --surface:       #161a20;   /* nav, panels */
+  --line:          #22262c;   /* hairline border */
+  --line-strong:   #2c3138;
+
+  /* Foreground */
+  --text:          #e9edf1;   /* primary text */
+  --muted:         #a7b0bb;   /* secondary text */
+  --muted-dim:     rgba(167, 176, 187, 0.5);
+
+  /* Brand — a slate / dusty blue. NOT a saturated cyan. */
+  --brand:         #6699cc;
+  --brand-2:       #4a7fb3;   /* darker brand for hover/active */
+  --brand-deep:    #1f3a5f;   /* logo blue / dark surfaces */
+  --brand-ink:     #0f2540;   /* deepest brand for filled bgs */
+  --brand-tint:    rgba(102, 153, 204, 0.12);   /* used for icon chips */
+  --brand-dim:     rgba(102, 153, 204, 0.08);
+  --glow:          rgba(102, 153, 204, 0.15);   /* hero blob fill */
+  --glow-strong:   rgba(102, 153, 204, 0.30);   /* glow-pulse peak */
+  --bracket:       rgba(102, 153, 204, 0.50);   /* [ ] frame around buttons */
+
+  /* Accents (used sparingly) */
+  --teal:          #4ec9b0;   /* terminal "OK", code highlight */
+  --emerald-line:  rgba(16, 185, 129, 0.50);   /* terminal `$` lines bg */
+  --emerald-low:   rgba(16, 185, 129, 0.35);   /* terminal body text */
+  --magenta:       #e0457b;   /* pillar-swarm "High" end of scale */
+  --purple:        #8e6bc5;   /* mid pillar-swarm hue */
+  --garden:        #3d7a4a;   /* GardenBook (side product) green */
+  --warn:          #d99a4a;   /* warnings */
+  --danger:        #d96666;   /* errors */
+
+  /* Semantic */
+  --fg1:           var(--text);
+  --fg2:           var(--muted);
+  --fg3:           var(--muted-dim);
+  --link:          var(--brand);
+  --link-hover:    var(--text);
+  --focus-ring:    rgba(102, 153, 204, 0.40);
+
+  /* Selection */
+  --selection-bg:  rgba(102, 153, 204, 0.30);
+
+  /* ---------- TYPE ---------- */
+  /* Brand is mono-first. Body is JetBrains Mono. */
+  --font-mono:     'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans:     'JetBrains Mono', ui-monospace, monospace; /* same as mono — by design */
+  --font-hand:     'Caveat', cursive;                          /* hand-drawn accent / comic pages */
+  --font-serif:    Georgia, 'Times New Roman', serif;          /* not used by brand; fallback only */
+
+  /* Type scale — built around 1rem = 16px, line-height generous */
+  --fs-xs:    11px;     /* eyebrows / micro caps */
+  --fs-sm:    13px;
+  --fs-base:  16px;
+  --fs-lg:    18px;
+  --fs-xl:    20px;
+  --fs-2xl:   24px;
+  --fs-3xl:   30px;
+  --fs-4xl:   36px;
+  --fs-5xl:   48px;
+  --fs-hero:  clamp(40px, 8vw, 96px);  /* `garrett_schumacher` style mega type */
+
+  --lh-tight:  1.15;
+  --lh-snug:   1.35;
+  --lh-normal: 1.5;
+  --lh-relax:  1.65;   /* body default */
+
+  --tracking-mega:   -0.02em;
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0;
+  --tracking-eyebrow: 0.3em;   /* all-caps section eyebrows */
+
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semi:    600;
+  --weight-bold:    700;
+
+  /* ---------- ELEVATION / RADII / SPACING ---------- */
+  --radius-xs:  4px;
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-2xl: 24px;       /* GlassPanel default */
+  --radius-pill: 999px;
+
+  --shadow-card:    0 8px 32px rgba(0, 0, 0, 0.25);
+  --shadow-lift:    0 12px 40px rgba(0, 0, 0, 0.35);
+  --shadow-glow:    0 0 40px rgba(102, 153, 204, 0.30);
+  --shadow-inset:   inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  /* Spacing — Tailwind-ish 4px base */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* Motion */
+  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast:   150ms;
+  --dur-base:   200ms;
+  --dur-slow:   300ms;
+  --dur-hero:   700ms;   /* hero-fade-up */
+}
+
+/* ---------- SEMANTIC HEADLINE / BODY HELPERS ---------- */
+/* These are convenience classes that map to the brand's actual usage. */
+
+.gs-display {
+  font-family: var(--font-mono);
+  font-size: var(--fs-hero);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-mega);
+  line-height: var(--lh-tight);
+  color: var(--text);
+}
+
+.gs-tagline {
+  font-family: var(--font-mono);
+  font-size: clamp(20px, 3vw, 36px);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-tight);
+  color: var(--brand);
+}
+
+.gs-h1 { font-family: var(--font-mono); font-size: var(--fs-4xl); font-weight: var(--weight-bold); color: var(--text); letter-spacing: var(--tracking-tight); }
+.gs-h2 { font-family: var(--font-mono); font-size: var(--fs-2xl); font-weight: var(--weight-bold); color: var(--text); }
+.gs-h3 { font-family: var(--font-mono); font-size: var(--fs-lg); font-weight: var(--weight-semi); color: var(--brand); }
+.gs-h4 { font-family: var(--font-mono); font-size: var(--fs-base); font-weight: var(--weight-semi); color: var(--text); }
+
+.gs-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--weight-semi);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: rgba(102, 153, 204, 0.72);
+}
+
+.gs-body {
+  font-family: var(--font-mono);
+  font-size: var(--fs-base);
+  line-height: var(--lh-relax);
+  color: var(--muted);
+}
+
+.gs-code {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--teal);
+  background: rgba(78, 201, 176, 0.08);
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+}
+
+.gs-hand {
+  font-family: var(--font-hand);
+  font-weight: var(--weight-semi);
+  letter-spacing: 0.01em;
+}
+
+/* ---------- DEFAULT BASE STYLES ---------- */
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--fs-base);
+  line-height: var(--lh-relax);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: var(--selection-bg); color: var(--text); }
+
+a { color: var(--brand); text-decoration: none; transition: color var(--dur-base); }
+a:hover { color: var(--text); text-decoration: underline; }
+
+/* ---------- COMPONENT PRIMITIVES ---------- */
+/* The brand's signature: bracket button. */
+.gs-bracket-btn {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color var(--dur-base);
+}
+.gs-bracket-btn .bk { color: var(--bracket); transition: transform var(--dur-base); }
+.gs-bracket-btn .lbl { padding: 0 8px; transition: color var(--dur-base); }
+.gs-bracket-btn:hover { color: var(--text); }
+.gs-bracket-btn:hover .bk:first-child { transform: translateX(-2px); }
+.gs-bracket-btn:hover .bk:last-child  { transform: translateX(2px); }
+.gs-bracket-btn--primary .bk { color: var(--brand); }
+.gs-bracket-btn--primary .lbl { color: var(--text); }
+.gs-bracket-btn--primary:hover .lbl { color: var(--brand); }
+
+/* GlassPanel — the workhorse card */
+.gs-glass {
+  position: relative;
+  border-radius: var(--radius-2xl);
+  border: 1px solid rgba(102, 153, 204, 0.12);
+  background: rgba(20, 22, 26, 0.60);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-card);
+}
+.gs-glass--hover { transition: transform var(--dur-slow) var(--ease-out), border-color var(--dur-slow), box-shadow var(--dur-slow); }
+.gs-glass--hover:hover { transform: translateY(-4px); border-color: rgba(102, 153, 204, 0.25); box-shadow: var(--shadow-lift); }
+
+/* Gradient divider — used between sections */
+.gs-gradient-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--brand), transparent);
+}
+
+/* Icon chip — small rounded tile behind a Lucide icon */
+.gs-icon-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  background: var(--brand-tint);
+  color: var(--brand);
+}
+
+/* Eyebrow + section title combo */
+.gs-section-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--weight-semi);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: rgba(102, 153, 204, 0.72);
+}
+
+/* Keyframes — copied from animations.css */
+@keyframes gs-float    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+@keyframes gs-pulse    { 0%,100%{opacity:1} 50%{opacity:0.7} }
+@keyframes gs-blink    { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes gs-glow     { 0%,100%{box-shadow:0 0 20px var(--glow)} 50%{box-shadow:0 0 40px var(--glow-strong)} }
+@keyframes gs-fade-up  { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.gs-fade-in { animation: gs-fade-up var(--dur-hero) var(--ease-out) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
