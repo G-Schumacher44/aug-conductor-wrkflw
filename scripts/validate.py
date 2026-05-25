@@ -7,23 +7,28 @@ Checks:
   - handoff format (Commit:, Exact Next Steps)
   - active slice acceptance criteria checkboxes
   - CI workflow stub presence
-  - git branch state
+  - git branch state (local only — skipped in CI)
 
 For domain-specific checks (LookML, dbt, etc.) see demo/scripts/.
 
 Usage:
   python3 scripts/validate.py
+
+  # Point at an arbitrary project root (useful for testing / adapters):
+  CONDUCTOR_PROJECT_ROOT=/path/to/my-project python3 scripts/validate.py
 """
 
+import os
 import re
 import sys
 import subprocess
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent
-PROJECT = REPO_ROOT / "project"
+PROJECT   = Path(os.environ.get("CONDUCTOR_PROJECT_ROOT", str(REPO_ROOT / "project")))
 
 results = []
+project_deployed = PROJECT.exists()
 
 
 def check(name, fn):
@@ -37,14 +42,15 @@ def check(name, fn):
 # ── Spine structure ───────────────────────────────────────────────────────────
 
 check("project/ directory", lambda: (
-    ("pass", "", None) if PROJECT.exists()
-    else ("fail", "not found — scaffold project/ first", None)
+    ("pass", "", None) if project_deployed
+    else ("warn", "not found — set CONDUCTOR_PROJECT_ROOT or scaffold project/ first (project checks skipped)", None)
 ))
 
 for rel in ["AGENTS.md", "intent.md", "conductor/index.md", "conductor/handoff-log.md"]:
     path = rel
     check(f"project/{rel}", lambda p=path: (
-        ("pass", "", None) if (PROJECT / p).exists()
+        ("skip", "project/ not deployed", None) if not project_deployed
+        else ("pass", "", None) if (PROJECT / p).exists()
         else ("fail", "missing — scaffold incomplete", None)
     ))
 
@@ -52,6 +58,8 @@ for rel in ["AGENTS.md", "intent.md", "conductor/index.md", "conductor/handoff-l
 # ── Handoff format ────────────────────────────────────────────────────────────
 
 def check_handoff():
+    if not project_deployed:
+        return "skip", "project/ not deployed", None
     f = PROJECT / "conductor" / "handoff-log.md"
     if not f.exists():
         return "fail", "missing", None
@@ -73,6 +81,8 @@ check("handoff-log.md written", check_handoff)
 # ── CI workflow stub ──────────────────────────────────────────────────────────
 
 def check_ci_stub():
+    if not project_deployed:
+        return "skip", "project/ not deployed", None
     workflows = PROJECT / ".github" / "workflows"
     if not workflows.exists() or not any(workflows.iterdir()):
         return "warn", "no .github/workflows — stub recommended", None
@@ -107,10 +117,12 @@ def parse_acceptance_criteria(content):
     return items
 
 
-active_slice_rel = get_active_slice_rel()
+active_slice_rel = get_active_slice_rel() if project_deployed else None
 
 
 def check_active_slice():
+    if not project_deployed:
+        return "skip", "project/ not deployed", None
     if not active_slice_rel:
         return "warn", "could not parse from conductor/index.md", None
     if active_slice_rel.lower().startswith("none"):
@@ -145,6 +157,8 @@ if active_slice_rel and not active_slice_rel.lower().startswith("none") and (PRO
 # ── Git branch ────────────────────────────────────────────────────────────────
 
 def check_branch():
+    if os.environ.get("CI") or os.environ.get("GITHUB_ACTIONS"):
+        return "skip", "CI environment", None
     try:
         branch = subprocess.check_output(
             ["git", "branch", "--show-current"],
