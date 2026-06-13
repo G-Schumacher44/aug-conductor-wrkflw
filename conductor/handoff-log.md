@@ -4,6 +4,31 @@ Newest entry at the top. Current-state handoff only; older entries live in `cond
 
 ---
 
+## Slice 01 — CLOSED (repo = stable demo/reference artifact)
+
+Date: 2026-06-13
+Commit: (this commit)
+Target Branch: main
+Status: CLOSED — operator-approved at the 2026-06-12 fleet triage.
+Conductor Mode: audit
+
+### Objective
+Formally close slice-01. Bootstrap completed 2026-05-23 (`3734062`, "no further slices planned");
+the commits since (deck redesign/refactor, `bd49f2f`..`19f9ce7`) are presentation polish, not
+Conductor-managed work. The repo's job now is to exist as a runnable Conductor demo — three demo
+layers + the governance validator — and as reference material.
+
+### Current State
+- Conductor standard v2.0.0 thin-stamped 2026-06-12 (`conductor/standard.json`, this commit).
+- No active slice. Future work here (new demo layers, validator changes) opens a fresh slice.
+- Note for the next agent: `scripts/validate.py` has an uncommitted local modification (operator's,
+  not reviewed here) — reconcile before building on it.
+
+### Exact Next Steps
+None. Closed.
+
+---
+
 ## Slice 01 — Bootstrap Complete
 
 Date: 2026-05-23
