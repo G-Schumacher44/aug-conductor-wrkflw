@@ -1,9 +1,9 @@
 {
   "standardVersion": "2.0.0",
-  "hub": "workspace-partner",
+  "hub": "self",
   "mode": "thin",
-  "libraryFallback": "/Volumes/t9/dev/apps/workspace-partner/conductor",
+  "libraryFallback": "",
   "receipt": [],
   "stamped": "2026-06-12",
-  "source": "workspace-partner/conductor/standard/manifest.json"
+  "source": "self"
 }
