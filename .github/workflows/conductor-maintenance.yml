@@ -25,6 +25,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history, NOT the default shallow depth-1 clone. The validator's
+          # check_commit_hash verifies that the Commit: hash in the handoff actually exists
+          # (`git cat-file -e`) — its whole purpose is catching a hallucinated hash. Under a
+          # depth-1 checkout only the tip commit is present, so EVERY historical hash reports
+          # "does not exist in git — handoff may be hallucinated" and the check inverts into a
+          # guaranteed false positive. Caught by dispatching this workflow rather than
+          # trusting a local run, where full history made it pass.
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
