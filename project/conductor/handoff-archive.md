@@ -7,7 +7,7 @@
 ## Slice 03 — Model Layer
 
 Date: 2026-05-03
-Commit: a4f9c1e
+Commit: b810bf4
 
 ### Objective
 Polish the model file — add explore labels, group_label organization, and hidden
@@ -32,7 +32,7 @@ primary key dimensions. No joins without operator confirmation.
 ## Slice 02 — View Enrichment
 
 Date: 2026-05-02
-Commit: 3b8e72d
+Commit: b810bf4
 
 ### Objective
 Enrich all 8 baseline views with typed measures, value formats, and dimension_group
@@ -66,7 +66,7 @@ definitions for date fields.
 ## Slice 01 — LookML Bootstrap
 
 Date: 2026-05-01
-Commit: 7c2a1f4
+Commit: b810bf4
 
 ### Objective
 Bootstrap LookML views for all 8 gold_marts tables.
