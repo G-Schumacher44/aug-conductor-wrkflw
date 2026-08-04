@@ -11,8 +11,20 @@ Checks:
 
 For domain-specific checks (LookML, dbt, etc.) see demo/scripts/.
 
+Two questions, two modes — they are not the same question:
+
+  (default)  "Am I ready to hand off?"  Unchecked acceptance criteria FAIL. This is the gate the
+             demos require before writing a handoff, and it keeps its teeth.
+
+  --health   "Is the spine intact?"  Structure, handoff format, commit hashes and credentials are
+             still enforced; slice PROGRESS is reported but does not fail. This is for scheduled
+             monitoring of a repo that legitimately sits at an unstarted slice — `main` here ships
+             slice-01 deliberately at 0/8 as Demo 1's starting state, so asking the handoff
+             question on a schedule can only ever answer "no".
+
 Usage:
   python3 scripts/validate.py
+  python3 scripts/validate.py --health
 
   # Point at an arbitrary project root (useful for testing / adapters):
   CONDUCTOR_PROJECT_ROOT=/path/to/my-project python3 scripts/validate.py
@@ -26,6 +38,10 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent
 PROJECT   = Path(os.environ.get("CONDUCTOR_PROJECT_ROOT", str(REPO_ROOT / "project")))
+
+# --health: monitoring mode. See the module docstring for why this is a different question, not a
+# weaker version of the same one.
+HEALTH_MODE = "--health" in sys.argv[1:]
 
 results = []
 project_deployed = PROJECT.exists()
@@ -171,10 +187,18 @@ if active_slice_rel and not active_slice_rel.lower().startswith("none") and (PRO
         done = sum(1 for ticked, _ in criteria if ticked)
         total = len(criteria)
         lines = "\n".join(f"       {'[x]' if t else '[ ]'} {text}" for t, text in criteria)
+        if done == total:
+            status, message = "pass", ""
+        elif HEALTH_MODE:
+            # Progress, not a verdict: a slice sitting unstarted is the normal resting state of a
+            # demo repo, not a defect. Still SHOWN, so the number is never hidden.
+            status, message = "warn", f"{total - done} unchecked — progress only in --health mode"
+        else:
+            status, message = "fail", "unchecked items block handoff"
         results.append({
             "name": f"Acceptance criteria  {done}/{total} checked",
-            "status": "pass" if done == total else "fail",
-            "message": "" if done == total else "unchecked items block handoff",
+            "status": status,
+            "message": message,
             "detail": lines,
         })
     else:
@@ -217,7 +241,8 @@ skipped = sum(1 for r in results if r["status"] == "skip")
 icons = {"pass": "✓", "warn": "~", "fail": "✗", "skip": "-"}
 hr = "─" * 52
 
-print(f"\nConductor Spine Validation\n{hr}")
+mode_label = "Conductor Spine Validation — health mode (slice progress not enforced)" if HEALTH_MODE else "Conductor Spine Validation"
+print(f"\n{mode_label}\n{hr}")
 for r in results:
     icon = icons.get(r["status"], "?")
     suffix = f"  — {r['message']}" if r["message"] else ""

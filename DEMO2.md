@@ -74,7 +74,7 @@ Commit: `feat(model): add fct_promotions explore`
 ### 6 — Run the spine validator
 
 ```bash
-python scripts/validate.py
+python3 scripts/validate.py
 ```
 
 Required gate before writing the handoff. Fix any failures. All checks must pass.

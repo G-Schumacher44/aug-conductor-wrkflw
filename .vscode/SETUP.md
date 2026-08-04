@@ -2,12 +2,17 @@
 
 Optional tooling for this repo. All items are independent — set up what applies to your environment.
 
-**Note:** `mcp.json` and `settings.json` are shipped as `.example` files so VS Code doesn't
-auto-load them and produce errors on clone. Copy them when you're ready to set up:
+**Note:** `mcp.json` is shipped as an `.example` file so VS Code doesn't auto-load it and produce
+errors on clone. Copy it when you're ready to set up:
+
+`settings.json` IS committed and does auto-load — deliberately. It carries the file-watcher
+exclusion that stops VS Code pegging a core when an agent writes to `project/` in a tight loop,
+which is the normal state of affairs while running these demos. It contains no credentials and no
+machine-specific paths. (`settings.example.json` remains as a minimal starting point if you would
+rather not use the committed one — delete `settings.json` and copy it instead.)
 
 ```bash
 cp .vscode/mcp.example.json .vscode/mcp.json
-cp .vscode/settings.example.json .vscode/settings.json
 ```
 
 ---

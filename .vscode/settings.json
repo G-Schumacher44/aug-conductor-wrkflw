@@ -5,9 +5,11 @@
     "**/.venv/**": true,
     "**/project/**": true
   },
+  // NOT "**/project" here. The watcher exclusion above is about CPU, and is fine — but excluding
+  // project/ from SEARCH hides the one directory every demo tells the reader to open, so a
+  // search for `slice-01` or `fct_promotions` silently returns nothing.
   "search.exclude": {
-    "**/.venv": true,
-    "**/project": true
+    "**/.venv": true
   },
   "git.autorefresh": false,
 

@@ -3,7 +3,14 @@
 Source: BigQuery dataset `your-gcp-project.gold_marts`
 Domain: E-commerce (orders, revenue, shipping, customers, marketing)
 
-All 8 tables are independently aggregated gold-layer fact tables. No FK joins exist between them at this grain.
+All 9 tables are independently aggregated gold-layer fact tables. No FK joins exist between them
+at this grain.
+
+**Which demo uses which:** the first 8 are the dataset as it stands at Demo 1, and slice-01 builds
+one view per table for exactly those (hence its "8 total" acceptance criterion). `fct_promotions`
+is the table Demo 2 introduces — its slice-04 scenario is "a new table has been added to the
+dataset, write its view" — and it is documented here because that slice sends the agent to this
+file to find it. If you are running Demo 1, stop at `fct_daily_dashboard`.
 
 ---
 

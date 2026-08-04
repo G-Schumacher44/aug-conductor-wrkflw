@@ -17,7 +17,9 @@ marketing attribution, shipping, cart abandonment, and a daily KPI dashboard.
 **BQ project:** `your-gcp-project`
 **Dataset:** `gold_marts`
 **Schema reference:** [`demo/schema/gold_marts.md`](./demo/schema/gold_marts.md)
-**Reference output:** [`demo/views/`](./demo/views/) — what a correct slice 01 produces
+**Reference output:** [`demo/views/`](./demo/views/) — 9 views: the 8 a correct slice 01
+produces, plus `fct_promotions.view.lkml`, which Demo 2's slice-04 adds. Compare against
+the first 8 when checking Demo 1's output.
 
 ---
 
@@ -38,7 +40,7 @@ You do not need to read DEMO.md again after this point.
 - Use only columns listed in `demo/schema/gold_marts.md` — do not invent fields
 - No hardcoded credentials
 - Commit as you go — not one giant commit at the end
-- Run `python scripts/validate.py` from the **repo root** before writing the handoff
+- Run `python3 scripts/validate.py` from the **repo root** before writing the handoff
 - `demo/views/` is reference output only — write your output to `project/views/`
 
 ---
