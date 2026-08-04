@@ -1,21 +1,33 @@
 #!/usr/bin/env python3
 """
-Conductor spine validator — agnostic to workflow type.
+Conductor spine validator — domain-agnostic, stdlib only.
 
-Tier 1: Conductor governance checks (always runs, zero dependencies)
-  - project/ spine structure
+Checks:
+  - project/ spine structure and required files
   - handoff format (Commit:, Exact Next Steps)
   - active slice acceptance criteria checkboxes
-  - git branch state
+  - CI workflow stub presence
+  - git branch state (local only — skipped in CI)
 
-Tier 2: Simulated CI — structural LookML shape checks (no external tooling required)
-  - view files: view block, sql_table_name, dimensions, count measure
-  - model file: connection, explore blocks
-  Runs when project/views/ and project/models/ exist.
-  Records NOT RUN for any check that requires external tooling (lkml, LAMS, Spectacles).
+For domain-specific checks (LookML, dbt, etc.) see demo/scripts/.
+
+Two questions, two modes — they are not the same question:
+
+  (default)  "Am I ready to hand off?"  Unchecked acceptance criteria FAIL. This is the gate the
+             demos require before writing a handoff, and it keeps its teeth.
+
+  --health   "Is the spine intact?"  Structure, handoff format, commit hashes and credentials are
+             still enforced; slice PROGRESS is reported but does not fail. This is for scheduled
+             monitoring of a repo that legitimately sits at an unstarted slice — `main` here ships
+             slice-01 deliberately at 0/8 as Demo 1's starting state, so asking the handoff
+             question on a schedule can only ever answer "no".
 
 Usage:
-  python scripts/validate.py
+  python3 scripts/validate.py
+  python3 scripts/validate.py --health
+
+  # Point at an arbitrary project root (useful for testing / adapters):
+  CONDUCTOR_PROJECT_ROOT=/path/to/my-project python3 scripts/validate.py
 """
 
 import os
@@ -25,9 +37,14 @@ import subprocess
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent
-PROJECT = REPO_ROOT / "project"
+PROJECT   = Path(os.environ.get("CONDUCTOR_PROJECT_ROOT", str(REPO_ROOT / "project")))
+
+# --health: monitoring mode. See the module docstring for why this is a different question, not a
+# weaker version of the same one.
+HEALTH_MODE = "--health" in sys.argv[1:]
 
 results = []
+project_deployed = PROJECT.exists()
 
 
 def check(name, fn):
@@ -38,22 +55,27 @@ def check(name, fn):
         results.append({"name": name, "status": "fail", "message": str(e), "detail": None})
 
 
-# ── Tier 1: Conductor spine ──────────────────────────────────────────────────
+# ── Spine structure ───────────────────────────────────────────────────────────
 
 check("project/ directory", lambda: (
-    ("pass", "", None) if PROJECT.exists()
-    else ("fail", "not found — scaffold project/ first", None)
+    ("pass", "", None) if project_deployed
+    else ("warn", "not found — set CONDUCTOR_PROJECT_ROOT or scaffold project/ first (project checks skipped)", None)
 ))
 
 for rel in ["AGENTS.md", "intent.md", "conductor/index.md", "conductor/handoff-log.md"]:
-    path = rel  # capture for closure
+    path = rel
     check(f"project/{rel}", lambda p=path: (
-        ("pass", "", None) if (PROJECT / p).exists()
+        ("skip", "project/ not deployed", None) if not project_deployed
+        else ("pass", "", None) if (PROJECT / p).exists()
         else ("fail", "missing — scaffold incomplete", None)
     ))
 
 
+# ── Handoff format ────────────────────────────────────────────────────────────
+
 def check_handoff():
+    if not project_deployed:
+        return "skip", "project/ not deployed", None
     f = PROJECT / "conductor" / "handoff-log.md"
     if not f.exists():
         return "fail", "missing", None
@@ -69,17 +91,51 @@ def check_handoff():
         return "warn", f"required fields missing: {', '.join(missing)}", None
     return "pass", "", None
 
-
 check("handoff-log.md written", check_handoff)
 
 
+def check_commit_hash():
+    if not project_deployed:
+        return "skip", "project/ not deployed", None
+    f = PROJECT / "conductor" / "handoff-log.md"
+    if not f.exists():
+        return "skip", "handoff-log.md missing", None
+    content = re.sub(r"<!--.*?-->", "", f.read_text(), flags=re.DOTALL)
+    m = re.search(r"Commit:\s*([0-9a-f]{7,40})", content, re.IGNORECASE)
+    if not m:
+        return "warn", "no commit hash found in Commit: field", None
+    commit = m.group(1)
+    try:
+        subprocess.check_output(
+            ["git", "cat-file", "-e", commit],
+            cwd=REPO_ROOT, stderr=subprocess.DEVNULL
+        )
+    except subprocess.CalledProcessError:
+        return "fail", f"Commit: {commit} does not exist in git — handoff may be hallucinated", None
+    try:
+        log = subprocess.check_output(
+            ["git", "log", "--oneline", "--ancestry-path", f"{commit}^..HEAD"],
+            cwd=REPO_ROOT, text=True, stderr=subprocess.DEVNULL
+        )
+        if commit[:7] not in log:
+            return "warn", f"Commit: {commit} exists but is not reachable from HEAD", None
+    except Exception:
+        pass
+    return "pass", commit, None
+
+check("Handoff commit hash is real", check_commit_hash)
+
+
+# ── CI workflow stub ──────────────────────────────────────────────────────────
+
 def check_ci_stub():
+    if not project_deployed:
+        return "skip", "project/ not deployed", None
     workflows = PROJECT / ".github" / "workflows"
     if not workflows.exists() or not any(workflows.iterdir()):
         return "warn", "no .github/workflows — stub recommended", None
     files = [f.name for f in workflows.iterdir()]
     return "pass", ", ".join(files), None
-
 
 check("CI workflow stub", check_ci_stub)
 
@@ -109,10 +165,12 @@ def parse_acceptance_criteria(content):
     return items
 
 
-active_slice_rel = get_active_slice_rel()
+active_slice_rel = get_active_slice_rel() if project_deployed else None
 
 
 def check_active_slice():
+    if not project_deployed:
+        return "skip", "project/ not deployed", None
     if not active_slice_rel:
         return "warn", "could not parse from conductor/index.md", None
     if active_slice_rel.lower().startswith("none"):
@@ -120,7 +178,6 @@ def check_active_slice():
     if not (PROJECT / active_slice_rel).exists():
         return "fail", f"{active_slice_rel} not found", None
     return "pass", active_slice_rel, None
-
 
 check("Active slice file", check_active_slice)
 
@@ -130,10 +187,18 @@ if active_slice_rel and not active_slice_rel.lower().startswith("none") and (PRO
         done = sum(1 for ticked, _ in criteria if ticked)
         total = len(criteria)
         lines = "\n".join(f"       {'[x]' if t else '[ ]'} {text}" for t, text in criteria)
+        if done == total:
+            status, message = "pass", ""
+        elif HEALTH_MODE:
+            # Progress, not a verdict: a slice sitting unstarted is the normal resting state of a
+            # demo repo, not a defect. Still SHOWN, so the number is never hidden.
+            status, message = "warn", f"{total - done} unchecked — progress only in --health mode"
+        else:
+            status, message = "fail", "unchecked items block handoff"
         results.append({
             "name": f"Acceptance criteria  {done}/{total} checked",
-            "status": "pass" if done == total else "warn",
-            "message": "",
+            "status": status,
+            "message": message,
             "detail": lines,
         })
     else:
@@ -145,83 +210,11 @@ if active_slice_rel and not active_slice_rel.lower().startswith("none") and (PRO
         })
 
 
-# ── Tier 2: Simulated CI — LookML structural checks ─────────────────────────
-
-views_dir = PROJECT / "views"
-models_dir = PROJECT / "models"
-
-if views_dir.exists() or models_dir.exists():
-
-    def check_manifest():
-        manifest = PROJECT / "manifest.lkml"
-        if not manifest.exists():
-            return "warn", "manifest.lkml missing — add project_name declaration", None
-        if not re.search(r"project_name\s*:", manifest.read_text()):
-            return "warn", "manifest.lkml present but missing project_name:", None
-        return "pass", "", None
-
-    check("manifest.lkml", check_manifest)
-
-    def check_views_structure():
-        if not views_dir.exists():
-            return "fail", "project/views/ not found", None
-        view_files = list(views_dir.glob("*.view.lkml"))
-        if not view_files:
-            return "fail", "no .view.lkml files found", None
-        issues = []
-        for vf in view_files:
-            content = vf.read_text()
-            name = vf.name
-            if not re.search(r"\bview\s*:", content):
-                issues.append(f"{name}: missing view block")
-            if not re.search(r"\bsql_table_name\s*:", content):
-                issues.append(f"{name}: missing sql_table_name")
-            if not re.search(r"\bdimension\s*:", content):
-                issues.append(f"{name}: no dimensions found")
-            if not re.search(r"type\s*:\s*count", content):
-                issues.append(f"{name}: missing count measure")
-        if issues:
-            return "warn", f"{len(issues)} structural issue(s)", "\n".join(f"       {i}" for i in issues)
-        return "pass", f"{len(view_files)} view(s) structurally valid (sim — lkml pending approval)", None
-
-    check("LookML views — simulated check", check_views_structure)
-
-    def check_model_structure():
-        if not models_dir.exists():
-            return "fail", "project/models/ not found", None
-        model_files = list(models_dir.glob("*.model.lkml"))
-        if not model_files:
-            return "fail", "no .model.lkml files found", None
-        content = model_files[0].read_text()
-        issues = []
-        if not re.search(r"\bconnection\s*:", content):
-            issues.append("missing connection:")
-        explores = re.findall(r"\bexplore\s*:\s*\w+", content)
-        if not explores:
-            issues.append("no explore blocks found")
-        if issues:
-            return "warn", "; ".join(issues), None
-        return "pass", f"{len(explores)} explore(s) — sim (lkml pending approval)", None
-
-    check("LookML model — simulated check", check_model_structure)
-
-    results.append({
-        "name": "lkml syntax check",
-        "status": "skip",
-        "message": "NOT RUN — pending tooling approval",
-        "detail": None,
-    })
-    results.append({
-        "name": "LAMS style check",
-        "status": "skip",
-        "message": "NOT RUN — pending tooling approval",
-        "detail": None,
-    })
-
-
-# ── Git state ────────────────────────────────────────────────────────────────
+# ── Git branch ────────────────────────────────────────────────────────────────
 
 def check_branch():
+    if os.environ.get("CI") or os.environ.get("GITHUB_ACTIONS"):
+        return "skip", "CI environment", None
     try:
         branch = subprocess.check_output(
             ["git", "branch", "--show-current"],
@@ -235,21 +228,21 @@ def check_branch():
     except Exception:
         return "warn", "could not determine branch", None
 
-
 check("Git branch is a feature branch", check_branch)
 
 
-# ── Report ───────────────────────────────────────────────────────────────────
+# ── Report ────────────────────────────────────────────────────────────────────
 
-passed = sum(1 for r in results if r["status"] == "pass")
-warned = sum(1 for r in results if r["status"] == "warn")
-failed = sum(1 for r in results if r["status"] == "fail")
+passed  = sum(1 for r in results if r["status"] == "pass")
+warned  = sum(1 for r in results if r["status"] == "warn")
+failed  = sum(1 for r in results if r["status"] == "fail")
 skipped = sum(1 for r in results if r["status"] == "skip")
 
 icons = {"pass": "✓", "warn": "~", "fail": "✗", "skip": "-"}
 hr = "─" * 52
 
-print(f"\nConductor Spine Validation\n{hr}")
+mode_label = "Conductor Spine Validation — health mode (slice progress not enforced)" if HEALTH_MODE else "Conductor Spine Validation"
+print(f"\n{mode_label}\n{hr}")
 for r in results:
     icon = icons.get(r["status"], "?")
     suffix = f"  — {r['message']}" if r["message"] else ""

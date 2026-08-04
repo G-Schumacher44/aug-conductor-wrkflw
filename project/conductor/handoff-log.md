@@ -5,7 +5,7 @@
 ## Slice 03 — Model Layer
 
 Date: 2026-05-03
-Commit: a4f9c1e
+Commit: b810bf4
 
 ### Objective
 Polish the model file — add explore labels, group_label organization, and hidden

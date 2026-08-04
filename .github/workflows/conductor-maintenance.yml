@@ -1,32 +1,56 @@
 name: Conductor Maintenance
 # Scheduled health check — mirrors what Demo 3 runs manually via Codex app cron.
-# Runs validate.py and reports conductor spine status.
-# Stub — uncomment jobs after connecting to a live repo with project/ committed.
+# Runs the spine validator in --health mode and reports conductor spine status.
+#
+# WHY --health AND NOT THE PLAIN GATE: this file previously had `on:` triggers with every job
+# commented out. A workflow with no `jobs:` key is invalid, so GitHub recorded a `startup_failure`
+# on every push to this branch — red entries in the public history of a branch a reviewer is told
+# to check out for the demo. It is a real workflow now.
+#
+# It runs --health, not the plain gate: this branch deliberately ships its next slice with
+# acceptance criteria unchecked, because completing them is what the demo agent does. The default
+# gate answers "am I ready to hand off?", so on a pristine demo start state the honest answer is
+# "no" — forever, on a schedule.
+#
+# --health asks the question a monitor should ask: "is the spine intact?" Structure, handoff
+# format, commit-hash reachability and credential checks all still FAIL the run. Only slice
+# PROGRESS is downgraded to a reported warning. The demo itself still invokes the full gate, where
+# DEMO2.md's "Required gate. All checks must pass." is the point.
 
 on:
   schedule:
     - cron: '0 6 * * 1'  # Monday 6am UTC
   workflow_dispatch:      # allow manual trigger
 
-# jobs:
-#   health-check:
-#     name: Conductor spine validation
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v4
-#       - uses: actions/setup-python@v5
-#         with:
-#           python-version: '3.12'
-#       - name: Run spine validator
-#         run: python scripts/validate.py
-#       - name: Check queue completeness
-#         run: |
-#           python -c "
-#           import re, sys
-#           index = open('project/conductor/index.md').read()
-#           non_stable = re.findall(r'\|\s*(ACTIVE|QUEUED|IN-PROGRESS)\s*\|', index)
-#           if non_stable:
-#               print(f'WARN: non-stable slices found: {non_stable}')
-#               sys.exit(1)
-#           print('All slices STABLE')
-#           "
+jobs:
+  health-check:
+    name: Conductor spine validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history, NOT the default shallow depth-1 clone. The validator's
+          # check_commit_hash verifies that the Commit: hash in the handoff actually exists
+          # (`git cat-file -e`) — its whole purpose is catching a hallucinated hash. Under a
+          # depth-1 checkout only the tip commit is present, so EVERY historical hash reports
+          # "does not exist in git — handoff may be hallucinated" and the check inverts into a
+          # guaranteed false positive. Caught by dispatching this workflow rather than
+          # trusting a local run, where full history made it pass.
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run spine validator
+        run: python3 scripts/validate.py --health
+      - name: Check queue completeness (demo branches only)
+        if: hashFiles('project/conductor/index.md') != ''
+        run: |
+          python3 - <<'EOF'
+          import re, sys
+          index = open('project/conductor/index.md').read()
+          non_stable = re.findall(r'\|\s*(ACTIVE|QUEUED|IN-PROGRESS)\s*\|', index, re.IGNORECASE)
+          if non_stable:
+              print(f'WARN: non-stable slices found: {non_stable}')
+          else:
+              print('All slices STABLE')
+          EOF
