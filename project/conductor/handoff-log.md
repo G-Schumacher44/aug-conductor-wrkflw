@@ -5,7 +5,7 @@
 ## Slice 04 — Promotions View
 
 Date: 2026-05-23
-Commit: 3e1a8f2
+Commit: 036a216
 
 ### Objective
 Add baseline LookML view for fct_promotions and register it as a ninth explore
