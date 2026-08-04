@@ -45,7 +45,7 @@ Branch from `demo-3-start`. All commits go on this branch.
 ### 3 — Run the spine validator
 
 ```bash
-python scripts/validate.py
+python3 scripts/validate.py
 ```
 
 Capture the full output. Note the pass/warn/fail counts and any specific failures.

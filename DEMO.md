@@ -38,7 +38,7 @@ You do not need to read DEMO.md again after this point.
 - Use only columns listed in `demo/schema/gold_marts.md` — do not invent fields
 - No hardcoded credentials
 - Commit as you go — not one giant commit at the end
-- Run `python scripts/validate.py` from the **repo root** before writing the handoff
+- Run `python3 scripts/validate.py` from the **repo root** before writing the handoff
 - `demo/views/` is reference output only — write your output to `project/views/`
 
 ---
