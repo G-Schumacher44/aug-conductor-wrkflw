@@ -5,3 +5,9 @@
 .tools/
 __pycache__/
 *.pyc
+
+# Working-tree scratch that must never reach this PUBLIC repo. `assets/*.zip` in particular:
+# a design-system archive sits here untracked, and the DEMO files instruct agents to "commit as
+# you go" — one `git add -A` would publish it.
+assets/*.zip
+ds/

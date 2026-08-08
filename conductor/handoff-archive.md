@@ -7,7 +7,7 @@ Older handoff entries moved out of `conductor/handoff-log.md`.
 ## Demo Run 01 — Slice 01 LookML Bootstrap (pre-project/ design)
 
 Date: 2026-05-23
-Commit: 2690ca9
+Commit: 7f7fa02
 
 Agent ran slice-01 under the old root-level output design. Views were generated to `views/`
 at repo root (removed — new design uses `project/views/`). Archived for reference.
