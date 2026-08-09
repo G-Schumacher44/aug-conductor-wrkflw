@@ -4,6 +4,64 @@ Newest entry at the top. Current-state handoff only; older entries live in `cond
 
 ---
 
+## Patch — Wire review-pantheon gate (Way C) + cross-repo pairing docs
+
+Date: 2026-08-09
+Commit: cf5b8f8
+Target Branch: main
+Status: STABLE
+Conductor Mode: patch
+
+### Objective
+Make this repo the first public adopter of review-pantheon's PR gate, so its and
+review-pantheon's mutual "pairs with" story is literally true rather than aspirational.
+
+### Current State
+- `.github/workflows/review-gate.yml` added, verbatim from review-pantheon v1's
+  `examples/review-gate.yml` (Way C install — fetched via
+  `gh api repos/G-Schumacher44/review-pantheon/contents/examples/review-gate.yml?ref=v1`).
+  Gated on the `REVIEW_GATE_ENABLED` repo variable and the `CLAUDE_CODE_OAUTH_TOKEN` secret —
+  both unset as of this commit, so the job is a no-op until the operator sets them (the
+  variable separately from this change).
+- README gained a "Works with review-pantheon" section, mirroring review-pantheon's own
+  "Works with Conductor" section in its README (fetched at the `v1` tag for this session).
+- `conductor/AGENTS.md`'s "include validation gates" workflow rule now names a concrete,
+  optional example (`pantheon gate --branch` pre-PR / the Action on the PR) — Conductor
+  itself stays gate-agnostic. Root `AGENTS.md` was checked; it has no matching rule to update.
+- `conductor/tracks.md`'s registry gained a real entry for the review-pantheon pairing —
+  recorded as a non-blocking verification track (not the artifact-blocking shape the file's
+  worked example describes), since no slice here blocks on review-pantheon's state.
+
+### Files Changed
+- `.github/workflows/review-gate.yml` (new)
+- `README.md`
+- `conductor/AGENTS.md`
+- `conductor/tracks.md`
+
+### Validation
+- `python3 scripts/validate.py --health` — 8 passed, 3 warnings, 0 failed (warnings are the
+  documented project/-state ones, unrelated to this change)
+- `python3 scripts/validate.py` — exits 1 by design (unstarted demo slice in `project/`,
+  documented in the slice-01-CLOSED entry below); unrelated to this change
+- `cd scripts && python3 -m pytest test_validate.py -q` — 11 passed
+- `.github/workflows/review-gate.yml` parses as YAML (`yaml.safe_load`)
+- Every relative/absolute link added in this session resolves: `.github/workflows/review-gate.yml`
+  exists, the README's `#works-with-review-pantheon` anchor exists, `conductor/AGENTS.md`'s
+  `../.github/workflows/review-gate.yml` link resolves, and
+  `gh api repos/G-Schumacher44/review-pantheon/contents/docs/SETUP.md` / `.../README.md`
+  both resolve at the `main`/`v1` refs referenced
+
+### Exact Next Steps
+1. Operator sets the `CLAUDE_CODE_OAUTH_TOKEN` secret and `REVIEW_GATE_ENABLED` repo variable
+   on `aug-conductor-wrkflw` to turn the gate live.
+2. Once live, confirm the gate actually runs and posts a verdict on the next PR opened here —
+   this session did not observe a live gate run (no token configured yet).
+
+### Blockers
+- None. The gate is intentionally inert until the operator provisions the token/variable.
+
+---
+
 ## Slice 01 — CLOSED (repo = stable demo/reference artifact)
 
 Date: 2026-06-13
