@@ -235,6 +235,19 @@ Domain-specific checks (LookML, dbt, etc.) live as separate extension scripts. S
 
 ---
 
+## Works with review-pantheon
+
+[review-pantheon](https://github.com/G-Schumacher44/review-pantheon) pairs with this repo — Conductor
+plans the work (slices, handoffs), review-pantheon's gate (Artemis, Apollo) verifies the delivery, and
+its counsel agents (Socrates, Diogenes, Plato) pressure-test a plan before it's built. Conductor stays
+agnostic about which gate runs the check; review-pantheon is one example, not a requirement.
+
+This repo now runs that gate on its own PRs: [`.github/workflows/review-gate.yml`](./.github/workflows/review-gate.yml)
+is review-pantheon's published-action stub (Way C in its [setup docs](https://github.com/G-Schumacher44/review-pantheon/blob/main/docs/SETUP.md)) — `uses: G-Schumacher44/review-pantheon@v1` on every pull request. It's a no-op until
+`CLAUDE_CODE_OAUTH_TOKEN` is set as a repo secret and `REVIEW_GATE_ENABLED` as a repo variable.
+
+---
+
 ## License
 
 MIT — see [LICENSE](./LICENSE)

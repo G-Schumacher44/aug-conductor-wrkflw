@@ -6,8 +6,7 @@ Type: track-registry
 ## About This File
 
 `tracks.md` records cross-repo dependencies so agents know what they're blocked on
-and what they're unblocking. It is only relevant in multi-repo setups — this demo
-repo is standalone, so the registry below is empty.
+and what they're unblocking. It is only relevant in multi-repo setups.
 
 ---
 
@@ -52,8 +51,18 @@ Once the dbt repo marks the artifact STABLE, this repo's agent can unblock and p
 
 ## Registry (this repo)
 
-This repo is standalone — no cross-repo dependencies.
+This repo has no artifact-producing upstream/downstream dependency in the sense the example
+above describes — no other repo's slice blocks on this one, and this repo's slices don't block
+on an artifact from elsewhere. It does have one cross-repo tooling pairing, recorded below in
+the same shape: a planning↔verification pairing rather than an artifact-blocking one, so
+"Blocking slice" is n/a and a red status here never stops a slice from advancing.
 
-| Repo | Role | Tracks status |
-|------|------|---------------|
-| aug-conductor-wrkflw (this repo) | standalone demo | no external dependencies |
+| Repo | Role | Provides | Tracks status |
+|------|------|----------|----------------|
+| [review-pantheon](https://github.com/G-Schumacher44/review-pantheon) | verification pairing (non-blocking) | Artemis/Apollo PR gate on this repo's own pull requests (`.github/workflows/review-gate.yml`) | INSTALLED, gate disabled until `CLAUDE_CODE_OAUTH_TOKEN` + `REVIEW_GATE_ENABLED` are set on this repo |
+
+This repo is also review-pantheon's own documented "Works with Conductor" example — its README
+names aug-conductor-wrkflw as the repo that pairs with it: Conductor plans the work (slices,
+handoffs), review-pantheon verifies the delivery and pressure-tests the plan before it's built.
+See the README's [Works with review-pantheon](../README.md#works-with-review-pantheon) section
+here for the mirror of that pairing.
