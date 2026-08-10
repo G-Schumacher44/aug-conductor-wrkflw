@@ -1,3 +1,7 @@
+# INSTALLED COPY (2026-08-09, from review-pantheon v1) — this IS the live workflow for this
+# repo, not a template awaiting install. Kept byte-identical to upstream's
+# examples/review-gate.yml below this note; the next three lines are the upstream header
+# describing the copy step that has already happened here.
 # examples/review-gate.yml — the whole install for the published-action lane. Copy to
 # .github/workflows/review-gate.yml — nothing else lands in your repo. See docs/SETUP.md's
 # "Way C" for the setup checklist.

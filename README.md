@@ -243,8 +243,12 @@ its counsel agents (Socrates, Diogenes, Plato) pressure-test a plan before it's 
 agnostic about which gate runs the check; review-pantheon is one example, not a requirement.
 
 This repo now runs that gate on its own PRs: [`.github/workflows/review-gate.yml`](./.github/workflows/review-gate.yml)
-is review-pantheon's published-action stub (Way C in its [setup docs](https://github.com/G-Schumacher44/review-pantheon/blob/main/docs/SETUP.md)) — `uses: G-Schumacher44/review-pantheon@v1` on every pull request. It's a no-op until
-`CLAUDE_CODE_OAUTH_TOKEN` is set as a repo secret and `REVIEW_GATE_ENABLED` as a repo variable.
+is review-pantheon's published-action stub (Way C in its [setup docs](https://github.com/G-Schumacher44/review-pantheon/blob/main/docs/SETUP.md)) — `uses: G-Schumacher44/review-pantheon@v1` on every pull request. Both settings it
+needs are configured on this repo (`REVIEW_GATE_ENABLED` repo variable, `CLAUDE_CODE_OAUTH_TOKEN`
+secret). Fail-closed by design: the job only runs when the variable is `true`, and if the secret
+were missing the action fails loudly at its auth check rather than passing silently — a green
+gate always means a verdict was actually produced (or, on fork PRs, an explicit NOT-GATED skip
+notice; see review-pantheon's SECURITY.md).
 
 ---
 
