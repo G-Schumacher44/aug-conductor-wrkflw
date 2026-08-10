@@ -58,7 +58,11 @@ review-pantheon's mutual "pairs with" story is literally true rather than aspira
   (verified in a clean worktree: main is 7 passed / 3 warnings / 1 failed — this branch
   passes one MORE check than main; the slice-01-CLOSED entry, now in
   `conductor/handoff-archive.md`, documents the by-design failure); unrelated to this change
-- `cd scripts && python3 -m pytest test_validate.py -q` — 11 passed
+- `cd scripts && python3 -m pytest test_validate.py -q` — 13 passed (11 at this entry's first
+  writing; this PR's review rounds added two tests covering validate.py's new PR-anchor
+  exception, both also registered in the file's standalone `tests` list — the gate's apollo
+  caught BOTH the stale count and the unregistered tests in one blocker, which is exactly the
+  job this PR wires him up to do)
 - `.github/workflows/review-gate.yml` parses as YAML (`yaml.safe_load`)
 - Every relative/absolute link added in this session resolves: `.github/workflows/review-gate.yml`
   exists, the README's `#works-with-review-pantheon` anchor exists, `conductor/AGENTS.md`'s

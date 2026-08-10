@@ -223,6 +223,8 @@ tests = [
     test_acceptance_criteria_all_checked,
     test_active_slice_none,
     test_no_ci_stub,
+    test_pr_anchored_handoff_squash_merge_form,
+    test_handoff_with_neither_commit_nor_pr_anchor_still_warns,
     test_hallucinated_commit_hash,
 ]
 
