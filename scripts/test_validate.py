@@ -138,6 +138,36 @@ def test_acceptance_criteria_partial():
         ok("reports 1/2 criteria checked", "1/2" in out, out)
 
 
+def test_pr_anchored_handoff_squash_merge_form():
+    # AGENTS.md's squash-merge exception: a session whose work merges via a squashing PR
+    # anchors on `PR: #N` — the validator must accept it as a complete, verifiable-shape
+    # anchor rather than warning about a missing Commit: field (the pre-exception behavior,
+    # which pushed agents toward recording pre-squash hashes that the reviewed history
+    # never contains — the exact hallucinated-anchor class test_hallucinated_commit_hash
+    # guards against from the other direction).
+    with tempfile.TemporaryDirectory() as tmp:
+        p = make_good_project(Path(tmp))
+        (p / "conductor" / "handoff-log.md").write_text(
+            "# Handoff\nPR: #6 (squash-merges to main)\nExact Next Steps: merge the PR\n"
+        )
+        rc, out = run(p)
+        ok("PR-anchored handoff exits 0", rc == 0, out)
+        ok("no missing-Commit warning for PR anchor", "required fields missing" not in out, out)
+        ok("reports the PR-anchored form", "PR-anchored" in out, out)
+
+
+def test_handoff_with_neither_commit_nor_pr_anchor_still_warns():
+    with tempfile.TemporaryDirectory() as tmp:
+        p = make_good_project(Path(tmp))
+        (p / "conductor" / "handoff-log.md").write_text(
+            "# Handoff\nDid a lot of significant work on the project today, truly.\n"
+            "Exact Next Steps: continue the work\n"
+        )
+        rc, out = run(p)
+        ok("anchorless handoff exits 0 (warn only)", rc == 0, out)
+        ok("warns when neither Commit: nor PR: #N present", "Commit:" in out, out)
+
+
 def test_hallucinated_commit_hash():
     with tempfile.TemporaryDirectory() as tmp:
         p = make_good_project(Path(tmp))
