@@ -31,7 +31,11 @@ review-pantheon's mutual "pairs with" story is literally true rather than aspira
   "Works with Conductor" section in its README (fetched at the `v1` tag for this session).
 - `conductor/AGENTS.md`'s "include validation gates" workflow rule now names a concrete,
   optional example (`pantheon gate --branch` pre-PR / the Action on the PR) — Conductor
-  itself stays gate-agnostic. Root `AGENTS.md` was checked; it has no matching rule to update.
+  itself stays gate-agnostic. Root `AGENTS.md` has no matching validation-gates rule to
+  update, but it WAS edited later in this PR for a different reason: its Handoff Rules'
+  `Commit:` field gained the squash-merge exception (anchor on PR #N; never record a hash
+  the reviewed history won't contain), after the gate + Codex both flagged this entry's
+  original pre-squash hash anchor.
 - `conductor/tracks.md`'s registry gained a real entry for the review-pantheon pairing —
   recorded as a non-blocking verification track (not the artifact-blocking shape the file's
   worked example describes), since no slice here blocks on review-pantheon's state.
@@ -39,6 +43,7 @@ review-pantheon's mutual "pairs with" story is literally true rather than aspira
 ### Files Changed
 - `.github/workflows/review-gate.yml` (new)
 - `README.md`
+- `AGENTS.md` (Handoff Rules: squash-merge exception added to the `Commit:` field)
 - `conductor/AGENTS.md`
 - `conductor/tracks.md`
 - `conductor/handoff-log.md` (this entry; superseded Slice-01 entries moved out per the
