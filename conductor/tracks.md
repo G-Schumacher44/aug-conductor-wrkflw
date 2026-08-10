@@ -59,7 +59,7 @@ the same shape: a planning↔verification pairing rather than an artifact-blocki
 
 | Repo | Role | Provides | Tracks status |
 |------|------|----------|----------------|
-| [review-pantheon](https://github.com/G-Schumacher44/review-pantheon) | verification pairing (non-blocking) | Artemis/Apollo PR gate on this repo's own pull requests (`.github/workflows/review-gate.yml`) | INSTALLED, gate disabled until `CLAUDE_CODE_OAUTH_TOKEN` + `REVIEW_GATE_ENABLED` are set on this repo |
+| [review-pantheon](https://github.com/G-Schumacher44/review-pantheon) | verification pairing (non-blocking) | Artemis/Apollo PR gate on this repo's own pull requests (`.github/workflows/review-gate.yml`) | LIVE — `CLAUDE_CODE_OAUTH_TOKEN` + `REVIEW_GATE_ENABLED` are configured; first gated PR was #6 (the PR that installed it) |
 
 This repo is also review-pantheon's own documented "Works with Conductor" example — its README
 names aug-conductor-wrkflw as the repo that pairs with it: Conductor plans the work (slices,
