@@ -54,7 +54,9 @@ from scratch after the first session. See `demo/LOOP.md` for a concrete example.
 When creating or updating a slice:
 
 1. spell out exact writable surfaces and scope boundaries
-2. include validation gates and the smallest sufficient verification steps
+2. include validation gates and the smallest sufficient verification steps — for example,
+   `pantheon gate --branch` pre-PR, or the [review-pantheon](https://github.com/G-Schumacher44/review-pantheon)
+   Action on the PR (see this repo's [`.github/workflows/review-gate.yml`](../.github/workflows/review-gate.yml)); Conductor stays agnostic — any gate that fits the stack works
 3. call out explicit out-of-scope items
 4. declare `conductor_mode`, handoff posture, and tag posture
 5. update `conductor/tracks.md` if cross-repo dependencies change

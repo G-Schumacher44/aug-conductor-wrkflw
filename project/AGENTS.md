@@ -27,7 +27,9 @@ Read the slice spec, do the work, write the handoff.
 
 Every session ends with a `conductor/handoff-log.md` entry containing:
 
-- **Commit:** — 7-char hash
+- **Commit:** — 7-char hash. Squash-merge exception (same as root AGENTS.md): work that merges
+  via a squashing PR anchors on **PR: #N** instead — never record a hash the reviewed history
+  won't contain.
 - **Objective** — what this session set out to do
 - **Current State** — what was actually completed
 - **Files Changed** — list of written or modified files

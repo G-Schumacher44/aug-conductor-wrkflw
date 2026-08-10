@@ -235,6 +235,23 @@ Domain-specific checks (LookML, dbt, etc.) live as separate extension scripts. S
 
 ---
 
+## Works with review-pantheon
+
+[review-pantheon](https://github.com/G-Schumacher44/review-pantheon) pairs with this repo — Conductor
+plans the work (slices, handoffs), review-pantheon's gate (Artemis, Apollo) verifies the delivery, and
+its counsel agents (Socrates, Diogenes, Plato) pressure-test a plan before it's built. Conductor stays
+agnostic about which gate runs the check; review-pantheon is one example, not a requirement.
+
+This repo now runs that gate on its own PRs: [`.github/workflows/review-gate.yml`](./.github/workflows/review-gate.yml)
+is review-pantheon's published-action stub (Way C in its [setup docs](https://github.com/G-Schumacher44/review-pantheon/blob/main/docs/SETUP.md)) — `uses: G-Schumacher44/review-pantheon@v1` on every pull request. Both settings it
+needs are configured on this repo (`REVIEW_GATE_ENABLED` repo variable, `CLAUDE_CODE_OAUTH_TOKEN`
+secret). Fail-closed by design: the job only runs when the variable is `true`, and if the secret
+were missing the action fails loudly at its auth check rather than passing silently — a green
+gate always means a verdict was actually produced (or, on fork PRs, an explicit NOT-GATED skip
+notice; see review-pantheon's SECURITY.md).
+
+---
+
 ## License
 
 MIT — see [LICENSE](./LICENSE)

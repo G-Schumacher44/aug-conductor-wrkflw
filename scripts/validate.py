@@ -83,8 +83,13 @@ def check_handoff():
     if len(content) < 50:
         return "warn", "appears empty — agent may not have written the handoff yet", None
     missing = []
-    if "Commit:" not in content:
-        missing.append("Commit:")
+    # AGENTS.md's Commit: rule carries a squash-merge exception: a session whose work merges
+    # via a squashing PR anchors on `PR: #N` instead (its work-commit hashes don't survive
+    # into the target branch's history). Either anchor form satisfies the requirement.
+    # Field-anchored (line start), not prose-matched: "the PR: #6 discussion mentioned…" in a
+    # paragraph must not satisfy an anchor requirement — only a real `PR: #N` field line does.
+    if "Commit:" not in content and not re.search(r"^\s*PR:\s*#\d+", content, re.MULTILINE):
+        missing.append("Commit: (or PR: #N for squash-merge sessions)")
     if "Exact Next Steps" not in content:
         missing.append("Exact Next Steps")
     if missing:
@@ -103,7 +108,13 @@ def check_commit_hash():
     content = re.sub(r"<!--.*?-->", "", f.read_text(), flags=re.DOTALL)
     m = re.search(r"Commit:\s*([0-9a-f]{7,40})", content, re.IGNORECASE)
     if not m:
-        return "warn", "no commit hash found in Commit: field", None
+        # Squash-merge exception (AGENTS.md Handoff Rules): a PR-anchored entry has no commit
+        # hash to verify — the PR number is the durable reference, checked for shape only
+        # (its existence lives on the forge, outside this offline validator's reach).
+        pr = re.search(r"^\s*PR:\s*#(\d+)", content, re.MULTILINE)
+        if pr:
+            return "pass", f"PR-anchored handoff (squash-merge form): PR #{pr.group(1)}", None
+        return "warn", "no commit hash found in Commit: field (nor a PR: #N anchor)", None
     commit = m.group(1)
     try:
         subprocess.check_output(

@@ -45,7 +45,11 @@ See `demo/LOOP.md` for a concrete walkthrough.
 
 Every session must end with a `conductor/handoff-log.md` entry. The entry must include:
 
-- **Commit:** — 7-char hash of the anchor commit for this session
+- **Commit:** — 7-char hash of the anchor commit for this session. Squash-merge exception:
+  when the session's work merges via a squashing PR, its work-commit hashes don't survive into
+  the target branch's history — anchor on **PR: #N** instead (the durable reference; pre-squash
+  commits stay reachable via the PR's own refs). Never record a hash that the reviewed history
+  won't contain.
 - **Objective** — what this session set out to do
 - **Current State** — what was actually completed
 - **Files Changed** — list of files written or modified

@@ -1,0 +1,49 @@
+# INSTALLED COPY (2026-08-09, from review-pantheon v1) — this IS the live workflow for this
+# repo, not a template awaiting install. Kept byte-identical to upstream's
+# examples/review-gate.yml below this note; the next three lines are the upstream header
+# describing the copy step that has already happened here.
+# examples/review-gate.yml — the whole install for the published-action lane. Copy to
+# .github/workflows/review-gate.yml — nothing else lands in your repo. See docs/SETUP.md's
+# "Way C" for the setup checklist.
+#
+# `uses: G-Schumacher44/review-pantheon@v1` below tracks the latest release — the `v1` major
+# tag moves when a new release is cut (see RELEASING.md at repo root). Want updates only on
+# your own schedule? Replace `@v1` with a full release-commit SHA — the same trade
+# install.sh's generated Way A workflow makes for you.
+name: review-pantheon
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    # Repo variable gate (no silent start), plus a draft skip — both must live at job level.
+    if: ${{ vars.REVIEW_GATE_ENABLED == 'true' && github.event.pull_request.draft == false }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # full history: the action needs base...head to compute the diff
+
+      # FORK PRs: this job still runs, but the action detects that GitHub withheld the secret
+      # from a fork run and skips every step, emitting a NOT GATED notice and step summary
+      # instead of failing. The check goes green BECAUSE IT SKIPPED — it does not mean the PR
+      # was reviewed. Review fork PRs yourself, and do not make this a required check on a repo
+      # that accepts outside contributions until you have read SECURITY.md's "Fork pull requests".
+      - uses: G-Schumacher44/review-pantheon@v1
+        with:
+          # Set exactly one of these two — it fails loud otherwise. No Bedrock/Vertex/Foundry/
+          # OIDC passthrough here; see docs/SETUP.md's Way C if you need pure cloud-provider auth.
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # execution: trusted   # DANGER: grants every agent full Bash instead of the default
+          #                      # read-only git allowlist (diff/show/log/status). Own-repo/
+          #                      # trusted-author use only — never for reviewing a fork PR you
+          #                      # don't control. Default is "readonly"; leave this commented
+          #                      # out unless you have a specific reason to change it.
