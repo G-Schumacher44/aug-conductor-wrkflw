@@ -49,6 +49,12 @@ review-pantheon's mutual "pairs with" story is literally true rather than aspira
 - `conductor/handoff-log.md` (this entry; superseded Slice-01 entries moved out per the
   current-state-only rule)
 - `conductor/handoff-archive.md` (received the two moved Slice-01 entries)
+- `project/AGENTS.md` (review round: the scoped Commit rule gained the same squash-merge
+  exception as root, so validate.py's PROJECT checks police a rule that actually permits
+  what the code accepts)
+- `scripts/validate.py` (review round: accepts the PR-anchor form, field-anchored regex)
+- `scripts/test_validate.py` (review round: two new tests, registered in BOTH entrypoints —
+  pytest and the standalone `tests` list)
 
 ### Validation (re-run after the review-round edits, same session that wrote this entry)
 - `python3 scripts/validate.py --health` — 8 passed, 3 warnings, 0 failed, exit 0 (warnings
