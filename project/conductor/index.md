@@ -30,3 +30,10 @@ Active slice: conductor/slice-01-lookml-bootstrap.md
    to `ACTIVE` until a session actually starts it
 5. Update `Active slice:` line to `none — awaiting slice-NN`
 6. Commit slice doc + index.md + handoff-log.md together
+
+**Opening a slice (the counterpart — do this FIRST, before any work):** a session that
+picks up the next slice must promote it before executing. Set its queue row `QUEUED →
+ACTIVE` and set `Active slice:` to that slice's path. This is not bookkeeping: the
+validator only inspects the acceptance criteria of the slice named on the `Active slice:`
+line, and short-circuits entirely when that line reads `none`. Skip the promotion and the
+gate silently checks nothing for the rest of the project.

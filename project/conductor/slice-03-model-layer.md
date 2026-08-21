@@ -19,6 +19,13 @@ No joins until operator confirms shared grain between tables.
 
 ## Execution Steps
 
+### Step 0 — Promote this slice to ACTIVE
+
+Before any work: in `conductor/index.md`, set this slice's queue row `QUEUED → ACTIVE` and
+set the `Active slice:` line to this slice's path. The validator only checks the acceptance
+criteria of the slice named there and short-circuits when it reads `none`, so skipping this
+leaves the gate checking nothing.
+
 ### Step 1 — Create your branch
 
 ```bash
