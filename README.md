@@ -236,7 +236,7 @@ python3 scripts/validate.py --health  # "is the spine intact?" — Demo 3's requ
 
 The default mode fails while the active slice has any unchecked acceptance-criteria box —
 that's the point when you're about to write a handoff. But it means a **fresh clone of `main`
-exits 1 by design**: `main` ships slice-01 at 0/8 acceptance criteria (Demo 1's starting state,
+exits 1 by design**: `main` ships slice-01 at 0/7 acceptance criteria (Demo 1's starting state,
 committed on `main` itself, not a feature branch) — you'll see something like `7 passed | 2
 warnings | 2 failed`, including "on main — commits should go on a feature branch". That's
 expected; it's the state an agent is meant to complete, not a broken repo.

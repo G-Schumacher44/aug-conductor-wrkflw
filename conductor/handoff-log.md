@@ -61,9 +61,15 @@ validator's honesty is the thing being protected, not adjusted.
    running). `conductor/index.md` (root + `project/`) end-of-slice lists and `AGENTS.md`'s
    Handoff Rules updated to match. `DEMO.md`'s two prose references to slice-01's order
    updated; no file anywhere references these steps by number outside each slice's own
-   now-removed self-reference (grepped the full repo to confirm). `DEMO2.md`/`DEMO3.md`
-   left untouched — `DEMO2.md` narrates `demo-2-start`'s slice-04, which carries the same
-   shape but lives only on that branch, out of scope per this dispatch's hard rule and the
+   now-removed self-reference (grepped the full repo to confirm). `DEMO3.md` left untouched.
+   **Superseded later in this same PR (Apollo, round 3):** `DEMO2.md` WAS left untouched as
+   of `838f223` on the reasoning below, but Codex then showed its steps 6/7 carried the same
+   gate-before-handoff circularity in their own narration — independent of which branch
+   slice-04 lives on — so `15eebd1` rewrote them to the handoff-then-gate order and dropped
+   the self-referential instruction. What remains genuinely out of scope is slice-04's own
+   criteria list, which lives only on `demo-2-start` and belongs to the demo-branch rebuild
+   workstream. The original reasoning, kept so the scope call is auditable: `DEMO2.md`
+   narrates `demo-2-start`'s slice-04, out of scope per this dispatch's hard rule and the
    prior PR's own "separate operator-decision workstream" call.
 2. **False credential-check guarantee (Codex, highest priority).** `README.md` claimed
    `--health` mode still fails "credential checks" for real problems. `scripts/validate.py`
@@ -95,6 +101,9 @@ validator's honesty is the thing being protected, not adjusted.
 - `conductor/index.md`
 - `conductor/slice-01-initial-bootstrap.md`
 - `project/conductor/index.md`
+- `scripts/validate.py` — module docstring only, no behavior change (round 3: its own
+  docstring was the source of the false "handoff format ... and credentials are still
+  enforced" claim the README had copied)
 - `project/conductor/slice-01-lookml-bootstrap.md`
 - `project/conductor/slice-02-view-enrichment.md`
 - `project/conductor/slice-03-model-layer.md`
