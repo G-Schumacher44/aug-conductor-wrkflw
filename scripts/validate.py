@@ -16,11 +16,23 @@ Two questions, two modes — they are not the same question:
   (default)  "Am I ready to hand off?"  Unchecked acceptance criteria FAIL. This is the gate the
              demos require before writing a handoff, and it keeps its teeth.
 
-  --health   "Is the spine intact?"  Structure, handoff format, commit hashes and credentials are
-             still enforced; slice PROGRESS is reported but does not fail. This is for scheduled
-             monitoring of a repo that legitimately sits at an unstarted slice — `main` here ships
+  --health   "Is the spine intact?"  Slice PROGRESS is reported but does not fail. This is for
+             scheduled monitoring of a repo that legitimately sits at an unstarted slice — `main` here ships
              slice-01 deliberately at 0/8 as Demo 1's starting state, so asking the handoff
              question on a schedule can only ever answer "no".
+
+What actually EXITS NONZERO (both modes) — only a `fail` does; a `warn` never does
+(see the exit line at the bottom of this file):
+  - handoff-log.md missing entirely
+  - a `Commit:` hash that does not exist in git (the anti-hallucination check)
+  - the active slice file named by conductor/index.md not existing
+  - committing on a protected branch instead of a feature branch
+Everything else is advisory and exits 0, including a handoff that is present but MISSING
+REQUIRED FIELDS (`Exact Next Steps`, `Commit:`), a commit that exists but is unreachable
+from HEAD, a missing CI stub, and an unparseable index. Default mode adds one failure the
+health mode downgrades to a warning: unchecked acceptance criteria.
+This script never reads file CONTENTS for secrets — there is no credential scanning here.
+Keep this list honest: it is the thing readers trust when they wire the validator into CI.
 
 Usage:
   python3 scripts/validate.py

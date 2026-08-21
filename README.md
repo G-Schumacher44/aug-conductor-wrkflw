@@ -243,9 +243,16 @@ expected; it's the state an agent is meant to complete, not a broken repo.
 
 `--health` is for a repo that legitimately sits at an unstarted or already-finished slice —
 scheduled monitoring (see [`.github/workflows/conductor-maintenance.yml`](./.github/workflows/conductor-maintenance.yml))
-shouldn't fail forever just because nobody's mid-slice. Structure, handoff format, and
-commit-hash reachability still fail for real problems in both modes; only slice *progress*
-— the acceptance-criteria checkboxes — is downgraded to a reported warning.
+shouldn't fail forever just because nobody's mid-slice. Only slice *progress* — the
+acceptance-criteria checkboxes — differs between the modes; it fails the default gate and is
+downgraded to a reported warning under `--health`.
+
+Be precise about what a green run does and does not prove, in **either** mode. Only these
+exit nonzero: a missing `handoff-log.md`, a `Commit:` hash that doesn't exist in git (the
+anti-hallucination check), an active-slice file named by the index but absent, and committing
+on a protected branch. Everything else is advisory and still exits 0 — including a handoff
+that exists but is **missing required fields** like `Exact Next Steps`, a commit that exists
+but isn't reachable from HEAD, a missing CI stub, and an unparseable index.
 
 `scripts/validate.py` does not scan file contents for secrets. "No hardcoded credentials"
 is one of those acceptance-criteria checkboxes: a manual, honor-system attestation the agent
