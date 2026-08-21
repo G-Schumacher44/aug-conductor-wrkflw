@@ -60,6 +60,9 @@ Every session must end with a `conductor/handoff-log.md` entry. The entry must i
 - **Blockers** — anything unresolved that the operator needs to decide
 
 At the end of each slice, also:
+- Write the handoff entry first, before running the gate — if the slice's Acceptance
+  Criteria includes a "handoff written" item, it can only be honestly ticked once the
+  entry actually exists
 - Tick (`- [x]`) every satisfied item in the slice's Acceptance Criteria section before
   running the final validator gate — an unticked-but-satisfied checkbox is what makes
   the gate fail on work that's actually done

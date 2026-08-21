@@ -51,11 +51,15 @@ dimension_group: <field_name> {
 }
 ```
 
-### Step 5 — Tick satisfied acceptance criteria, then run the spine validator (required gate)
+### Step 5 — Write the handoff
 
-Before running the validator, tick (`- [x]`) every item in this file's **Acceptance
-Criteria** section that this session actually satisfied. Do not tick "ran
-scripts/validate.py" yet — you haven't run it.
+Write an entry at the **top** of `conductor/handoff-log.md`. Move the current top entry to
+`conductor/handoff-archive.md` first.
+
+### Step 6 — Tick satisfied acceptance criteria, then run the spine validator (required gate)
+
+Tick (`- [x]`) every item in this file's **Acceptance Criteria** section that is now
+true — including "Handoff written", since Step 5 just did that.
 
 Run from the **repo root**:
 
@@ -63,10 +67,12 @@ Run from the **repo root**:
 python3 scripts/validate.py
 ```
 
-Fix any failures before writing the handoff. Once the run is clean, tick the remaining
-validator criterion.
+This is the required gate. It runs while slice-02 is still `Active slice:` in
+`conductor/index.md`, so it genuinely checks this slice's acceptance criteria, not a
+short-circuited "none". Fix any failures before proceeding. Once clean, paste the real
+`X passed | Y warnings | 0 failed` line into the handoff's `### Validation` field.
 
-### Step 6 — Mark slice stable and advance the queue
+### Step 7 — Mark slice stable, advance the queue, and commit
 
 In this file: `Status: queued` → `Status: stable`
 
@@ -77,10 +83,8 @@ In `conductor/index.md`:
   reporting slice-02's completion.
 - Update `Active slice:` line to `none — awaiting slice-03`
 
-### Step 7 — Write the handoff
-
-Write an entry at the **top** of `conductor/handoff-log.md`. Move the current top entry to
-`conductor/handoff-archive.md` first.
+Commit the slice doc, `conductor/index.md`, and `conductor/handoff-log.md` (plus
+`conductor/handoff-archive.md` if the prior entry moved) together.
 
 ## Acceptance Criteria
 
@@ -88,6 +92,4 @@ Write an entry at the **top** of `conductor/handoff-log.md`. Move the current to
 - [ ] All financial measures have value_format_name applied
 - [ ] All DATE columns converted to dimension_group
 - [ ] No dimensions removed or renamed from slice 01
-- [ ] Ran `scripts/validate.py` from repo root (Step 5) and resolved every failure it reported
-- [ ] slice-02 marked stable, conductor/index.md advanced to slice-03
 - [ ] Handoff written with Exact Next Steps

@@ -230,8 +230,8 @@ Apply the same rename inside `conductor/` — `conductor/AGENTS.md` → `conduct
 Two modes, two different questions:
 
 ```bash
-python3 scripts/validate.py           # "am I ready to hand off?" — the demos' required gate
-python3 scripts/validate.py --health  # "is the spine intact?" — for scheduled/monitoring runs
+python3 scripts/validate.py           # "am I ready to hand off?" — Demo 1 and Demo 2's required gate
+python3 scripts/validate.py --health  # "is the spine intact?" — Demo 3's required gate (scheduled/monitoring runs)
 ```
 
 The default mode fails while the active slice has any unchecked acceptance-criteria box —
@@ -243,9 +243,14 @@ expected; it's the state an agent is meant to complete, not a broken repo.
 
 `--health` is for a repo that legitimately sits at an unstarted or already-finished slice —
 scheduled monitoring (see [`.github/workflows/conductor-maintenance.yml`](./.github/workflows/conductor-maintenance.yml))
-shouldn't fail forever just because nobody's mid-slice. Structure, handoff format, commit-hash
-reachability, and credential checks still fail for real problems; only slice *progress* is
-downgraded to a reported warning.
+shouldn't fail forever just because nobody's mid-slice. Structure, handoff format, and
+commit-hash reachability still fail for real problems in both modes; only slice *progress*
+— the acceptance-criteria checkboxes — is downgraded to a reported warning.
+
+`scripts/validate.py` does not scan file contents for secrets. "No hardcoded credentials"
+is one of those acceptance-criteria checkboxes: a manual, honor-system attestation the agent
+ticks, not something the validator verifies — in `--health` mode a repo with an un-ticked (or
+wrongly-ticked) box still exits 0 on that basis alone.
 
 Domain-specific checks (LookML, dbt, etc.) live as separate extension scripts. See [`demo/scripts/`](./demo/scripts/) for the pattern and a LookML reference implementation.
 

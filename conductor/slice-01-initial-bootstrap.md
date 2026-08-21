@@ -53,33 +53,7 @@ Rules:
 - Commit after each meaningful unit: `feat(<scope>): <description>`
 - Do not invent requirements — only build what is specified
 
-### Step 4 — Tick satisfied acceptance criteria, then run the spine validator (required gate)
-
-Go to the **Acceptance Criteria** section below and tick (`- [x]`) every item this
-session satisfied. Only tick what is already true — don't tick "validate.py exits 0" yet,
-since you haven't run it.
-
-```bash
-python3 scripts/validate.py
-```
-
-Fix any **failures** before writing the handoff. Warnings are acceptable — they flag
-recommendations, not blocking issues. The exit code is what matters: exit 0 = proceed,
-exit 1 = fix before continuing. Once the run is clean, tick the remaining validator
-criterion — it now honestly reflects the run you just completed.
-
-### Step 5 — Mark stable and advance the queue
-
-In this file: `Status: <active>` → `Status: stable`
-
-In `conductor/index.md`:
-- Update queue row: slice-01 `ACTIVE` → `STABLE`
-- Leave the next slice `QUEUED` — don't flip it to `ACTIVE` until a session actually
-  starts it. Its acceptance criteria are all unchecked, so an active-but-unstarted next
-  slice would fail the very validator gate this one just passed.
-- Update `Active slice:` line to `none — awaiting slice-02` (or whichever slice is next)
-
-### Step 6 — Write the handoff
+### Step 4 — Write the handoff
 
 Write an entry at the top of `conductor/handoff-log.md`:
 
@@ -110,14 +84,41 @@ Commit: <7-char hash>
 <anything the operator must resolve before work can continue, or "None">
 ```
 
-Commit: `docs(handoff): record slice 01 completion`
+`Commit:` is the hash of your last work commit so far, not the handoff commit itself,
+which doesn't exist yet.
+
+### Step 5 — Tick satisfied acceptance criteria, then run the spine validator (required gate)
+
+Go to the **Acceptance Criteria** section below and tick (`- [x]`) every item that is now
+true — including "Handoff written", since Step 4 just did that.
+
+```bash
+python3 scripts/validate.py
+```
+
+This is the required gate. It runs while this slice is still `Active slice:` in
+`conductor/index.md`, so it genuinely checks this slice's acceptance criteria, not a
+short-circuited "none". Fix any **failures** before proceeding — warnings are acceptable,
+they flag recommendations, not blocking issues. Once the run is clean, paste the real
+`X passed | Y warnings | 0 failed` line into the handoff's `### Validation` field.
+
+### Step 6 — Mark stable, advance the queue, and commit
+
+In this file: `Status: <active>` → `Status: stable`
+
+In `conductor/index.md`:
+- Update queue row: slice-01 `ACTIVE` → `STABLE`
+- Leave the next slice `QUEUED` — don't flip it to `ACTIVE` until a session actually
+  starts it. Its acceptance criteria are all unchecked, so an active-but-unstarted next
+  slice would fail the very validator gate this one just passed.
+- Update `Active slice:` line to `none — awaiting slice-02` (or whichever slice is next)
+
+Commit the slice doc, `conductor/index.md`, and `conductor/handoff-log.md` together:
+`docs(handoff): record slice 01 completion`
 
 ## Acceptance Criteria
 
 - [ ] Branch created from main or dev — not committed directly
 - [ ] Work matches the scope defined in this slice — nothing more
-- [ ] Ran `python3 scripts/validate.py` (Step 4) and resolved every failure it reported
-- [ ] Slice marked stable in this file
-- [ ] `conductor/index.md` queue advanced to next slice
 - [ ] Handoff written with Commit: hash and Exact Next Steps
 - [ ] No hardcoded credentials or secrets

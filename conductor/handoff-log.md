@@ -45,6 +45,47 @@ validator's honesty is the thing being protected, not adjusted.
 - Both `conductor/index.md` files' (root meta + `project/`) end-of-slice responsibility
   lists updated to match the same tick-then-gate, none-awaiting pattern.
 
+### Review round — four unresolved PR #8 threads fixed
+1. **Gate-ordering circularity survived one level down (Codex, blocker).** The first pass
+   put "tick criteria, then run the gate" before the step that writes the handoff — but
+   every slice's criteria list included a "Handoff written" item, which can't be honestly
+   true until the handoff step, which ran *after* the gate. Reordered every slice
+   spec (project slice-01/02/03 + the root meta template) to: do the work → **write the
+   handoff** → tick every satisfied criterion (now including "handoff written") → **run
+   the required gate** (slice still `ACTIVE`, so it's a real check, not short-circuited by
+   `Active slice: none`) → mark stable + advance the queue. Also deleted the
+   self-referential "ran `scripts/validate.py` ... and resolved every failure it reported"
+   criterion (the passing gate is the evidence) and, in slice-02/03, the equally circular
+   "slice marked stable / queue advanced" criteria (those are post-gate actions by the new
+   ordering, so they can never be honestly true while the gate that checks them is still
+   running). `conductor/index.md` (root + `project/`) end-of-slice lists and `AGENTS.md`'s
+   Handoff Rules updated to match. `DEMO.md`'s two prose references to slice-01's order
+   updated; no file anywhere references these steps by number outside each slice's own
+   now-removed self-reference (grepped the full repo to confirm). `DEMO2.md`/`DEMO3.md`
+   left untouched — `DEMO2.md` narrates `demo-2-start`'s slice-04, which carries the same
+   shape but lives only on that branch, out of scope per this dispatch's hard rule and the
+   prior PR's own "separate operator-decision workstream" call.
+2. **False credential-check guarantee (Codex, highest priority).** `README.md` claimed
+   `--health` mode still fails "credential checks" for real problems. `scripts/validate.py`
+   has no credential-scanning code at all — "No hardcoded credentials" is one manually-ticked
+   acceptance-criteria checkbox among others, and in `--health` mode the whole
+   acceptance-criteria line (including that box) is downgraded to a warning. Removed the
+   false claim and added an explicit paragraph stating the validator does not scan file
+   contents for secrets. Grepped the full PR diff for every other capability claim added
+   (the `--health`/default-mode split, the "fresh clone of `main` exits 1" claim) and
+   verified each against `scripts/validate.py`'s actual behavior by running it (see
+   Validation) — both check out.
+3. **Superseded handoff entry not archived (CodeRabbit, major).** The first pass's edit to
+   `conductor/handoff-log.md` was purely additive — it inserted the new PR #8 entry above
+   the old "Patch — Wire review-pantheon gate (Way C)..." entry instead of moving it out,
+   violating the file's own current-state-only rule. Moved that entry verbatim to the top
+   of `conductor/handoff-archive.md` (ahead of the existing "Slice 01 — CLOSED" entry) and
+   added `conductor/handoff-archive.md` to this entry's Files Changed.
+4. **"Required gate" wording not scoped to the demos that use it (CodeRabbit, minor).**
+   `README.md` called the plain `scripts/validate.py` invocation "the demos' required
+   gate" — but `DEMO3.md` requires `--health`. Reworded both mode-comment lines: default
+   mode is Demo 1 and Demo 2's required gate; `--health` is Demo 3's.
+
 ### Files Changed
 - `AGENTS.md`
 - `DEMO.md`
@@ -58,118 +99,48 @@ validator's honesty is the thing being protected, not adjusted.
 - `project/conductor/slice-02-view-enrichment.md`
 - `project/conductor/slice-03-model-layer.md`
 - `conductor/handoff-log.md` (this entry)
+- `conductor/handoff-archive.md` (archived the superseded PR #6 entry, which this PR's
+  first pass left sitting below the current-state entry in violation of the log's own
+  current-state-only rule)
 
 ### Validation
-- `python3 scripts/validate.py` (real repo, this branch, unchanged demo-start state):
-  8 passed | 2 warnings | 1 failed, exit 1 (expected — slice-01 hasn't actually been run
-  in this session; the one failure is the pre-existing unchecked-criteria state)
-- `python3 scripts/validate.py --health` (same state): 8 passed | 3 warnings | 0 failed, exit 0
-- Gate-ordering fix, proven via `CONDUCTOR_PROJECT_ROOT` pointed at a scratch copy of
-  `project/` (no real repo files touched) simulating slice-01 finished, all 8 boxes ticked:
-  - old buggy pattern (`Active slice:` → slice-02 directly): 8 passed | 2 warnings | 1 failed,
-    exit 1 — reproduces the reported bug exactly
-  - fixed pattern (`Active slice: none — awaiting slice-02`, real commit hash `f8a1fb3`):
-    10 passed | 0 warnings | 0 failed, exit 0
-- `cd scripts && python3 -m pytest test_validate.py -q`: 13 passed in 0.89s (unchanged from
-  baseline — `scripts/validate.py` itself was not touched)
-- Pre-PR `koa review --branch` ritual: blocked by the sandbox's network allowlist
-  (`api.anthropic.com` / `github.com` both denied); disclosed in PR #8 under "Pre-gate:
-  unresolved findings" rather than silently skipped. Report saved at
-  `/tmp/claude-501/koa-locks/koa-review-branch-_Volumes_t9_dev_git_repos_aug-conductor-wrkflw-8e57f239.json`.
+- `python3 scripts/validate.py` (real repo, this branch, unchanged demo-start state, this
+  session): `8 passed | 2 warnings | 1 failed`, exit 1 — expected; slice-01 is still 0/7
+  unticked (Demo 1's real starting state, unchanged by this review round)
+- `python3 scripts/validate.py --health` (same state, this session): `8 passed | 3 warnings
+  | 0 failed`, exit 0
+- **Gate-ordering fix, re-verified this session** for the reordering above, via
+  `CONDUCTOR_PROJECT_ROOT` pointed at a scratch copy of `project/` (no real repo files
+  touched) simulating slice-01 finished under the *new* step order — handoff written
+  first (real reachable commit hash `8b22472`), then all 7 (post-deletion) criteria
+  ticked, `Active slice:` left pointing at slice-01 (still `ACTIVE`, not short-circuited),
+  then the gate run:
+  ```
+  ✓ handoff-log.md written
+  ✓ Handoff commit hash is real — 8b22472
+  ✓ Acceptance criteria  7/7 checked
+  ✓ Git branch is a feature branch — fix/demo-governance-defects
+  11 passed  |  0 warnings  |  0 failed  |  0 skipped
+  ```
+  exit 0 — every criterion honestly tickable, slice genuinely `ACTIVE` throughout, gate
+  passes for real. Same pattern applies to slice-02/03 and the root meta template (same
+  reorder, same criteria deletions); not independently re-simulated this session since the
+  shape and the validator's parsing logic are identical.
+- `cd scripts && python3 -m pytest test_validate.py -q`: `13 passed in 0.85s` this session
+  (unchanged count from baseline — `scripts/validate.py` itself was not touched, per the
+  hard rule protecting the validator's honesty)
 
 ### Exact Next Steps
-1. Operator: review and merge PR #8 (CI's own `review-gate.yml` will run with real network
-   access, unlike this session's sandboxed local attempt).
-2. Operator: decide whether to also fix the demo-branch-only defects noted in the PR body
-   (`demo-2-start:project/conductor/slice-04-promotions-view.md` has the identical circular
+1. Operator: merge PR #8 once the four review threads above are confirmed resolved.
+2. Operator: decide whether to also fix the demo-branch-only defects noted below (unchanged
+   from the prior round, still deferred):
+   `demo-2-start:project/conductor/slice-04-promotions-view.md` has the identical circular
    "scripts/validate.py exits 0" criterion, with no tick-checkbox instruction anywhere on
-   that branch) — that's a separate operator-decision workstream per this dispatch's hard
-   rule against touching `demo-2-start`/`demo-3-start`.
-3. Next time an agent actually runs Demo 1 for real, confirm the fixed slice-01 spec
+   that branch — separate operator-decision workstream per this dispatch's hard rule
+   against touching `demo-2-start`/`demo-3-start`.
+3. Next time an agent actually runs Demo 1 for real, confirm the reordered slice-01 spec
    produces a clean non-simulated `validate.py` run end to end (this session only proved it
    via a scratch-copy simulation, not a live Demo 1 execution).
-
-### Blockers
-- None.
-
----
-
-## Patch — Wire review-pantheon gate (Way C) + cross-repo pairing docs
-
-Date: 2026-08-09
-PR: #6 (squash-merges to main — the durable anchor; pre-squash work commits are only
-reachable via the PR's own refs, so no raw intermediate hash is recorded here)
-Target Branch: main
-Status: STABLE
-Conductor Mode: patch
-
-### Objective
-Make this repo the first public adopter of review-pantheon's PR gate, so its and
-review-pantheon's mutual "pairs with" story is literally true rather than aspirational.
-
-### Current State
-- `.github/workflows/review-gate.yml` added from review-pantheon v1's
-  `examples/review-gate.yml` (Way C install — fetched via
-  `gh api repos/G-Schumacher44/review-pantheon/contents/examples/review-gate.yml?ref=v1`) —
-  byte-verbatim except one added first line marking it as the installed copy (a gate finding
-  on this very PR: the upstream header's "copy to .github/workflows/" instruction read as
-  confusing in-place). `REVIEW_GATE_ENABLED` and `CLAUDE_CODE_OAUTH_TOKEN` were both
-  configured on the repo before this PR merged — **this PR itself was the gate's first live
-  run** (verdict posted by the review-pantheon action: artemis SHIP / apollo
-  ACCEPT-WITH-NOTES, whose notes are addressed in this same PR).
-- README gained a "Works with review-pantheon" section, mirroring review-pantheon's own
-  "Works with Conductor" section in its README (fetched at the `v1` tag for this session).
-- `conductor/AGENTS.md`'s "include validation gates" workflow rule now names a concrete,
-  optional example (`pantheon gate --branch` pre-PR / the Action on the PR) — Conductor
-  itself stays gate-agnostic. Root `AGENTS.md` has no matching validation-gates rule to
-  update, but it WAS edited later in this PR for a different reason: its Handoff Rules'
-  `Commit:` field gained the squash-merge exception (anchor on PR #N; never record a hash
-  the reviewed history won't contain), after the gate + Codex both flagged this entry's
-  original pre-squash hash anchor.
-- `conductor/tracks.md`'s registry gained a real entry for the review-pantheon pairing —
-  recorded as a non-blocking verification track (not the artifact-blocking shape the file's
-  worked example describes), since no slice here blocks on review-pantheon's state.
-
-### Files Changed
-- `.github/workflows/review-gate.yml` (new)
-- `README.md`
-- `AGENTS.md` (Handoff Rules: squash-merge exception added to the `Commit:` field)
-- `conductor/AGENTS.md`
-- `conductor/tracks.md`
-- `conductor/handoff-log.md` (this entry; superseded Slice-01 entries moved out per the
-  current-state-only rule)
-- `conductor/handoff-archive.md` (received the two moved Slice-01 entries)
-- `project/AGENTS.md` (review round: the scoped Commit rule gained the same squash-merge
-  exception as root, so validate.py's PROJECT checks police a rule that actually permits
-  what the code accepts)
-- `scripts/validate.py` (review round: accepts the PR-anchor form, field-anchored regex)
-- `scripts/test_validate.py` (review round: two new tests, registered in BOTH entrypoints —
-  pytest and the standalone `tests` list)
-
-### Validation (re-run after the review-round edits, same session that wrote this entry)
-- `python3 scripts/validate.py --health` — 8 passed, 3 warnings, 0 failed, exit 0 (warnings
-  are the documented project/-state ones, unrelated to this change)
-- `python3 scripts/validate.py` — 8 passed, 2 warnings, 1 failed, exit 1: the failure is the
-  demo slice's deliberately-unchecked acceptance criteria, pre-existing on pristine `main`
-  (verified in a clean worktree: main is 7 passed / 3 warnings / 1 failed — this branch
-  passes one MORE check than main; the slice-01-CLOSED entry, now in
-  `conductor/handoff-archive.md`, documents the by-design failure); unrelated to this change
-- `cd scripts && python3 -m pytest test_validate.py -q` — 13 passed (11 at this entry's first
-  writing; this PR's review rounds added two tests covering validate.py's new PR-anchor
-  exception, both also registered in the file's standalone `tests` list — the gate's apollo
-  caught BOTH the stale count and the unregistered tests in one blocker, which is exactly the
-  job this PR wires him up to do)
-- `.github/workflows/review-gate.yml` parses as YAML (`yaml.safe_load`)
-- Every relative/absolute link added in this session resolves: `.github/workflows/review-gate.yml`
-  exists, the README's `#works-with-review-pantheon` anchor exists, `conductor/AGENTS.md`'s
-  `../.github/workflows/review-gate.yml` link resolves, and
-  `gh api repos/G-Schumacher44/review-pantheon/contents/docs/SETUP.md` / `.../README.md`
-  both resolve at the `main`/`v1` refs referenced
-
-### Exact Next Steps
-1. Merge PR #6. The gate is already live — it ran on this PR and posted its verdict.
-2. Future PRs here get gated automatically; findings follow review-pantheon's
-   fix-or-track discipline.
 
 ### Blockers
 - None.

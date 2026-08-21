@@ -85,36 +85,7 @@ lkml views/*.view.lkml models/*.model.lkml
 
 Note the result in the handoff Validation field. Skip if tooling is not approved.
 
-### Step 6 — Tick satisfied acceptance criteria, then run the spine validator (required gate)
-
-Before running the validator, go to the **Acceptance Criteria** section below and tick
-(`- [x]`) every item this session actually satisfied. Only tick what is true right now —
-do not tick "scripts/validate.py exits 0" yet, since you have not run it.
-
-Then run, from the **repo root** (not from project/):
-
-```bash
-python3 scripts/validate.py
-```
-
-Fix any failures before proceeding. All checks must pass. Once the run is clean, tick
-the remaining "ran the validator" criterion too — it now honestly reflects the run you
-just completed.
-
-### Step 7 — Mark slice stable and advance the queue
-
-In this file: change `Status: active` → `Status: stable`
-
-In `conductor/index.md`:
-- Update queue row: slice-01 `ACTIVE` → `STABLE`
-- Leave slice-02 `QUEUED` — do not flip it to `ACTIVE` yet. Its acceptance criteria are
-  all unchecked, and a validator run after this point would fail on the next slice's
-  progress instead of reporting this one's completion.
-- Update `Active slice:` line to `none — awaiting slice-02` (the operator promotes it to
-  `ACTIVE` when a session starts slice-02 — same pattern used to close out slice-04 in
-  Demo 2).
-
-### Step 8 — Write the handoff
+### Step 6 — Write the handoff
 
 Write an entry at the **top** of `conductor/handoff-log.md` (above the comment marker):
 
@@ -152,7 +123,43 @@ Bootstrap LookML views for all 8 gold_marts tables.
 - Connection name is a placeholder — operator sets it when connecting to Looker
 ```
 
-Commit: `docs(handoff): record slice 01 completion`
+`Commit:` is the hash of your last work commit so far (e.g. Step 4's `feat(model): ...`
+commit — check `git log -1 --format=%h`), not the handoff commit itself, which doesn't
+exist yet.
+
+### Step 7 — Tick satisfied acceptance criteria, then run the spine validator (required gate)
+
+Go to the **Acceptance Criteria** section below and tick (`- [x]`) every item that is now
+true — including "Handoff written", since Step 6 just did that. Only tick what is
+actually true.
+
+Then run, from the **repo root** (not from project/):
+
+```bash
+python3 scripts/validate.py
+```
+
+This is the required gate. It runs while slice-01 is still `Active slice:` in
+`conductor/index.md`, so it genuinely checks this slice's acceptance criteria, not a
+short-circuited "none". Fix any failures before proceeding — all checks must pass. Once
+clean, paste the real `X passed | Y warnings | 0 failed` line into the handoff's
+`### Validation` field you wrote in Step 6.
+
+### Step 8 — Mark slice stable, advance the queue, and commit
+
+In this file: change `Status: active` → `Status: stable`
+
+In `conductor/index.md`:
+- Update queue row: slice-01 `ACTIVE` → `STABLE`
+- Leave slice-02 `QUEUED` — do not flip it to `ACTIVE` yet. Its acceptance criteria are
+  all unchecked, and a validator run after this point would fail on the next slice's
+  progress instead of reporting this one's completion.
+- Update `Active slice:` line to `none — awaiting slice-02` (the operator promotes it to
+  `ACTIVE` when a session starts slice-02 — same pattern used to close out slice-04 in
+  Demo 2).
+
+Commit the slice doc, `conductor/index.md`, and `conductor/handoff-log.md` together:
+`docs(handoff): record slice 01 completion`
 
 ## Acceptance Criteria
 
@@ -161,6 +168,5 @@ Commit: `docs(handoff): record slice 01 completion`
 - [ ] No non-baseline measures (no sum, average, max, min)
 - [ ] models/gold_marts.model.lkml with 8 explores
 - [ ] CI stub present at .github/workflows/lookml-ci.yml
-- [ ] Ran `scripts/validate.py` from repo root (Step 6) and resolved every failure it reported
-- [ ] Handoff written with Exact Next Steps and validator output
+- [ ] Handoff written with Exact Next Steps
 - [ ] No hardcoded credentials

@@ -57,11 +57,20 @@ Review which tables share a grain (e.g., date, product_id). Document any confirm
 grains in the handoff. Do **not** add joins without operator confirmation — note them as
 candidates only.
 
-### Step 6 — Tick satisfied acceptance criteria, then run the spine validator (required gate)
+### Step 6 — Write the final handoff
 
-Before running the validator, tick (`- [x]`) every item in this file's **Acceptance
-Criteria** section that this session actually satisfied. Do not tick "ran
-scripts/validate.py" yet — you haven't run it.
+Write an entry at the **top** of `conductor/handoff-log.md`. Move current entry to archive.
+
+The final handoff should record:
+- Full project state (all 8 views enriched, model labeled)
+- Any join candidates (not yet added — operator decision)
+- Connection name still placeholder
+- What operator must do to make the project live in Looker
+
+### Step 7 — Tick satisfied acceptance criteria, then run the spine validator (required gate)
+
+Tick (`- [x]`) every item in this file's **Acceptance Criteria** section that is now
+true — including "Handoff written", since Step 6 just did that.
 
 Run from the **repo root**:
 
@@ -69,10 +78,12 @@ Run from the **repo root**:
 python3 scripts/validate.py
 ```
 
-Fix any failures before writing the handoff. Once the run is clean, tick the remaining
-validator criterion.
+This is the required gate. It runs while slice-03 is still `Active slice:` in
+`conductor/index.md`, so it genuinely checks this slice's acceptance criteria, not a
+short-circuited "none". Fix any failures before proceeding. Once clean, paste the real
+`X passed | Y warnings | 0 failed` line into the handoff's `### Validation` field.
 
-### Step 7 — Mark slice stable and close the queue
+### Step 8 — Mark slice stable, close the queue, and commit
 
 In this file: `Status: queued` → `Status: stable`
 
@@ -84,15 +95,8 @@ In `conductor/master-plan-lookml-gold-marts.md`:
 - Update slice index table: all rows → stable
 - Update Status: active → stable
 
-### Step 8 — Write the final handoff
-
-Write an entry at the **top** of `conductor/handoff-log.md`. Move current entry to archive.
-
-The final handoff should record:
-- Full project state (all 8 views enriched, model labeled)
-- Any join candidates (not yet added — operator decision)
-- Connection name still placeholder
-- What operator must do to make the project live in Looker
+Commit the slice doc, `conductor/index.md`, `conductor/master-plan-lookml-gold-marts.md`,
+and `conductor/handoff-log.md` (plus `conductor/handoff-archive.md`) together.
 
 ## Acceptance Criteria
 
@@ -100,6 +104,4 @@ The final handoff should record:
 - [ ] Key dimensions have group_label applied
 - [ ] PK dimensions are hidden
 - [ ] No joins added without operator confirmation in handoff
-- [ ] Ran `scripts/validate.py` from repo root (Step 6) and resolved every failure it reported
-- [ ] All slices marked stable, conductor/index.md queue shows all STABLE
 - [ ] Handoff written — records full project state, notes any open blockers for operator

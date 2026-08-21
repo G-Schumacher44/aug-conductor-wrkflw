@@ -40,7 +40,8 @@ You do not need to read DEMO.md again after this point.
 - Use only columns listed in `demo/schema/gold_marts.md` — do not invent fields
 - No hardcoded credentials
 - Commit as you go — not one giant commit at the end
-- Run `python3 scripts/validate.py` from the **repo root** before writing the handoff
+- Write the handoff first, then run `python3 scripts/validate.py` from the **repo root**
+  as the required gate (see the active slice spec's exact step order)
 - `demo/views/` is reference output only — write your output to `project/views/`
 
 ---
@@ -50,7 +51,7 @@ You do not need to read DEMO.md again after this point.
 A Conductor-governed LookML bootstrap:
 
 ```
-schema discovery → view generation → model → tick criteria → validate → handoff → Exact Next Steps
+schema discovery → view generation → model → handoff → tick criteria → validate → Exact Next Steps
 ```
 
 The "Exact Next Steps" in your handoff is the scheduling mechanism — you are proposing
