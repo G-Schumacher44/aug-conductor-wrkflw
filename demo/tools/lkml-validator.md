@@ -73,8 +73,8 @@ No system dependencies. Works in virtualenvs, Docker containers, and CI runners.
 # Validate a single file
 lkml views/fct_finance_revenue.view.lkml
 
-# Validate all views
-lkml views/*.view.lkml
+# Validate all views (the CLI takes one file per call)
+for f in views/*.view.lkml; do lkml "$f" || exit 1; done
 
 # Validate model file
 lkml models/gold_marts.model.lkml

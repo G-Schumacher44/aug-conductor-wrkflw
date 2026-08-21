@@ -102,6 +102,7 @@ Move the previous handoff entry to `project/conductor/handoff-archive.md`.
 ### 7 — Commit
 
 ```bash
+git add project/conductor/handoff-log.md project/conductor/handoff-archive.md
 git commit -m "chore(maintenance): conductor health check <YYYY-MM-DD>"
 ```
 

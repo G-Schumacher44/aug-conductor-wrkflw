@@ -80,10 +80,11 @@ Commit: `feat(model): add gold_marts model with 8 explores`
 If `lkml` is available in your environment:
 
 ```bash
-lkml views/*.view.lkml models/*.model.lkml
+for f in views/*.view.lkml models/*.model.lkml; do lkml "$f" || exit 1; done
 ```
 
-Note the result in the handoff Validation field. Skip if tooling is not approved.
+The `lkml` CLI takes one file per invocation, hence the loop. Note the result in the
+handoff Validation field. Skip if tooling is not approved.
 
 ### Step 6 — Run the spine validator (required gate)
 
