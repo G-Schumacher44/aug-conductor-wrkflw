@@ -105,8 +105,8 @@ Bootstrap LookML views for all 8 gold_marts tables.
 ### Files Changed
 - views/fct_*.view.lkml (8 files)
 - models/gold_marts.model.lkml
-- conductor/slice-01-lookml-bootstrap.md (stable)
-- conductor/index.md (queue advanced to slice-02)
+- conductor/slice-01-lookml-bootstrap.md (acceptance criteria ticked; marked stable in Step 8)
+- conductor/index.md (queue advanced to slice-02 in Step 8)
 
 ### Validation
 - scripts/validate.py: <X passed | Y warnings | 0 failed>
@@ -126,6 +126,12 @@ Bootstrap LookML views for all 8 gold_marts tables.
 `Commit:` is the hash of your last work commit so far (e.g. Step 4's `feat(model): ...`
 commit — check `git log -1 --format=%h`), not the handoff commit itself, which doesn't
 exist yet.
+
+Write this entry describing the state **as of now**, before the gate runs. The two closure
+lines above are annotated as Step 8 work rather than asserted as already done — if the gate
+in Step 7 cannot be cleared and the session stops there, the handoff must not claim a
+closure that never happened. Fill the `Validation` field with the real Step 7 output once
+you have it.
 
 ### Step 7 — Tick satisfied acceptance criteria, then run the spine validator (required gate)
 

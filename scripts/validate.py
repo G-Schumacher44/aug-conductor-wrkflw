@@ -21,18 +21,20 @@ Two questions, two modes — they are not the same question:
              slice-01 deliberately at 0/8 as Demo 1's starting state, so asking the handoff
              question on a schedule can only ever answer "no".
 
-What actually EXITS NONZERO (both modes) — only a `fail` does; a `warn` never does
-(see the exit line at the bottom of this file):
-  - handoff-log.md missing entirely
-  - a `Commit:` hash that does not exist in git (the anti-hallucination check)
-  - the active slice file named by conductor/index.md not existing
-  - committing on a protected branch instead of a feature branch
-Everything else is advisory and exits 0, including a handoff that is present but MISSING
-REQUIRED FIELDS (`Exact Next Steps`, `Commit:`), a commit that exists but is unreachable
-from HEAD, a missing CI stub, and an unparseable index. Default mode adds one failure the
-health mode downgrades to a warning: unchecked acceptance criteria.
-This script never reads file CONTENTS for secrets — there is no credential scanning here.
-Keep this list honest: it is the thing readers trust when they wire the validator into CI.
+THE EXIT RULE (both modes): the run exits nonzero if and only if some check returned
+`fail`. A `warn` NEVER fails the run — see the exit line at the bottom of this file.
+Read the `check(...)` registrations below for the authoritative behavior of each; this
+docstring deliberately does NOT restate them as a list, because a restated inventory
+drifts out of sync with the code and this repo has already paid for that twice.
+
+The distinction that surprises people: a handoff that EXISTS but is missing required
+fields (`Exact Next Steps`, `Commit:`) returns `warn`, so it exits 0. Absence of a file
+is a `fail`; malformed content mostly is not. Do not read a green run as "the handoff is
+well-formed" — it means "nothing returned fail."
+
+This script never reads file CONTENTS for secrets — there is no credential scanning here,
+in either mode. "No hardcoded credentials" is a manually ticked acceptance checkbox, an
+honor-system attestation the agent makes, not something this script verifies.
 
 Usage:
   python3 scripts/validate.py

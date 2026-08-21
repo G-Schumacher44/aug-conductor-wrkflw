@@ -28,7 +28,7 @@ This repo extends that foundation:
 - **Slice-based execution** replaces the single spec+plan model. Each unit of work is a bounded slice with explicit scope, gates, and out-of-scope declarations.
 - **Exact Next Steps** replaces open-ended "next track" proposals. The agent writes a concrete recommendation; the operator approves or redirects. The handoff is the scheduling mechanism.
 - **Multi-agent support** — the same scaffold runs with Codex, Claude, and Gemini by renaming `AGENTS.md` to match each CLI's convention.
-- **Validation gate** — `scripts/validate.py` enforces Conductor governance with zero external dependencies before any handoff is written. Domain-specific checks live as separate extension scripts — see `demo/scripts/`.
+- **Validation gate** — `scripts/validate.py` enforces Conductor governance with zero external dependencies. It runs after the handoff is written and the criteria are ticked, while the slice is still active — "handoff written" is itself an acceptance criterion, so gating before it exists can never come back clean. Domain-specific checks live as separate extension scripts — see `demo/scripts/`.
 - **Cross-repo tracks** — `conductor/tracks.md` tracks dependencies across repos; spokes coordinate without merging codebases.
 - **No external dependencies** — the entire workflow runs from the filesystem. No hosted service, no database, no API calls.
 
@@ -71,8 +71,9 @@ Each demo runs independently from its branch — no sequential dependency.
 3. Reads `demo/schema/gold_marts.md` — 8 tables, no live BQ access required
 4. Generates 8 `.view.lkml` files, one commit per view
 5. Generates `models/gold_marts.model.lkml` with 8 explores
-6. Runs `python3 scripts/validate.py` — required gate before handoff
-7. Marks slice stable, advances the queue, writes handoff with Exact Next Steps
+6. Writes the handoff with Exact Next Steps
+7. Ticks the satisfied acceptance criteria, then runs `python3 scripts/validate.py` — the required gate, run while the slice is still `ACTIVE` so it checks this slice's work
+8. Marks the slice stable and advances the queue
 
 ```bash
 git checkout main
@@ -247,12 +248,15 @@ shouldn't fail forever just because nobody's mid-slice. Only slice *progress* �
 acceptance-criteria checkboxes — differs between the modes; it fails the default gate and is
 downgraded to a reported warning under `--health`.
 
-Be precise about what a green run does and does not prove, in **either** mode. Only these
-exit nonzero: a missing `handoff-log.md`, a `Commit:` hash that doesn't exist in git (the
-anti-hallucination check), an active-slice file named by the index but absent, and committing
-on a protected branch. Everything else is advisory and still exits 0 — including a handoff
-that exists but is **missing required fields** like `Exact Next Steps`, a commit that exists
-but isn't reachable from HEAD, a missing CI stub, and an unparseable index.
+Be precise about what a green run does and does not prove, in **either** mode. The rule is
+simply: the run exits nonzero if and only if some check returned `fail` — a `warn` never
+fails the run. `scripts/validate.py`'s own checks are the authority on which is which; this
+README doesn't restate them as a list, because a restated inventory drifts.
+
+The distinction worth internalizing: **a missing file is a `fail`, but malformed content
+usually isn't.** A handoff that exists yet omits `Exact Next Steps` or `Commit:` returns a
+warning and still exits 0. So a green run means "nothing returned fail" — not "the handoff
+is well-formed," and never "no secrets are committed" (see below).
 
 `scripts/validate.py` does not scan file contents for secrets. "No hardcoded credentials"
 is one of those acceptance-criteria checkboxes: a manual, honor-system attestation the agent
