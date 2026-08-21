@@ -81,9 +81,11 @@ honestly, and the run can never come back clean. Same ordering rule as Demo 1.
 ### 7 — Tick the criteria, run the required gate, then close the slice out
 
 With the handoff written, go to `project/conductor/slice-04-promotions-view.md`'s
-**Acceptance Criteria** and tick (`- [x]`) every item this session satisfied — all of them
-are true now. Then run the required gate while the slice is still `ACTIVE`, so the run
-actually checks this slice's work:
+**Acceptance Criteria** and tick (`- [x]`) every item this session actually satisfied — and
+only those. If the list contains a self-referential item like "validate.py exits 0", leave it
+unticked and remove it from the slice: an acceptance criterion must never require asserting
+something that isn't true yet. Then run the required gate while the slice is still `ACTIVE`,
+so the run actually checks this slice's work:
 
 ```bash
 python3 scripts/validate.py
