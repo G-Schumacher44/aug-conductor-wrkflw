@@ -30,7 +30,8 @@ step order works end to end).
 ### Files Changed
 - `project/conductor/slice-01-lookml-bootstrap.md`
 - `demo/tools/lkml-validator.md`
-- `demo/scripts/validate_lookml.py` (hint string only)
+- `demo/scripts/validate_lookml.py` (hint string only — first push had an unescaped `"$f"` that
+  made the file a SyntaxError; the gate caught it, fixed in the second commit)
 - `project/.github/workflows/lookml-ci.yml`
 - `DEMO3.md`
 - `conductor/handoff-log.md` (this entry; PR #6 entry moved to the archive)
@@ -40,6 +41,8 @@ step order works end to end).
 - Container run (fresh clone, Ubuntu 24.04): Demo 1 views byte-identical to `demo/views/`,
   gate 9 passed / 0 failed after ticking; Demo 2 slice-04 view identical to reference,
   11 passed / 0 failed; Demo 3 wrote + committed its `degraded` report.
+- `python3 demo/scripts/validate_lookml.py` — parses and runs (2 failed on pristine `main`
+  = no views yet, by design)
 - `cd scripts && python3 -m pytest test_validate.py -q` — 13 passed
 - `python3 scripts/validate.py --health` — 0 failed
 
