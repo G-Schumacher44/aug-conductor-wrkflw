@@ -98,7 +98,7 @@ check("LookML model — structural", check_model)
 results.append({
     "name": "lkml syntax check",
     "status": "skip",
-    "message": "NOT RUN — pip install lkml, then: lkml project/views/*.view.lkml",
+    "message": "NOT RUN — pip install lkml, then: for f in project/views/*.view.lkml; do lkml "$f" || exit 1; done",
     "detail": None,
 })
 results.append({

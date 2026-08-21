@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install lkml
-      - run: lkml views/*.view.lkml models/*.model.lkml
+      - run: for f in views/*.view.lkml models/*.model.lkml; do lkml "$f" || exit 1; done
 
   lint:
     name: LAMS style check
