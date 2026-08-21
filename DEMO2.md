@@ -71,29 +71,34 @@ explore: fct_promotions {}
 
 Commit: `feat(model): add fct_promotions explore`
 
-### 6 — Tick satisfied acceptance criteria, then run the spine validator
+### 6 — Write the handoff
 
-Go to `project/conductor/slice-04-promotions-view.md`'s **Acceptance Criteria** section
-and tick (`- [x]`) every item this session satisfied. Don't tick "validate.py exits 0"
-yet — you haven't run it.
+Write the handoff entry first (its content is below, in step 7) — the gate in step 7 checks
+the acceptance criteria of the slice that is still `ACTIVE`, and "handoff written" is one of
+them. Running the gate before the handoff exists means that criterion cannot be ticked
+honestly, and the run can never come back clean. Same ordering rule as Demo 1.
+
+### 7 — Tick the criteria, run the required gate, then close the slice out
+
+With the handoff written, go to `project/conductor/slice-04-promotions-view.md`'s
+**Acceptance Criteria** and tick (`- [x]`) every item this session satisfied — all of them
+are true now. Then run the required gate while the slice is still `ACTIVE`, so the run
+actually checks this slice's work:
 
 ```bash
 python3 scripts/validate.py
 ```
 
-Required gate before writing the handoff. Fix any failures. All checks must pass. Once
-the run is clean, tick the remaining validator criterion.
+Fix any failures before continuing. Note the real output in the handoff's Validation field —
+never a number you didn't observe.
 
-### 7 — Write the handoff
+Only once that run is clean: mark `project/conductor/slice-04-promotions-view.md`
+`status: stable`, and advance `project/conductor/index.md` — move slice-04 from ACTIVE to
+STABLE and set `Active slice: none — awaiting slice-05` rather than flagging the next slice
+`ACTIVE` before it exists (an unstarted slice's unchecked criteria would fail the gate this
+session just passed).
 
-Mark `project/conductor/slice-04-promotions-view.md` `status: stable`.
-
-Advance `project/conductor/index.md` — move slice-04 from ACTIVE to STABLE. Set
-`Active slice: none — awaiting slice-05` rather than flagging the next slice `ACTIVE`
-before it exists — an unstarted slice's unchecked criteria would fail the gate this
-session just passed.
-
-Write an entry at the top of `project/conductor/handoff-log.md`:
+The handoff entry to write, at the top of `project/conductor/handoff-log.md`:
 
 ```
 ## Slice 04 — Promotions View
