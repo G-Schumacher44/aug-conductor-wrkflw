@@ -51,7 +51,11 @@ dimension_group: <field_name> {
 }
 ```
 
-### Step 5 — Run the spine validator (required gate)
+### Step 5 — Tick satisfied acceptance criteria, then run the spine validator (required gate)
+
+Before running the validator, tick (`- [x]`) every item in this file's **Acceptance
+Criteria** section that this session actually satisfied. Do not tick "ran
+scripts/validate.py" yet — you haven't run it.
 
 Run from the **repo root**:
 
@@ -59,7 +63,8 @@ Run from the **repo root**:
 python3 scripts/validate.py
 ```
 
-Fix any failures before writing the handoff.
+Fix any failures before writing the handoff. Once the run is clean, tick the remaining
+validator criterion.
 
 ### Step 6 — Mark slice stable and advance the queue
 
@@ -67,8 +72,10 @@ In this file: `Status: queued` → `Status: stable`
 
 In `conductor/index.md`:
 - slice-02 `ACTIVE` → `STABLE`
-- slice-03 `QUEUED` → `ACTIVE`
-- Update `Active slice:` line to `conductor/slice-03-model-layer.md`
+- Leave slice-03 `QUEUED` — do not flip it to `ACTIVE` yet; its criteria are all
+  unchecked, and a later validator run would fail on slice-03's progress instead of
+  reporting slice-02's completion.
+- Update `Active slice:` line to `none — awaiting slice-03`
 
 ### Step 7 — Write the handoff
 
@@ -81,6 +88,6 @@ Write an entry at the **top** of `conductor/handoff-log.md`. Move the current to
 - [ ] All financial measures have value_format_name applied
 - [ ] All DATE columns converted to dimension_group
 - [ ] No dimensions removed or renamed from slice 01
-- [ ] scripts/validate.py exits 0 (run from repo root)
+- [ ] Ran `scripts/validate.py` from repo root (Step 5) and resolved every failure it reported
 - [ ] slice-02 marked stable, conductor/index.md advanced to slice-03
 - [ ] Handoff written with Exact Next Steps

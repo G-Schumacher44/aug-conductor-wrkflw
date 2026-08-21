@@ -57,7 +57,11 @@ Review which tables share a grain (e.g., date, product_id). Document any confirm
 grains in the handoff. Do **not** add joins without operator confirmation — note them as
 candidates only.
 
-### Step 6 — Run the spine validator (required gate)
+### Step 6 — Tick satisfied acceptance criteria, then run the spine validator (required gate)
+
+Before running the validator, tick (`- [x]`) every item in this file's **Acceptance
+Criteria** section that this session actually satisfied. Do not tick "ran
+scripts/validate.py" yet — you haven't run it.
 
 Run from the **repo root**:
 
@@ -65,7 +69,8 @@ Run from the **repo root**:
 python3 scripts/validate.py
 ```
 
-Fix any failures before writing the handoff.
+Fix any failures before writing the handoff. Once the run is clean, tick the remaining
+validator criterion.
 
 ### Step 7 — Mark slice stable and close the queue
 
@@ -95,6 +100,6 @@ The final handoff should record:
 - [ ] Key dimensions have group_label applied
 - [ ] PK dimensions are hidden
 - [ ] No joins added without operator confirmation in handoff
-- [ ] scripts/validate.py exits 0 (run from repo root)
+- [ ] Ran `scripts/validate.py` from repo root (Step 6) and resolved every failure it reported
 - [ ] All slices marked stable, conductor/index.md queue shows all STABLE
 - [ ] Handoff written — records full project state, notes any open blockers for operator

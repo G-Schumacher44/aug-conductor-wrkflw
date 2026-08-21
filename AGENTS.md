@@ -34,7 +34,7 @@ Every session, before doing anything else:
 Every session runs a self-scheduling cycle:
 
 - Read the active slice spec → execute bounded work → write a handoff
-- The handoff's **Next Slice Proposal** field is your recommendation for the next unit of work
+- The handoff's **Exact Next Steps** field is your recommendation for the next unit of work
 - The operator reviews it, approves or redirects, and starts the next session
 - You are handing off to the next agent — write the proposal as if briefing a colleague who has no session context
 
@@ -60,8 +60,14 @@ Every session must end with a `conductor/handoff-log.md` entry. The entry must i
 - **Blockers** — anything unresolved that the operator needs to decide
 
 At the end of each slice, also:
+- Tick (`- [x]`) every satisfied item in the slice's Acceptance Criteria section before
+  running the final validator gate — an unticked-but-satisfied checkbox is what makes
+  the gate fail on work that's actually done
 - Mark the current slice `status: stable` in its slice doc
-- Advance `conductor/index.md` active pointer to the next queued slice (if one exists)
+- Advance `conductor/index.md`'s `Active slice:` line. If the next slice hasn't started
+  yet, point it at `none — awaiting slice-NN` rather than flagging that slice `ACTIVE` —
+  its criteria are still unchecked, and a validator run would fail on its progress
+  instead of confirming the slice you just finished
 
 Format: newest entry at the top. Keep `handoff-log.md` current-state only — move older entries to `conductor/handoff-archive.md`.
 

@@ -227,9 +227,25 @@ Apply the same rename inside `conductor/` — `conductor/AGENTS.md` → `conduct
 
 `scripts/validate.py` checks the Conductor spine — domain-agnostic, stdlib only, CI-safe. Checks: spine structure, handoff format (`Commit:`, `Exact Next Steps`), active slice acceptance criteria, CI stub, git branch state.
 
+Two modes, two different questions:
+
 ```bash
-python3 scripts/validate.py
+python3 scripts/validate.py           # "am I ready to hand off?" — the demos' required gate
+python3 scripts/validate.py --health  # "is the spine intact?" — for scheduled/monitoring runs
 ```
+
+The default mode fails while the active slice has any unchecked acceptance-criteria box —
+that's the point when you're about to write a handoff. But it means a **fresh clone of `main`
+exits 1 by design**: `main` ships slice-01 at 0/8 acceptance criteria (Demo 1's starting state,
+committed on `main` itself, not a feature branch) — you'll see something like `7 passed | 2
+warnings | 2 failed`, including "on main — commits should go on a feature branch". That's
+expected; it's the state an agent is meant to complete, not a broken repo.
+
+`--health` is for a repo that legitimately sits at an unstarted or already-finished slice —
+scheduled monitoring (see [`.github/workflows/conductor-maintenance.yml`](./.github/workflows/conductor-maintenance.yml))
+shouldn't fail forever just because nobody's mid-slice. Structure, handoff format, commit-hash
+reachability, and credential checks still fail for real problems; only slice *progress* is
+downgraded to a reported warning.
 
 Domain-specific checks (LookML, dbt, etc.) live as separate extension scripts. See [`demo/scripts/`](./demo/scripts/) for the pattern and a LookML reference implementation.
 

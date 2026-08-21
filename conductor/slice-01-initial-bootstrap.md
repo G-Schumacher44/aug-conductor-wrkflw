@@ -53,7 +53,11 @@ Rules:
 - Commit after each meaningful unit: `feat(<scope>): <description>`
 - Do not invent requirements — only build what is specified
 
-### Step 4 — Run the spine validator (required gate)
+### Step 4 — Tick satisfied acceptance criteria, then run the spine validator (required gate)
+
+Go to the **Acceptance Criteria** section below and tick (`- [x]`) every item this
+session satisfied. Only tick what is already true — don't tick "validate.py exits 0" yet,
+since you haven't run it.
 
 ```bash
 python3 scripts/validate.py
@@ -61,7 +65,8 @@ python3 scripts/validate.py
 
 Fix any **failures** before writing the handoff. Warnings are acceptable — they flag
 recommendations, not blocking issues. The exit code is what matters: exit 0 = proceed,
-exit 1 = fix before continuing.
+exit 1 = fix before continuing. Once the run is clean, tick the remaining validator
+criterion — it now honestly reflects the run you just completed.
 
 ### Step 5 — Mark stable and advance the queue
 
@@ -69,8 +74,10 @@ In this file: `Status: <active>` → `Status: stable`
 
 In `conductor/index.md`:
 - Update queue row: slice-01 `ACTIVE` → `STABLE`
-- Advance next slice: `QUEUED` → `ACTIVE`
-- Update `Active slice:` line
+- Leave the next slice `QUEUED` — don't flip it to `ACTIVE` until a session actually
+  starts it. Its acceptance criteria are all unchecked, so an active-but-unstarted next
+  slice would fail the very validator gate this one just passed.
+- Update `Active slice:` line to `none — awaiting slice-02` (or whichever slice is next)
 
 ### Step 6 — Write the handoff
 
@@ -109,7 +116,7 @@ Commit: `docs(handoff): record slice 01 completion`
 
 - [ ] Branch created from main or dev — not committed directly
 - [ ] Work matches the scope defined in this slice — nothing more
-- [ ] `python3 scripts/validate.py` exits 0
+- [ ] Ran `python3 scripts/validate.py` (Step 4) and resolved every failure it reported
 - [ ] Slice marked stable in this file
 - [ ] `conductor/index.md` queue advanced to next slice
 - [ ] Handoff written with Commit: hash and Exact Next Steps

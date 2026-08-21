@@ -23,10 +23,13 @@ Active slice: none — all slices stable
 
 ## Agent — end-of-slice responsibilities
 
-1. Mark completed slice `status: stable` in its slice doc
-2. Update queue table (ACTIVE → STABLE, next QUEUED → ACTIVE)
-3. Update `Active slice:` line to point to next slice
-4. Commit slice doc + index.md + handoff-log.md together
+1. Tick every satisfied acceptance-criteria checkbox in the slice doc, then run the
+   validator gate (`scripts/validate.py`) and fix any failures
+2. Mark completed slice `status: stable` in its slice doc
+3. Update queue table (ACTIVE → STABLE). Leave the next slice `QUEUED` — don't flip it
+   to `ACTIVE` until a session actually starts it
+4. Update `Active slice:` line to `none — awaiting slice-NN`
+5. Commit slice doc + index.md + handoff-log.md together
 
 ## Reference
 

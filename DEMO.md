@@ -50,7 +50,7 @@ You do not need to read DEMO.md again after this point.
 A Conductor-governed LookML bootstrap:
 
 ```
-schema discovery → view generation → model → validate → handoff → Exact Next Steps
+schema discovery → view generation → model → tick criteria → validate → handoff → Exact Next Steps
 ```
 
 The "Exact Next Steps" in your handoff is the scheduling mechanism — you are proposing

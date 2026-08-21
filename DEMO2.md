@@ -71,19 +71,27 @@ explore: fct_promotions {}
 
 Commit: `feat(model): add fct_promotions explore`
 
-### 6 — Run the spine validator
+### 6 — Tick satisfied acceptance criteria, then run the spine validator
+
+Go to `project/conductor/slice-04-promotions-view.md`'s **Acceptance Criteria** section
+and tick (`- [x]`) every item this session satisfied. Don't tick "validate.py exits 0"
+yet — you haven't run it.
 
 ```bash
 python3 scripts/validate.py
 ```
 
-Required gate before writing the handoff. Fix any failures. All checks must pass.
+Required gate before writing the handoff. Fix any failures. All checks must pass. Once
+the run is clean, tick the remaining validator criterion.
 
 ### 7 — Write the handoff
 
 Mark `project/conductor/slice-04-promotions-view.md` `status: stable`.
 
-Advance `project/conductor/index.md` — move slice-04 from ACTIVE to STABLE.
+Advance `project/conductor/index.md` — move slice-04 from ACTIVE to STABLE. Set
+`Active slice: none — awaiting slice-05` rather than flagging the next slice `ACTIVE`
+before it exists — an unstarted slice's unchecked criteria would fail the gate this
+session just passed.
 
 Write an entry at the top of `project/conductor/handoff-log.md`:
 

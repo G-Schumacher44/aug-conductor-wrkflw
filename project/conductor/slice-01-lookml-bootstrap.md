@@ -85,15 +85,21 @@ lkml views/*.view.lkml models/*.model.lkml
 
 Note the result in the handoff Validation field. Skip if tooling is not approved.
 
-### Step 6 — Run the spine validator (required gate)
+### Step 6 — Tick satisfied acceptance criteria, then run the spine validator (required gate)
 
-Run from the **repo root** (not from project/):
+Before running the validator, go to the **Acceptance Criteria** section below and tick
+(`- [x]`) every item this session actually satisfied. Only tick what is true right now —
+do not tick "scripts/validate.py exits 0" yet, since you have not run it.
+
+Then run, from the **repo root** (not from project/):
 
 ```bash
 python3 scripts/validate.py
 ```
 
-Fix any failures before proceeding. All checks must pass.
+Fix any failures before proceeding. All checks must pass. Once the run is clean, tick
+the remaining "ran the validator" criterion too — it now honestly reflects the run you
+just completed.
 
 ### Step 7 — Mark slice stable and advance the queue
 
@@ -101,8 +107,12 @@ In this file: change `Status: active` → `Status: stable`
 
 In `conductor/index.md`:
 - Update queue row: slice-01 `ACTIVE` → `STABLE`
-- Advance slice-02: `QUEUED` → `ACTIVE`
-- Update `Active slice:` line to `conductor/slice-02-view-enrichment.md`
+- Leave slice-02 `QUEUED` — do not flip it to `ACTIVE` yet. Its acceptance criteria are
+  all unchecked, and a validator run after this point would fail on the next slice's
+  progress instead of reporting this one's completion.
+- Update `Active slice:` line to `none — awaiting slice-02` (the operator promotes it to
+  `ACTIVE` when a session starts slice-02 — same pattern used to close out slice-04 in
+  Demo 2).
 
 ### Step 8 — Write the handoff
 
@@ -151,6 +161,6 @@ Commit: `docs(handoff): record slice 01 completion`
 - [ ] No non-baseline measures (no sum, average, max, min)
 - [ ] models/gold_marts.model.lkml with 8 explores
 - [ ] CI stub present at .github/workflows/lookml-ci.yml
-- [ ] scripts/validate.py exits 0 (run from repo root)
+- [ ] Ran `scripts/validate.py` from repo root (Step 6) and resolved every failure it reported
 - [ ] Handoff written with Exact Next Steps and validator output
 - [ ] No hardcoded credentials

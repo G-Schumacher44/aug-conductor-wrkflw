@@ -1,5 +1,8 @@
 # Run Demo 3 — Automated Maintenance
 
+> **CLI note:** This repo uses `AGENTS.md` as the agent rules file (Codex default).
+> For Claude Code rename to `CLAUDE.md`, for Gemini CLI rename to `GEMINI.md`.
+
 You are an automated maintenance agent. A cron job fired you — no human is present.
 You have no session context from prior conversations. Orient yourself entirely from
 the Conductor spine.
@@ -42,13 +45,18 @@ git checkout -b chore/maintenance-<YYYY-MM-DD>
 
 Branch from `demo-3-start`. All commits go on this branch.
 
-### 3 — Run the spine validator
+### 3 — Run the spine validator in health mode
 
 ```bash
-python3 scripts/validate.py
+python3 scripts/validate.py --health
 ```
 
-Capture the full output. Note the pass/warn/fail counts and any specific failures.
+Use `--health`, not the plain gate: the plain gate answers "am I ready to hand off?" and
+this maintenance slice permanently sits at an unstarted/stuck active slice by design, so
+that question can only ever answer "no" on a schedule. `--health` asks "is the spine
+intact?" instead — structure, handoff format, and commit-hash checks still fail for real
+problems; only slice progress is downgraded to a reported warning. Capture the full
+output. Note the pass/warn/fail counts and any specific failures.
 
 ### 4 — Check queue completeness
 
@@ -78,7 +86,7 @@ Type: automated-maintenance
 <clean | degraded>
 
 ### Validation
-- scripts/validate.py: <X passed | Y warnings | Z failed>
+- scripts/validate.py --health: <X passed | Y warnings | Z failed>
 <list any specific failures verbatim>
 
 ### Queue State
@@ -89,12 +97,17 @@ Type: automated-maintenance
 - <count> open blockers from last handoff
 <list each verbatim, or "None">
 
+### Exact Next Steps
+- If Status is `clean`: none — routine check, next run is cron-scheduled.
+- If Status is `degraded`: operator triages the Open Blockers above and decides whether
+  to queue a new slice or fix directly. This agent does not make that call.
+
 ### Next Run
 Cron-driven — operator sets schedule. No action required.
 ```
 
 **Status definition:**
-- `clean` — validate.py 0 failures, all slices STABLE, 0 open blockers
+- `clean` — validate.py --health 0 failures, all slices STABLE, 0 open blockers
 - `degraded` — any failures, any non-STABLE slices, or any open blockers
 
 Move the previous handoff entry to `project/conductor/handoff-archive.md`.
@@ -102,6 +115,7 @@ Move the previous handoff entry to `project/conductor/handoff-archive.md`.
 ### 7 — Commit
 
 ```bash
+git add project/conductor/handoff-log.md project/conductor/handoff-archive.md
 git commit -m "chore(maintenance): conductor health check <YYYY-MM-DD>"
 ```
 
