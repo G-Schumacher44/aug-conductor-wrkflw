@@ -116,8 +116,8 @@ Add fct_promotions view and explore to the established gold_marts LookML project
 ### Files Changed
 - project/views/fct_promotions.view.lkml (new)
 - project/models/gold_marts.model.lkml (updated)
-- project/conductor/slice-04-promotions-view.md (marked stable)
-- project/conductor/index.md (queue advanced)
+- project/conductor/slice-04-promotions-view.md (criteria ticked; marked stable in step 7)
+- project/conductor/index.md (queue advanced in step 7)
 
 ### Validation
 - scripts/validate.py: <X passed | 0 warnings | 0 failed>

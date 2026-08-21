@@ -13,12 +13,14 @@ For domain-specific checks (LookML, dbt, etc.) see demo/scripts/.
 
 Two questions, two modes — they are not the same question:
 
-  (default)  "Am I ready to hand off?"  Unchecked acceptance criteria FAIL. This is the gate the
-             demos require before writing a handoff, and it keeps its teeth.
+  (default)  "Is this slice actually finished?"  Unchecked acceptance criteria FAIL, and it keeps
+             its teeth. The demos run this AFTER the handoff is written and the criteria are
+             ticked, while the slice is still ACTIVE — "handoff written" is itself one of those
+             criteria, so gating before it exists can never come back clean.
 
   --health   "Is the spine intact?"  Slice PROGRESS is reported but does not fail. This is for
              scheduled monitoring of a repo that legitimately sits at an unstarted slice — `main` here ships
-             slice-01 deliberately at 0/8 as Demo 1's starting state, so asking the handoff
+             slice-01 deliberately at 0/7 as Demo 1's starting state, so asking the handoff
              question on a schedule can only ever answer "no".
 
 THE EXIT RULE (both modes): the run exits nonzero if and only if some check returned

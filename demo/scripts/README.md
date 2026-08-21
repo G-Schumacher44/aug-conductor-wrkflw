@@ -49,7 +49,8 @@ check("My thing label", check_my_thing)
 python3 scripts/validate.py && python3 demo/scripts/validate_lookml.py
 ```
 
-Both must exit 0 before writing a handoff.
+Both must exit 0 before the slice is marked stable. Run them after the handoff is written
+and the acceptance criteria are ticked — see the slice specs' step order.
 
 ---
 
